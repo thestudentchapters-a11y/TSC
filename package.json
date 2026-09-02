@@ -1,0 +1,22 @@
+{
+  "name": "the-student-chapters",
+  "version": "1.0.0",
+  "private": true,
+  "description": "THE STUDENT CHAPTERS (TSC) — India's student & youth media, community and opportunity platform. Monorepo: Next.js web app + Express API.",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w apps/web",
+    "dev:api": "npm run dev -w apps/api",
+    "build:web": "npm run build -w apps/web",
+    "build:api": "npm run build -w apps/api",
+    "start:web": "npm run start -w apps/web",
+    "start:api": "npm run start -w apps/api",
+    "seed": "npm run seed -w apps/api",
+    "install:all": "npm install"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}

@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── TSC global styles — brand: #1457A2 blue / #F6A61D gold / #0C0C0C ink / #FAF9F6 cream ── */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: #f6a61d;
+    color: #0c0c0c;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid #f6a61d;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  .container-tsc {
+    @apply mx-auto w-full max-w-[1480px] px-4 sm:px-6 lg:px-8 xl:px-12;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-brand sm:text-xs;
+  }
+
+  .gold-dot {
+    @apply inline-block h-1.5 w-1.5 rounded-[2px] bg-gold;
+  }
+
+  .section-pad {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .card-base {
+    @apply rounded-md border border-hairline bg-white transition-all duration-300 ease-out;
+  }
+
+  .card-hover {
+    @apply hover:-translate-y-1.5 hover:border-brand/30 hover:shadow-lift;
+  }
+
+  .meta-text {
+    @apply text-xs font-medium uppercase tracking-wider text-muted;
+  }
+
+  .prose-tsc p {
+    @apply mb-5 text-[15px] leading-7 text-ink/80 sm:text-base sm:leading-8;
+  }
+
+  .marquee-mask {
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  }
+}
+
+/* ── Marquee (ticker) ─────────────────────────────────────────────── */
+.marquee-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ── CTA underline grow (used inside group-hover cards/buttons) ───── */
+.cta-underline {
+  position: relative;
+}
+
+.cta-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: #f6a61d;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .cta-underline::after,
+a:hover .cta-underline::after,
+button:hover .cta-underline::after {
+  transform: scaleX(1);
+}
+
+/* ── Nav animated underline ───────────────────────────────────────── */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: #f6a61d;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::after,
+.nav-link-active::after {
+  transform: scaleX(1);
+}
+
+/* ── Accessible skip link ─────────────────────────────────────────── */
+.skip-link:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  background: #0c0c0c;
+  color: #faf9f6;
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+/* ── Thin editorial scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #faf9f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d8d4ca;
+  border-radius: 8px;
+  border: 2px solid #faf9f6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1457a2;
+}
+
+/* ── Reduced motion: calm everything down ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .marquee-track {
+    animation: none !important;
+  }
+}
