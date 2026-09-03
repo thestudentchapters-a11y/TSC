@@ -29,7 +29,7 @@ export function IntroSection() {
             <p className="eyebrow">More Than News. A Platform for the Next Generation.</p>
           </Reveal>
           <Reveal delay={0.08}>
-            <h2 className="mt-4 font-display text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl">
+            <h2 className="mt-4 font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
               Where Students Discover, Share &amp; Connect.
             </h2>
           </Reveal>
