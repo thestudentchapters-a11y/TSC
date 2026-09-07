@@ -17,7 +17,11 @@ export default function AdminSocialLinksPage() {
     whatsapp: site.whatsappUrl,
     konnectx: site.konnectxUrl,
   });
-  const set = (k: keyof typeof links, v: string) => setLinks((l) => ({ ...l, [k]: v }));
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const set = (k: keyof typeof links, v: string) => {
+    setLinks((l) => ({ ...l, [k]: v }));
+    if (errors[k]) setErrors((prev) => ({ ...prev, [k]: '' }));
+  };
 
   const rows: { key: keyof typeof links; label: string; icon: typeof Instagram; hint: string }[] = [
     { key: 'instagram', label: 'Instagram', icon: Instagram, hint: 'Official handle: instagram.com/studentchapters' },
@@ -27,6 +31,21 @@ export default function AdminSocialLinksPage() {
     { key: 'whatsapp', label: 'WhatsApp Community', icon: MessageCircle, hint: 'Invite link for the TSC community channel' },
     { key: 'konnectx', label: 'KonnectX', icon: Globe, hint: 'Official platform: konnectx.app' },
   ];
+
+  const handleSave = () => {
+    const errs: Record<string, string> = {};
+    for (const [key, val] of Object.entries(links)) {
+      if (val && val.trim() && !/^https?:\/\/.+/i.test(val.trim())) {
+        errs[key] = 'URL must start with http:// or https://';
+      }
+    }
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) {
+      push('Please fix the invalid URLs before saving.', 'error');
+      return;
+    }
+    push('Social links saved successfully.', 'success');
+  };
 
   return (
     <div>
@@ -43,7 +62,7 @@ export default function AdminSocialLinksPage() {
         {rows.map((r) => {
           const Icon = r.icon;
           return (
-            <Field key={r.key} label={r.label} htmlFor={`sl-${r.key}`} hint={r.hint}>
+            <Field key={r.key} label={r.label} htmlFor={`sl-${r.key}`} hint={r.hint} error={errors[r.key]}>
               <div className="flex items-center gap-2.5">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[6px] border border-hairline bg-cream text-brand">
                   <Icon aria-hidden className="h-4 w-4" />
@@ -54,7 +73,7 @@ export default function AdminSocialLinksPage() {
           );
         })}
         <div className="flex justify-end border-t border-hairline pt-5">
-          <Button size="sm" onClick={() => push('Social links saved — SiteSettings update (demo).', 'success')} arrow>
+          <Button size="sm" onClick={handleSave} arrow>
             Save Links
           </Button>
         </div>

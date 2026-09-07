@@ -39,11 +39,14 @@ export default function MembershipPage() {
     const e: Record<string, string> = {};
     if (form.name.trim().length < 3) e.name = 'Please enter your full name.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Please enter a valid email.';
-    if (form.phone && !/^[\d+\-\s]{8,15}$/.test(form.phone)) e.phone = 'Please enter a valid phone number.';
+    if (form.phone && !/^[\d+\-\s()]{8,18}$/.test(form.phone)) e.phone = 'Please enter a valid phone number (at least 8 digits).';
     if (!form.college.trim()) e.college = 'Please enter your college or university.';
     if (!form.city.trim()) e.city = 'Please enter your city.';
     if (!form.state) e.state = 'Please select your state.';
     if (form.password.length < 8) e.password = 'Password must be at least 8 characters.';
+    if (form.linkedin.trim() && !/^(https?:\/\/|\/|www\.|linkedin\.com\/)/i.test(form.linkedin.trim())) {
+      e.linkedin = 'Please enter a valid LinkedIn URL.';
+    }
     if (!form.consent) e.consent = 'Please accept the membership terms to continue.';
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -153,8 +156,8 @@ export default function MembershipPage() {
                   <Field label="Password" htmlFor="m-pass" required error={errors.password} hint="Minimum 8 characters. Stored hashed (bcrypt) on the API.">
                     <Input id="m-pass" type="password" value={form.password} onChange={(e) => set('password', e.target.value)} placeholder="Create a password" autoComplete="new-password" />
                   </Field>
-                  <Field label="LinkedIn (optional)" htmlFor="m-li">
-                    <Input id="m-li" value={form.linkedin} onChange={(e) => set('linkedin', e.target.value)} placeholder="linkedin.com/in/…" />
+                  <Field label="LinkedIn (optional)" htmlFor="m-li" error={errors.linkedin}>
+                    <Input id="m-li" value={form.linkedin} onChange={(e) => set('linkedin', e.target.value)} placeholder="https://linkedin.com/in/…" />
                   </Field>
                   <Field label="Instagram (optional)" htmlFor="m-ig">
                     <Input id="m-ig" value={form.instagram} onChange={(e) => set('instagram', e.target.value)} placeholder="@yourhandle" />

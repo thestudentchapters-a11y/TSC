@@ -25,12 +25,16 @@ export default function ShareCampusNewsPage() {
     const e: Record<string, string> = {};
     if (form.name.trim().length < 3) e.name = 'Please enter your name.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Please enter a valid email.';
+    if (!form.college.trim()) e.college = 'Please enter your college or university.';
     if (!form.campus.trim()) e.campus = 'Please enter the campus this news is from.';
     if (!form.city.trim()) e.city = 'Please enter your city.';
     if (!form.state) e.state = 'Please select your state.';
-    if (form.title.trim().length < 6) e.title = 'Give the news a clear headline.';
+    if (form.title.trim().length < 6) e.title = 'Give the news a clear headline (at least 6 characters).';
     if (!form.category) e.category = 'Choose a news category.';
     if (form.description.trim().length < 80) e.description = 'Add a bit more detail — at least 80 characters.';
+    if (form.links.trim() && !/^(https?:\/\/|\/|www\.).+/i.test(form.links.trim())) {
+      e.links = 'Please enter a valid link starting with http://, https://, or www.';
+    }
     if (!form.consent) e.consent = 'Please confirm consent so we can review your submission.';
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -88,7 +92,7 @@ export default function ShareCampusNewsPage() {
                 <Field label="Email" htmlFor="c-email" required error={errors.email}>
                   <Input id="c-email" type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                 </Field>
-                <Field label="College / University" htmlFor="c-college" required>
+                <Field label="College / University" htmlFor="c-college" required error={errors.college}>
                   <Input id="c-college" value={form.college} onChange={(e) => set('college', e.target.value)} placeholder="Your institution" />
                 </Field>
                 <Field label="Campus" htmlFor="c-campus" required error={errors.campus}>
@@ -128,7 +132,7 @@ export default function ShareCampusNewsPage() {
                 <Field label="Event date (optional)" htmlFor="c-date">
                   <Input id="c-date" type="date" value={form.eventDate} onChange={(e) => set('eventDate', e.target.value)} />
                 </Field>
-                <Field label="Supporting links (optional)" htmlFor="c-links">
+                <Field label="Supporting links (optional)" htmlFor="c-links" error={errors.links}>
                   <Input id="c-links" value={form.links} onChange={(e) => set('links', e.target.value)} placeholder="Instagram post, registration link…" />
                 </Field>
               </div>

@@ -4,6 +4,7 @@ import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Providers } from '@/components/providers/Providers';
+import { WhatsAppStickyButton } from '@/components/common/WhatsAppStickyButton';
 import { site } from '@/lib/site';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
@@ -83,6 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main id="main-content">{children}</main>
           <Footer />
+          <WhatsAppStickyButton />
         </Providers>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </body>

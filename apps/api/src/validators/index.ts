@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const email = z.string().trim().email('Please provide a valid email address');
 const password = z.string().min(8, 'Password must be at least 8 characters');
-const phone = z.string().regex(/^[\d+\-\s]{8,15}$/, 'Please provide a valid phone number').optional().or(z.literal(''));
+const phone = z.string().regex(/^[\d+\-\s()]{8,18}$/, 'Please provide a valid phone number (at least 8 digits)').optional().or(z.literal(''));
 
 export const registerSchema = z.object({
   name: z.string().trim().min(3, 'Name must be at least 3 characters'),
@@ -140,3 +140,20 @@ export const moderateSubmissionSchema = z.object({
   status: z.enum(['pending', 'under review', 'approved', 'rejected']),
   reviewNote: z.string().optional(),
 });
+
+export const hiringApplicationSchema = z.object({
+  type: z.enum(['Internship', 'Job']),
+  fullName: z.string().trim().min(2, 'Full name must be at least 2 characters'),
+  email,
+  phone: z.string().trim().min(8, 'Please provide a valid phone number'),
+  location: z.string().trim().min(2, 'Please specify your city/state'),
+  department: z.string().trim().min(2, 'Please select a track/department'),
+  experienceLevel: z.string().trim().min(2, 'Please specify your experience level or year of study'),
+  collegeOrCompany: z.string().trim().min(2, 'Please specify your college or current organization'),
+  linkedinUrl: z.string().trim().url().optional().or(z.literal('')),
+  portfolioUrl: z.string().trim().url().optional().or(z.literal('')),
+  resumeUrl: z.string().trim().min(3, 'Please provide a resume link or document URL'),
+  coverLetter: z.string().trim().min(30, 'Please share at least 30 characters about why you want to join TSC'),
+  availability: z.string().trim().min(2, 'Please specify your availability/joining timeline'),
+});
+

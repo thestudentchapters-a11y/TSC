@@ -1,4 +1,4 @@
-import { CampusSubmission, StorySubmission } from '../models/Submission';
+import { CampusSubmission, StorySubmission, CareerSubmission } from '../models/Submission';
 import type { Model } from 'mongoose';
 import ContactMessage from '../models/ContactMessage';
 import EventRegistration from '../models/EventRegistration';
@@ -50,6 +50,25 @@ export const submissionService = {
       images: Array.isArray(payload.images) ? payload.images : payload.image ? [payload.image] : [],
       supportingLinks: payload.links || payload.supportingLinks,
       consent: true,
+      status: 'pending',
+    });
+    return doc;
+  },
+
+  async submitCareerApplication(payload: Record<string, unknown>, userId?: string) {
+    const doc = await CareerSubmission.create({
+      user: userId || undefined,
+      opportunityId: payload.opportunityId,
+      opportunityTitle: payload.opportunityTitle,
+      organization: payload.organization,
+      type: payload.type || 'Job',
+      fullName: payload.fullName,
+      email: payload.email,
+      phone: payload.phone,
+      college: payload.college,
+      resumeUrl: payload.resumeUrl,
+      portfolioUrl: payload.portfolioUrl,
+      note: payload.note,
       status: 'pending',
     });
     return doc;

@@ -86,12 +86,18 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
   const [panels, setPanels] = useState(DEFAULT_HERO_PANELS);
 
   useEffect(() => {
+    const safeSrc = (src?: string, fallback = '') => {
+      if (!src) return fallback;
+      if (src.endsWith('.jp')) return src + 'g';
+      return src;
+    };
+
     // 1. Check props first
     if (initialPanels && initialPanels.length > 0) {
       setPanels(
         DEFAULT_HERO_PANELS.map((defaultPanel, i) => ({
           ...defaultPanel,
-          src: initialPanels[i]?.src || defaultPanel.src,
+          src: safeSrc(initialPanels[i]?.src, defaultPanel.src),
           alt: initialPanels[i]?.alt || defaultPanel.alt,
         }))
       );
@@ -107,7 +113,7 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
           setPanels(
             DEFAULT_HERO_PANELS.map((defaultPanel, i) => ({
               ...defaultPanel,
-              src: parsed[i]?.src || defaultPanel.src,
+              src: safeSrc(parsed[i]?.src, defaultPanel.src),
               alt: parsed[i]?.alt || defaultPanel.alt,
             }))
           );

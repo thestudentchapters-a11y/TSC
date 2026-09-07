@@ -101,3 +101,46 @@ const CampusSubmissionSchema = new Schema(
 export const CampusSubmission: Model<ICampusSubmission> =
   (mongoose.models.CampusSubmission as Model<ICampusSubmission>) ??
   mongoose.model<ICampusSubmission>('CampusSubmission', CampusSubmissionSchema);
+
+/* ── CareerSubmission (Quick Apply for jobs / internships / fellowships) ── */
+export interface ICareerSubmission {
+  _id: mongoose.Types.ObjectId;
+  user?: mongoose.Types.ObjectId | string;
+  opportunityId?: string;
+  opportunityTitle: string;
+  organization: string;
+  type: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  college: string;
+  resumeUrl: string;
+  portfolioUrl?: string;
+  note: string;
+  status: 'pending' | 'reviewed' | 'shortlisted' | 'rejected';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const CareerSubmissionSchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    opportunityId: { type: String },
+    opportunityTitle: { type: String, required: true },
+    organization: { type: String, required: true },
+    type: { type: String, required: true },
+    fullName: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true, lowercase: true },
+    phone: { type: String, required: true, trim: true },
+    college: { type: String, required: true, trim: true },
+    resumeUrl: { type: String, required: true, trim: true },
+    portfolioUrl: { type: String, trim: true },
+    note: { type: String, required: true, trim: true },
+    status: { type: String, enum: ['pending', 'reviewed', 'shortlisted', 'rejected'], default: 'pending', index: true },
+  },
+  { timestamps: true }
+);
+
+export const CareerSubmission: Model<ICareerSubmission> =
+  (mongoose.models.CareerSubmission as Model<ICareerSubmission>) ??
+  mongoose.model<ICareerSubmission>('CareerSubmission', CareerSubmissionSchema);

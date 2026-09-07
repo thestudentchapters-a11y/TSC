@@ -363,6 +363,7 @@ export const adminNavGroups: { label: string; items: { href: string; label: stri
   {
     label: 'People & Inbox',
     items: [
+      { href: '/admin/hiring', label: 'Hiring Applications', icon: Briefcase },
       { href: '/admin/members', label: 'Members', icon: Users },
       { href: '/admin/story-submissions', label: 'Story Submissions', icon: Share2 },
       { href: '/admin/campus-submissions', label: 'Campus Submissions', icon: School },

@@ -17,6 +17,7 @@ import Membership from '../models/Membership';
 import User from '../models/User';
 import SiteSettings from '../models/SiteSettings';
 import { StorySubmission, CampusSubmission } from '../models/Submission';
+import HiringApplication from '../models/HiringApplication';
 
 import { createContentService } from '../services/content.service';
 import { submissionService } from '../services/engagement.service';
@@ -24,6 +25,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { requireAuth, requireEditor, requireAdmin, type AuthRequest } from '../middleware/auth';
 import { authRouter } from './auth.routes';
 import { engagementRouter } from './engagement.routes';
+import { hiringRouter } from './hiring.routes';
 import { moderateSubmissionSchema } from '../validators';
 import { validate } from '../middleware/validate';
 import { ApiError } from '../utils/apiError';
@@ -36,9 +38,10 @@ export function registerRoutes(app: Router) {
     res.json({ success: true, service: 'THE STUDENT CHAPTERS™ API', time: new Date().toISOString() });
   });
 
-  /* ── Auth + engagement ──────────────────────────────────────────────── */
+  /* ── Auth + engagement + hiring ─────────────────────────────────────── */
   app.use('/', authRouter);
   app.use('/', engagementRouter);
+  app.use('/', hiringRouter);
 
   /* ── Content collections ────────────────────────────────────────────── */
   function contentRoutes(basePath: string, model: Parameters<typeof createContentService>[0], filterKeys?: string[], slugLookup = true) {
@@ -220,7 +223,7 @@ export function registerRoutes(app: Router) {
     requireAuth,
     requireEditor,
     asyncHandler(async (_req, res) => {
-      const [members, newMembers, pendingStories, pendingCampus, articles, upcomingEvents, activeOpps, episodes, campusCount] =
+      const [members, newMembers, pendingStories, pendingCampus, articles, upcomingEvents, activeOpps, episodes, campusCount, totalHiring, pendingHiring] =
         await Promise.all([
           User.countDocuments({ role: 'member' }),
           User.countDocuments({ role: 'member', createdAt: { $gte: new Date(Date.now() - 30 * 24 * 3600 * 1000) } }),
@@ -231,10 +234,12 @@ export function registerRoutes(app: Router) {
           Opportunity.countDocuments({ status: 'active' }),
           PodcastEpisode.countDocuments({}),
           Campus.countDocuments({}),
+          HiringApplication.countDocuments({}),
+          HiringApplication.countDocuments({ status: 'pending' }),
         ]);
       res.json({
         success: true,
-        data: { members, newMembers, pendingStories, pendingCampus, articles, upcomingEvents, activeOpps, episodes, campusCount },
+        data: { members, newMembers, pendingStories, pendingCampus, articles, upcomingEvents, activeOpps, episodes, campusCount, totalHiring, pendingHiring },
       });
     })
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CalendarDays, FileText, Globe2, Images, Mail, Mic, Newspaper, School, Share2, TrendingUp, Users } from 'lucide-react';
+import { Briefcase, CalendarDays, FileText, Globe2, Images, Mail, Mic, Newspaper, School, Share2, TrendingUp, Users } from 'lucide-react';
 import {
   demoArticles, demoCampuses, demoContactMessages, demoEditions, demoEpisodes, demoEvents,
   demoMembers, demoOpportunities, demoStorySubmissions, demoCampusSubmissions,
@@ -49,6 +49,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Hiring applications" value="12" sub="Jobs & Internships" icon={Briefcase} href="/admin/hiring" />
         <StatCard label="Total members" value={demoMembers.length} sub={`${newMembers} new this month`} icon={Users} href="/admin/members" />
         <StatCard label="Pending submissions" value={pending} sub="Awaiting review" icon={Share2} href="/admin/story-submissions" />
         <StatCard label="Published articles" value={demoArticles.filter((a) => a.status === 'published').length} sub="News section" icon={Newspaper} href="/admin/news" />
@@ -56,7 +57,6 @@ export default function AdminDashboardPage() {
         <StatCard label="Active opportunities" value={activeOpps} sub="Jobs · Internships · Fellowships" icon={TrendingUp} href="/admin/opportunities" />
         <StatCard label="Podcast episodes" value={demoEpisodes.length} icon={Mic} href="/admin/podcasts" />
         <StatCard label="Campuses" value={demoCampuses.length} icon={School} href="/admin/campuses" />
-        <StatCard label="Current affairs editions" value={demoEditions.length} icon={Globe2} href="/admin/current-affairs" />
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">

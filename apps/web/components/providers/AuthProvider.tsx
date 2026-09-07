@@ -10,6 +10,7 @@ export interface AuthUser {
   role: Role;
   college?: string;
   city?: string;
+  phone?: string;
 }
 
 interface AuthContextValue {

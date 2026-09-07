@@ -25,12 +25,18 @@ export default function ShareYourStoryPage() {
     const e: Record<string, string> = {};
     if (form.name.trim().length < 3) e.name = 'Please enter your name.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Please enter a valid email.';
+    if (form.phone.trim() && !/^[\d+\-\s()]{8,18}$/.test(form.phone.trim())) {
+      e.phone = 'Please enter a valid phone number (at least 8 digits).';
+    }
     if (!form.college.trim()) e.college = 'Please enter your college or university.';
     if (!form.city.trim()) e.city = 'Please enter your city.';
     if (!form.state) e.state = 'Please select your state.';
     if (form.title.trim().length < 6) e.title = 'Give your story a title (at least 6 characters).';
     if (!form.category) e.category = 'Choose a story category.';
     if (form.content.trim().length < 100) e.content = 'Tell us a bit more — at least 100 characters.';
+    if (form.videoUrl.trim() && !/^(https?:\/\/|\/|www\.).+/i.test(form.videoUrl.trim())) {
+      e.videoUrl = 'Please enter a valid video link starting with http:// or https://.';
+    }
     if (!form.consent) e.consent = 'Please confirm consent so we can review your story.';
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -88,7 +94,7 @@ export default function ShareYourStoryPage() {
                 <Field label="Email" htmlFor="s-email" required error={errors.email}>
                   <Input id="s-email" type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                 </Field>
-                <Field label="Phone (optional)" htmlFor="s-phone">
+                <Field label="Phone (optional)" htmlFor="s-phone" error={errors.phone}>
                   <Input id="s-phone" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91…" autoComplete="tel" />
                 </Field>
                 <Field label="College / University" htmlFor="s-college" required error={errors.college}>
@@ -130,8 +136,8 @@ export default function ShareYourStoryPage() {
               </Field>
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Video URL (optional)" htmlFor="s-video">
-                  <Input id="s-video" value={form.videoUrl} onChange={(e) => set('videoUrl', e.target.value)} placeholder="YouTube / drive link" />
+                <Field label="Video URL (optional)" htmlFor="s-video" error={errors.videoUrl}>
+                  <Input id="s-video" value={form.videoUrl} onChange={(e) => set('videoUrl', e.target.value)} placeholder="https://youtube.com/..." />
                 </Field>
                 <Field label="Social links (optional)" htmlFor="s-social">
                   <Input id="s-social" value={form.social} onChange={(e) => set('social', e.target.value)} placeholder="LinkedIn / Instagram / X" />

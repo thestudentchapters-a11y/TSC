@@ -58,6 +58,14 @@ export const mainNav: NavLink[] = [
   { label: 'Current Affairs', href: '/current-affairs' },
   { label: 'Legal Awareness', href: '/legal-awareness' },
   {
+    label: 'Hiring',
+    href: '/hiring',
+    children: [
+      { label: 'Internships', href: '/hiring?type=Internship', description: 'Student internships, editorial fellowships & creative roles.' },
+      { label: 'Jobs', href: '/hiring?type=Job', description: 'Full-time positions, editorial & engineering opportunities.' },
+    ],
+  },
+  {
     label: 'Community',
     href: '/community',
     children: [
@@ -94,6 +102,7 @@ export const footerNav = {
   ],
   about: [
     { label: 'About Us', href: '/about' },
+    { label: 'We’re Hiring', href: '/hiring' },
     { label: 'Our Mission', href: '/about#mission' },
     { label: 'Our Team', href: '/about#team' },
     { label: 'Contact Us', href: '/contact' },

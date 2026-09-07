@@ -21,6 +21,15 @@ export const submitCampusNews = asyncHandler(async (req: AuthRequest, res: Respo
   });
 });
 
+export const submitCareerApply = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const doc = await submissionService.submitCareerApplication(req.body, req.user ? String(req.user._id) : undefined);
+  res.status(201).json({
+    success: true,
+    message: 'Application submitted successfully — the recruiting team will review it.',
+    data: { id: String(doc._id), status: doc.status },
+  });
+});
+
 export const getMySubmissions = asyncHandler(async (req: AuthRequest, res: Response) => {
   const data = await submissionService.getMySubmissions(String(req.user!._id), req.user?.email);
   res.json({ success: true, data });

@@ -17,7 +17,30 @@ export default function AdminSettingsPage() {
     apiConnected: !!process.env.NEXT_PUBLIC_API_URL,
     storage: 'Cloudinary (not configured)',
   });
-  const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const set = (k: string, v: string) => {
+    setForm((f) => ({ ...f, [k]: v }));
+    if (errors[k]) setErrors((prev) => ({ ...prev, [k]: '' }));
+  };
+
+  const handleSave = () => {
+    const errs: Record<string, string> = {};
+    if (!form.siteName.trim() || form.siteName.trim().length < 2) {
+      errs.siteName = 'Site name is required (at least 2 characters).';
+    }
+    if (!form.siteUrl.trim() || !/^https?:\/\/.+/i.test(form.siteUrl.trim())) {
+      errs.siteUrl = 'Site URL must start with http:// or https://';
+    }
+    if (form.contactEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contactEmail.trim())) {
+      errs.contactEmail = 'Please enter a valid contact email address.';
+    }
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) {
+      push('Please fix the errors before saving.', 'error');
+      return;
+    }
+    push('Settings saved successfully (persists via API SiteSettings when connected).', 'success');
+  };
 
   return (
     <div>
@@ -34,16 +57,16 @@ export default function AdminSettingsPage() {
           <h2 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-[0.14em]">
             <Settings aria-hidden className="h-4 w-4 text-brand" /> Site
           </h2>
-          <Field label="Site name" htmlFor="st-name">
+          <Field label="Site name" htmlFor="st-name" required error={errors.siteName}>
             <Input id="st-name" value={form.siteName} onChange={(e) => set('siteName', e.target.value)} />
           </Field>
           <Field label="Tagline" htmlFor="st-tag">
             <Input id="st-tag" value={form.tagline} onChange={(e) => set('tagline', e.target.value)} />
           </Field>
-          <Field label="Site URL" htmlFor="st-url" hint="Used for canonical URLs, OG tags and sitemap">
+          <Field label="Site URL" htmlFor="st-url" required error={errors.siteUrl} hint="Used for canonical URLs, OG tags and sitemap">
             <Input id="st-url" value={form.siteUrl} onChange={(e) => set('siteUrl', e.target.value)} />
           </Field>
-          <Field label="Contact email" htmlFor="st-email" hint="Shown on the contact page — [TO BE CONFIGURED] until set">
+          <Field label="Contact email" htmlFor="st-email" error={errors.contactEmail} hint="Shown on the contact page — [TO BE CONFIGURED] until set">
             <Input id="st-email" type="email" value={form.contactEmail} onChange={(e) => set('contactEmail', e.target.value)} placeholder="hello@…" />
           </Field>
         </section>
@@ -79,7 +102,7 @@ export default function AdminSettingsPage() {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Button size="sm" onClick={() => push('Settings saved (demo — persists via API SiteSettings when connected).', 'success')} arrow>
+        <Button size="sm" onClick={handleSave} arrow>
           Save Settings
         </Button>
       </div>

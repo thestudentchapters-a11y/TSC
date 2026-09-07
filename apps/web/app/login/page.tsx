@@ -15,15 +15,29 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [generalError, setGeneralError] = useState('');
+
+  const validate = () => {
+    const errs: Record<string, string> = {};
+    if (!email.trim()) {
+      errs.email = 'Please enter your email address.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errs.email = 'Please enter a valid email address.';
+    }
+    if (!password) {
+      errs.password = 'Please enter your password.';
+    } else if (password.length < 6) {
+      errs.password = 'Password must be at least 6 characters.';
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    if (!email.includes('@') || password.length < 6) {
-      setError('Enter a valid email and a password of at least 6 characters.');
-      return;
-    }
+    setGeneralError('');
+    if (!validate()) return;
     setBusy(true);
     const res = await login(email, password);
     setBusy(false);
@@ -31,7 +45,7 @@ export default function LoginPage() {
       push('Welcome back to TSC.', 'success');
       window.location.href = email.startsWith('admin') ? '/admin' : '/dashboard';
     } else {
-      setError(res.error ?? 'Login failed.');
+      setGeneralError(res.error ?? 'Invalid email or password. Please try again.');
     }
   };
 
@@ -41,15 +55,35 @@ export default function LoginPage() {
       <section className="section-pad">
         <div className="container-tsc max-w-md">
           <form onSubmit={submit} className="card-base space-y-5 p-6 sm:p-8" noValidate>
-            <Field label="Email" htmlFor="l-email" required error={error && !email.includes('@') ? error : undefined}>
-              <Input id="l-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" />
+            <Field label="Email" htmlFor="l-email" required error={errors.email}>
+              <Input
+                id="l-email"
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                }}
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
             </Field>
-            <Field label="Password" htmlFor="l-pass" required>
-              <Input id="l-pass" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Your password" autoComplete="current-password" />
+            <Field label="Password" htmlFor="l-pass" required error={errors.password}>
+              <Input
+                id="l-pass"
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+                }}
+                placeholder="Your password"
+                autoComplete="current-password"
+              />
             </Field>
-            {error && (
+            {generalError && (
               <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                {error}
+                {generalError}
               </p>
             )}
             <div className="flex items-center justify-between">

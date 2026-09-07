@@ -29,13 +29,32 @@ export default function SubmitArticlePage() {
   const [city, setCity] = useState(user?.city ?? '');
   const [state, setState] = useState('Bihar');
   const [videoUrl, setVideoUrl] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  const validate = () => {
+    const errs: Record<string, string> = {};
+    if (!title.trim() || title.trim().length < 6) {
+      errs.title = 'Please provide an engaging title of at least 6 characters.';
+    }
+    if (!content.trim() || content.trim().length < 80) {
+      errs.content = 'Please write at least 80 characters for your story content.';
+    }
+    if (image.trim() && !/^(https?:\/\/|\/images\/|\/)/i.test(image.trim())) {
+      errs.image = 'Image must be a valid URL (https://...) or image path (/images/...).';
+    }
+    if (videoUrl.trim() && !/^https?:\/\/.+/i.test(videoUrl.trim())) {
+      errs.videoUrl = 'Video URL must start with http:// or https://.';
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) {
-      push('Please provide both an article title and content.', 'error');
+    if (!validate()) {
+      push('Please fix the highlighted errors before submitting.', 'error');
       return;
     }
 
@@ -162,14 +181,13 @@ export default function SubmitArticlePage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="card-base mt-8 space-y-6 p-6 sm:p-8">
-          <Field label="Article Title" htmlFor="art-title" required hint="Make it engaging and specific">
+        <form onSubmit={handleSubmit} className="card-base mt-8 space-y-6 p-6 sm:p-8" noValidate>
+          <Field label="Article Title" htmlFor="art-title" required error={errors.title} hint="Make it engaging and specific">
             <Input
               id="art-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. How Our Campus Solar Club Built an EV Prototype"
-              required
             />
           </Field>
 
@@ -184,7 +202,7 @@ export default function SubmitArticlePage() {
               </Select>
             </Field>
 
-            <Field label="Cover Image URL" htmlFor="art-img" hint="Optional public URL or /images/hero/ path">
+            <Field label="Cover Image URL" htmlFor="art-img" error={errors.image} hint="Optional public URL or /images/hero/ path">
               <Input
                 id="art-img"
                 value={image}
@@ -204,14 +222,13 @@ export default function SubmitArticlePage() {
             />
           </Field>
 
-          <Field label="Article Content" htmlFor="art-content" required hint="Share your full story, lessons, and takeaways">
+          <Field label="Article Content" htmlFor="art-content" required error={errors.content} hint="Share your full story, lessons, and takeaways (minimum 80 characters)">
             <Textarea
               id="art-content"
               rows={10}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write your article here..."
-              required
             />
           </Field>
 
@@ -242,7 +259,7 @@ export default function SubmitArticlePage() {
             </Field>
           </div>
 
-          <Field label="Optional Video / Project Link" htmlFor="art-video" hint="YouTube video, LinkedIn post or project repo">
+          <Field label="Optional Video / Project Link" htmlFor="art-video" error={errors.videoUrl} hint="YouTube video, LinkedIn post or project repo">
             <Input
               id="art-video"
               value={videoUrl}
