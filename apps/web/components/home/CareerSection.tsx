@@ -32,9 +32,9 @@ export function CareerSection({ opportunities }: { opportunities: Opportunity[] 
                   <span className="inline-flex h-12 w-12 items-center justify-center rounded-[8px] bg-gold-50 text-gold-deep transition-all duration-300 group-hover:-rotate-6 group-hover:bg-gold group-hover:text-ink">
                     <Icon aria-hidden className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" />
                   </span>
-                  <h3 className="mt-5 font-display text-base font-bold">{p.title}</h3>
-                  <p className="mt-2.5 flex-1 text-[13.5px] leading-6 text-muted">{p.copy}</p>
-                  <div className="mt-5">
+                  <h3 className="mt-5 font-display text-base font-bold min-h-[1.5rem]">{p.title}</h3>
+                  <p className="mt-2.5 flex-1 text-[13.5px] leading-6 text-muted min-h-[4.5rem]">{p.copy}</p>
+                  <div className="mt-auto pt-4">
                     <TextCTA href={p.href} className="!text-[11.5px]">
                       {p.cta}
                     </TextCTA>

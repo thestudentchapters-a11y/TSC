@@ -34,9 +34,9 @@ export function LegalSection() {
                   <span className="inline-flex h-12 w-12 items-center justify-center rounded-[8px] bg-brand text-white transition-all duration-300 group-hover:rotate-[-6deg] group-hover:bg-gold group-hover:text-ink">
                     <Icon aria-hidden className="h-6 w-6" />
                   </span>
-                  <h3 className="mt-5 font-display text-[15px] font-bold">{t.title}</h3>
-                  <p className="mt-2 flex-1 text-[13.5px] leading-6 text-muted">{t.desc}</p>
-                  <span className="mt-5 inline-flex items-center gap-1.5 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
+                  <h3 className="mt-5 font-display text-[15px] font-bold min-h-[1.5rem]">{t.title}</h3>
+                  <p className="mt-2 flex-1 text-[13.5px] leading-6 text-muted min-h-[3rem]">{t.desc}</p>
+                  <span className="mt-auto inline-flex items-center gap-1.5 pt-4 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
                     <span className="cta-underline">Learn More</span>
                     <ArrowRight aria-hidden className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>

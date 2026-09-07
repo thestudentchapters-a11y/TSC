@@ -46,9 +46,9 @@ export default async function CareerPage() {
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-[8px] bg-gold-50 text-gold-deep transition-all duration-300 group-hover:-rotate-6 group-hover:bg-gold group-hover:text-ink">
                       <Icon aria-hidden className="h-6 w-6" />
                     </span>
-                    <h2 className="mt-5 font-display text-lg font-bold">{p.title}</h2>
-                    <p className="mt-2.5 flex-1 text-[13.5px] leading-6 text-muted">{p.copy}</p>
-                    <span className="mt-5 inline-flex items-center gap-2 font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-brand">
+                    <h2 className="mt-5 font-display text-lg font-bold min-h-[1.75rem]">{p.title}</h2>
+                    <p className="mt-2.5 flex-1 text-[13.5px] leading-6 text-muted min-h-[4.5rem]">{p.copy}</p>
+                    <span className="mt-auto inline-flex items-center gap-2 pt-4 font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-brand">
                       <span className="cta-underline">{p.cta}</span>
                       <ArrowRight aria-hidden className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                     </span>

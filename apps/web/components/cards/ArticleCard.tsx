@@ -33,7 +33,7 @@ export function ArticleCard({
     return (
       <Link
         href={`/news/${article.slug}`}
-        className="card-base card-hover group flex gap-5 p-4 sm:p-5"
+        className="card-base card-hover group flex h-full gap-5 p-4 sm:p-5"
       >
         <div className="relative hidden w-44 shrink-0 overflow-hidden rounded-sm sm:block">
           <Image
@@ -44,16 +44,20 @@ export function ArticleCard({
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
-        <div className="min-w-0 flex-1 space-y-2.5 py-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <CategoryPill>{article.category}</CategoryPill>
-            {article.demo && <DemoChip />}
+        <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
+          <div className="space-y-2.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <CategoryPill>{article.category}</CategoryPill>
+              {article.demo && <DemoChip />}
+            </div>
+            <h3 className="font-display text-[17px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3rem]">
+              {article.title}
+            </h3>
+            <p className="line-clamp-2 text-sm leading-6 text-muted">{article.excerpt}</p>
           </div>
-          <h3 className="font-display text-[17px] font-bold leading-snug transition-colors group-hover:text-brand">
-            {article.title}
-          </h3>
-          <p className="line-clamp-2 text-sm leading-6 text-muted">{article.excerpt}</p>
-          {meta}
+          <div className="mt-auto pt-3">
+            {meta}
+          </div>
         </div>
       </Link>
     );
@@ -94,8 +98,8 @@ export function ArticleCard({
   }
 
   return (
-    <Link href={`/news/${article.slug}`} className="card-base card-hover group flex flex-col overflow-hidden">
-      <div className={cn('relative aspect-[16/10] overflow-hidden')}>
+    <Link href={`/news/${article.slug}`} className="card-base card-hover group flex h-full flex-col overflow-hidden">
+      <div className={cn('relative aspect-[16/10] w-full shrink-0 overflow-hidden')}>
         <Image
           src={article.image}
           alt={article.imageAlt}
@@ -105,15 +109,15 @@ export function ArticleCard({
         />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
           <CategoryPill>{article.category}</CategoryPill>
           {article.demo && <DemoChip />}
         </div>
-        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand">
+        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem]">
           {article.title}
         </h3>
-        <p className="line-clamp-2 text-sm leading-6 text-muted">{article.excerpt}</p>
-        <div className="mt-auto space-y-3 pt-1">
+        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem]">{article.excerpt}</p>
+        <div className="mt-auto space-y-3 pt-2">
           {meta}
           <span className="cta-underline font-display text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
             Read Story

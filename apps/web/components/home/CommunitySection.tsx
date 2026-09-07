@@ -73,12 +73,12 @@ export function CommunitySection({ initialBg }: { initialBg?: string }) {
             return (
               <StaggerItem key={b.title}>
                 <div className="card-base card-hover group flex h-full flex-col items-center gap-4 p-6 text-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-brand/20 bg-brand-50 text-brand transition-all duration-300 group-hover:-translate-y-1 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-brand/20 bg-brand-50 text-brand transition-all duration-300 group-hover:-translate-y-1 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
                     <Icon aria-hidden className="h-5 w-5" />
                   </span>
-                  <div>
-                    <h3 className="font-display text-[12.5px] font-bold uppercase tracking-[0.16em]">{b.title}</h3>
-                    <p className="mt-2 text-[12.5px] leading-5 text-muted">{b.desc}</p>
+                  <div className="flex flex-1 flex-col justify-start">
+                    <h3 className="flex min-h-[2rem] items-center justify-center font-display text-[12.5px] font-bold uppercase tracking-[0.16em]">{b.title}</h3>
+                    <p className="mt-2 flex-1 text-[12.5px] leading-5 text-muted">{b.desc}</p>
                   </div>
                 </div>
               </StaggerItem>

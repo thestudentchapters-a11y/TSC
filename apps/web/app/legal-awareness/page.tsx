@@ -72,9 +72,9 @@ export default async function LegalAwarenessPage({
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-[8px] bg-brand text-white transition-all duration-300 group-hover:-rotate-6 group-hover:bg-gold group-hover:text-ink">
                       <Icon aria-hidden className="h-6 w-6" />
                     </span>
-                    <h2 className="mt-5 font-display text-[15px] font-bold">{t}</h2>
-                    <p className="mt-2 flex-1 text-[13px] leading-6 text-muted">{meta.desc}</p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
+                    <h2 className="mt-5 font-display text-[15px] font-bold min-h-[1.5rem]">{t}</h2>
+                    <p className="mt-2 flex-1 text-[13px] leading-6 text-muted min-h-[3rem]">{meta.desc}</p>
+                    <span className="mt-auto inline-flex items-center gap-1.5 pt-4 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
                       <span className="cta-underline">Explore</span>
                       <ArrowRight aria-hidden className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                     </span>
@@ -91,11 +91,11 @@ export default async function LegalAwarenessPage({
             </h2>
             <div className="mt-7 grid gap-6 sm:grid-cols-2">
               {items.map((l) => (
-                <Link key={l.id} href={`/legal-awareness/${l.slug}`} className="card-base card-hover group flex flex-col gap-3 p-6">
+                <Link key={l.id} href={`/legal-awareness/${l.slug}`} className="card-base card-hover group flex h-full flex-col gap-3 p-6">
                   <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brand">{l.topic}</p>
-                  <h3 className="font-display text-[17px] font-bold leading-snug transition-colors group-hover:text-brand">{l.title}</h3>
-                  <p className="text-[13.5px] leading-6 text-muted">{l.summary}</p>
-                  <p className="mt-auto flex items-center gap-3 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted">
+                  <h3 className="font-display text-[17px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3rem]">{l.title}</h3>
+                  <p className="line-clamp-2 text-[13.5px] leading-6 text-muted min-h-[3rem]">{l.summary}</p>
+                  <p className="mt-auto flex items-center gap-3 border-t border-hairline pt-3 text-[11px] font-medium uppercase tracking-wider text-muted">
                     <span>{l.readingTime} min read</span>
                     <span aria-hidden>•</span>
                     <span className="cta-underline text-brand">Read explainer</span>

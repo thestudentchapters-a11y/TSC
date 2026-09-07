@@ -32,25 +32,25 @@ export default async function CurrentAffairsPage() {
             {editions.map((ed) => (
               <StaggerItem key={ed.id}>
                 <Link href={`/current-affairs/${ed.slug}`} className="card-base card-hover group flex h-full flex-col overflow-hidden">
-                  <div className="relative aspect-[4/5] sm:aspect-[4/4.4]">
+                  <div className="relative aspect-[4/5] sm:aspect-[4/4.4] w-full shrink-0 overflow-hidden">
                     <Image src={ed.cover} alt={ed.coverAlt} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                     <span className="absolute right-3 top-3 rounded-[4px] bg-gold px-2.5 py-1 font-display text-[10px] font-bold uppercase tracking-[0.14em] text-ink">
                       {ed.month} {ed.year}
                     </span>
                   </div>
                   <div className="flex flex-1 flex-col gap-3 p-5">
-                    <h2 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand">
+                    <h2 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem]">
                       {ed.title}
                     </h2>
-                    <p className="line-clamp-2 text-[13.5px] leading-6 text-muted">{ed.intro}</p>
-                    <div className="flex flex-wrap gap-1.5">
+                    <p className="line-clamp-2 text-[13.5px] leading-6 text-muted min-h-[3rem]">{ed.intro}</p>
+                    <div className="flex min-h-[1.75rem] flex-wrap gap-1.5">
                       {ed.topics.map((t) => (
                         <span key={t} className="rounded-full border border-hairline bg-cream px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-ink/60">
                           {t === 'Science & Technology' ? 'Sci-Tech' : t}
                         </span>
                       ))}
                     </div>
-                    <span className="mt-auto inline-flex items-center gap-2 pt-2 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
+                    <span className="mt-auto inline-flex items-center gap-2 border-t border-hairline pt-3 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
                       <span className="cta-underline">Read This Edition</span>
                       <ArrowRight aria-hidden className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                     </span>

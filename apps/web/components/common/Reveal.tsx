@@ -72,9 +72,9 @@ export function StaggerItem({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  if (reduce) return <div className={className}>{children}</div>;
+  if (reduce) return <div className={cn('h-full', className)}>{children}</div>;
   return (
-    <motion.div variants={staggerChild} className={className}>
+    <motion.div variants={staggerChild} className={cn('h-full', className)}>
       {children}
     </motion.div>
   );

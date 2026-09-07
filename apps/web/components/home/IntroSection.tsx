@@ -59,7 +59,7 @@ export function IntroSection() {
               const Icon = p.icon;
               return (
                 <StaggerItem key={p.title}>
-                  <div className="card-base card-hover group h-full p-6">
+                  <div className="card-base card-hover group flex h-full flex-col p-6">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-[8px] bg-brand-50 text-brand transition-all duration-300 group-hover:rotate-[-6deg] group-hover:bg-brand group-hover:text-white">
                       <Icon aria-hidden className="h-6 w-6 transition-transform duration-300 group-hover:scale-110" />
                     </span>
@@ -67,7 +67,7 @@ export function IntroSection() {
                       {p.title}
                     </h3>
                     <span aria-hidden className="mt-3 block h-0.5 w-6 bg-gold" />
-                    <p className="mt-3 text-[13.5px] leading-6 text-muted">{p.copy}</p>
+                    <p className="mt-3 flex-1 text-[13.5px] leading-6 text-muted">{p.copy}</p>
                   </div>
                 </StaggerItem>
               );

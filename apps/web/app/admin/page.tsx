@@ -10,7 +10,7 @@ import { formatDate } from '@/lib/utils';
 
 function StatCard({ label, value, sub, icon: Icon, href }: { label: string; value: string | number; sub?: string; icon: typeof Users; href: string }) {
   return (
-    <Link href={href} className="card-base card-hover group flex flex-col gap-3 p-5">
+    <Link href={href} className="card-base card-hover group flex h-full flex-col justify-between gap-3 p-5">
       <div className="flex items-center justify-between">
         <span className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-brand-50 text-brand transition-colors group-hover:bg-brand group-hover:text-white">
           <Icon aria-hidden className="h-5 w-5" />
@@ -19,7 +19,7 @@ function StatCard({ label, value, sub, icon: Icon, href }: { label: string; valu
       </div>
       <div>
         <p className="font-display text-[12px] font-bold uppercase tracking-[0.12em]">{label}</p>
-        {sub && <p className="mt-0.5 text-[11px] text-muted">{sub}</p>}
+        <p className="mt-0.5 text-[11px] text-muted min-h-[1rem]">{sub || ' '}</p>
       </div>
     </Link>
   );

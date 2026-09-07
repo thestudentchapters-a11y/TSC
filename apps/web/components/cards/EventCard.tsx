@@ -12,8 +12,8 @@ export function EventCard({ event, priority = false }: { event: TscEvent; priori
   const past = event.status === 'past' || event.status === 'cancelled';
 
   return (
-    <article className="card-base card-hover group flex flex-col overflow-hidden">
-      <div className="relative aspect-[16/9] overflow-hidden">
+    <article className="card-base card-hover group flex h-full flex-col overflow-hidden">
+      <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
         <Image
           src={event.image}
           alt={event.imageAlt}
@@ -39,22 +39,24 @@ export function EventCard({ event, priority = false }: { event: TscEvent; priori
         )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <CategoryPill>{event.category}</CategoryPill>
-        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand">
+        <div className="flex min-h-[1.75rem] items-center">
+          <CategoryPill>{event.category}</CategoryPill>
+        </div>
+        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem]">
           <Link href={`/events/${event.slug}`}>{event.title}</Link>
         </h3>
-        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted">
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted min-h-[1.5rem] overflow-hidden">
           <span className="inline-flex items-center gap-1">
             <MapPin aria-hidden className="h-3.5 w-3.5 text-brand" />
             {event.city}, {event.state}
           </span>
-          <span className="inline-flex items-center gap-1">
+          <span className="inline-flex items-center gap-1 truncate">
             <Users aria-hidden className="h-3.5 w-3.5 text-brand" />
-            {event.organizer}
+            <span className="truncate">{event.organizer}</span>
           </span>
         </p>
-        <p className="line-clamp-2 text-sm leading-6 text-muted">{event.dek}</p>
-        <div className="mt-auto flex items-center justify-between gap-3 pt-2">
+        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem]">{event.dek}</p>
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-hairline pt-3">
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted">
             <Calendar aria-hidden className="h-3.5 w-3.5 text-gold-deep" />
             Reg. by {new Date(event.registrationDeadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}

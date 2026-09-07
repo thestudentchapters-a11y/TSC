@@ -12,15 +12,14 @@ export const podcastCategoryIcon: Record<PodcastCategory, typeof Mic> = {
   'Ideas & Perspectives': Lightbulb,
 };
 
-/** Podcast episode card — thumbnail with play overlay, guest, duration, category icon. */
 export function PodcastCard({ episode, priority = false }: { episode: PodcastEpisode; priority?: boolean }) {
   const Icon = podcastCategoryIcon[episode.category];
   return (
     <Link
       href={`/podcast/${episode.slug}`}
-      className="card-base card-hover group flex w-[264px] shrink-0 flex-col overflow-hidden snap-start sm:w-[288px]"
+      className="card-base card-hover group flex h-full w-[264px] shrink-0 flex-col overflow-hidden snap-start sm:w-[288px]"
     >
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden">
         <Image
           src={episode.image}
           alt={episode.imageAlt}
@@ -41,22 +40,22 @@ export function PodcastCard({ episode, priority = false }: { episode: PodcastEpi
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-2.5 p-4">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
           <CategoryPill>
             <Icon aria-hidden className="mr-1 h-3 w-3" />
             {episode.category}
           </CategoryPill>
           {episode.demo && <DemoChip />}
         </div>
-        <h3 className="font-display text-[15px] font-bold leading-snug transition-colors group-hover:text-brand">
+        <h3 className="font-display text-[15px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[2.5rem]">
           {episode.title}
         </h3>
-        <p className="text-xs font-medium text-muted">with {episode.guest}</p>
-        <p className="mt-auto flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-muted">
+        <p className="text-xs font-medium text-muted truncate min-h-[1.25rem]">with {episode.guest}</p>
+        <p className="mt-auto flex items-center gap-2 border-t border-hairline pt-2.5 text-[11px] font-medium uppercase tracking-wider text-muted">
           <Clock aria-hidden className="h-3 w-3 text-gold-deep" />
           {episode.durationLabel}
           <span aria-hidden>•</span>
-          {formatDate(episode.date)}
+          <span className="truncate">{formatDate(episode.date)}</span>
         </p>
       </div>
     </Link>
