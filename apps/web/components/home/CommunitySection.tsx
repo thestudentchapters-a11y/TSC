@@ -1,8 +1,13 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Megaphone, Sparkles, Users, Bell, HeartHandshake } from 'lucide-react';
 import { SectionHeading } from '@/components/common/SectionHeading';
 import { StaggerGrid, StaggerItem, Reveal } from '@/components/common/Reveal';
 import { Button } from '@/components/common/Button';
+
+const DEFAULT_COMMUNITY_BG = '/images/community/community-1.jpg';
 
 const BENEFITS = [
   { icon: Megaphone, title: 'BE HEARD', desc: 'Share your ideas, stories and experiences.' },
@@ -12,13 +17,40 @@ const BENEFITS = [
   { icon: HeartHandshake, title: 'BE INVOLVED', desc: 'Participate in campaigns, events and initiatives.' },
 ];
 
-export function CommunitySection() {
+export function CommunitySection({ initialBg }: { initialBg?: string }) {
+  const [bgImg, setBgImg] = useState(initialBg || DEFAULT_COMMUNITY_BG);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem('tsc.admin.promoImages');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.communityBg) setBgImg(parsed.communityBg);
+      }
+    } catch {
+      /* noop */
+    }
+
+    const api = process.env.NEXT_PUBLIC_API_URL;
+    if (api) {
+      fetch(`${api}/api/settings`)
+        .then((r) => r.json())
+        .then((res) => {
+          const promo = res?.data?.homepage?.promoImages;
+          if (promo?.communityBg) setBgImg(promo.communityBg);
+        })
+        .catch(() => {
+          /* keep current */
+        });
+    }
+  }, []);
+
   return (
     <section aria-label="Community and membership" className="relative overflow-hidden section-pad">
       {/* soft community image band */}
       <div aria-hidden className="absolute inset-0">
         <Image
-          src="/images/community/community-1.jpg"
+          src={bgImg}
           alt=""
           fill
           sizes="100vw"

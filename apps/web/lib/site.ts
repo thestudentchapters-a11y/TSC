@@ -15,7 +15,7 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
   email: '', // [TO BE CONFIGURED] official contact email — set via admin → Settings
   whatsappUrl: process.env.NEXT_PUBLIC_WHATSAPP_URL ?? '',
-  konnectxUrl: process.env.NEXT_PUBLIC_KONNECTX_URL ?? '',
+  konnectxUrl: process.env.NEXT_PUBLIC_KONNECTX_URL ?? 'https://konnectx.app/',
   social: {
     instagram: 'https://www.instagram.com/studentchapters/',
     youtube: 'https://www.youtube.com/channel/UC8IGnEOSxDVqd1AviLa-5qA',
@@ -87,7 +87,8 @@ export const footerNav = {
     { label: 'Share Your Story', href: '/share-your-story' },
     { label: 'Share Campus News', href: '/share-campus-news' },
     { label: 'Campaigns', href: '/campaigns' },
-    { label: 'KonnectX', href: site.konnectxUrl || '#' },
+    { label: 'KonnectX', href: site.konnectxUrl || 'https://konnectx.app/' },
+    { label: 'MY TAG APP', href: 'https://mytagapp.com/' },
   ],
   about: [
     { label: 'About Us', href: '/about' },

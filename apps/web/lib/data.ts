@@ -86,6 +86,35 @@ export async function getLegalBySlug(slug: string): Promise<LegalArticle | undef
 /* Campaigns */
 export const getCampaign = () => withApi<Campaign>('/api/campaigns/all-india-career-awareness', flagshipCampaign);
 
+/* Site Settings */
+export interface SiteSettingsData {
+  siteName?: string;
+  tagline?: string;
+  contactEmail?: string;
+  officeAddress?: string;
+  social?: {
+    instagram?: string;
+    youtube?: string;
+    linkedin?: string;
+    facebook?: string;
+  };
+  whatsappUrl?: string;
+  konnectxUrl?: string;
+  homepage?: {
+    heroEyebrow?: string;
+    campaignSlug?: string;
+    sectionsEnabled?: Record<string, boolean>;
+    heroPanels?: Array<{ src: string; alt: string }>;
+    promoImages?: {
+      writeStory?: string;
+      campusNews?: string;
+      communityBg?: string;
+    };
+  };
+}
+
+export const getSiteSettings = () => withApi<SiteSettingsData>('/api/settings', {});
+
 /* ── Global search across all content types ── */
 export async function searchAll(query: string): Promise<SearchHit[]> {
   const q = query.trim().toLowerCase();

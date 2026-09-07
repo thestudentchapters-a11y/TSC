@@ -18,6 +18,12 @@ export interface ISiteSettings {
     heroEyebrow?: string;
     campaignSlug?: string;
     sectionsEnabled?: Record<string, boolean>;
+    heroPanels?: Array<{ src: string; alt: string }>;
+    promoImages?: {
+      writeStory?: string;
+      campusNews?: string;
+      communityBg?: string;
+    };
   };
   updatedAt: Date;
 }
@@ -37,11 +43,22 @@ const SiteSettingsSchema = new Schema(
       facebook: { type: String, default: 'https://www.facebook.com/people/The-Student-Chapters/61562542822959/' },
     },
     whatsappUrl: { type: String },
-    konnectxUrl: { type: String },
+    konnectxUrl: { type: String, default: 'https://konnectx.app/' },
     homepage: {
       heroEyebrow: { type: String },
       campaignSlug: { type: String, default: 'all-india-career-awareness' },
       sectionsEnabled: { type: Schema.Types.Mixed },
+      heroPanels: [
+        {
+          src: { type: String, required: true },
+          alt: { type: String, default: '' },
+        },
+      ],
+      promoImages: {
+        writeStory: { type: String, default: '/images/participation/write-story.jpg' },
+        campusNews: { type: String, default: '/images/participation/campus-news.jpg' },
+        communityBg: { type: String, default: '/images/community/community-1.jpg' },
+      },
     },
   },
   { timestamps: true }

@@ -3,22 +3,27 @@ import { contactService, eventService, savedItemService, submissionService } fro
 import { asyncHandler } from '../utils/asyncHandler';
 import type { AuthRequest } from '../middleware/auth';
 
-export const submitStory = asyncHandler(async (req: Request, res: Response) => {
-  const doc = await submissionService.submitStory(req.body);
+export const submitStory = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const doc = await submissionService.submitStory(req.body, req.user ? String(req.user._id) : undefined);
   res.status(201).json({
     success: true,
-    message: 'Story submitted — our editors will review it soon.',
+    message: 'Story / Article submitted — our editors will review it soon.',
     data: { id: String(doc._id), status: doc.status },
   });
 });
 
-export const submitCampusNews = asyncHandler(async (req: Request, res: Response) => {
-  const doc = await submissionService.submitCampusNews(req.body);
+export const submitCampusNews = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const doc = await submissionService.submitCampusNews(req.body, req.user ? String(req.user._id) : undefined);
   res.status(201).json({
     success: true,
     message: 'Campus news submitted — it is now in the review queue.',
     data: { id: String(doc._id), status: doc.status },
   });
+});
+
+export const getMySubmissions = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const data = await submissionService.getMySubmissions(String(req.user!._id), req.user?.email);
+  res.json({ success: true, data });
 });
 
 export const contact = asyncHandler(async (req: Request, res: Response) => {

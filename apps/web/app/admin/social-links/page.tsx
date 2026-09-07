@@ -25,7 +25,7 @@ export default function AdminSocialLinksPage() {
     { key: 'linkedin', label: 'LinkedIn', icon: Linkedin, hint: 'Company page: in.linkedin.com/company/the-student-chapters' },
     { key: 'facebook', label: 'Facebook', icon: Facebook, hint: 'Official page: facebook.com/people/The-Student-Chapters/61562542822959/' },
     { key: 'whatsapp', label: 'WhatsApp Community', icon: MessageCircle, hint: 'Invite link for the TSC community channel' },
-    { key: 'konnectx', label: 'KonnectX', icon: Globe, hint: 'KonnectX profile/channel link' },
+    { key: 'konnectx', label: 'KonnectX', icon: Globe, hint: 'Official platform: konnectx.app' },
   ];
 
   return (

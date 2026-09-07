@@ -1,11 +1,50 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PenLine, School, ArrowRight } from 'lucide-react';
 import { SectionHeading } from '@/components/common/SectionHeading';
 import { StaggerGrid, StaggerItem } from '@/components/common/Reveal';
 
+const DEFAULT_WRITE_STORY_IMG = '/images/participation/write-story.jpg';
+const DEFAULT_CAMPUS_NEWS_IMG = '/images/participation/campus-news.jpg';
+
 /** Student participation — Share Your Story + Share Campus News. */
-export function ParticipationSection() {
+export function ParticipationSection({
+  initialImages,
+}: {
+  initialImages?: { writeStory?: string; campusNews?: string };
+}) {
+  const [writeStoryImg, setWriteStoryImg] = useState(initialImages?.writeStory || DEFAULT_WRITE_STORY_IMG);
+  const [campusNewsImg, setCampusNewsImg] = useState(initialImages?.campusNews || DEFAULT_CAMPUS_NEWS_IMG);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem('tsc.admin.promoImages');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.writeStory) setWriteStoryImg(parsed.writeStory);
+        if (parsed.campusNews) setCampusNewsImg(parsed.campusNews);
+      }
+    } catch {
+      /* noop */
+    }
+
+    const api = process.env.NEXT_PUBLIC_API_URL;
+    if (api) {
+      fetch(`${api}/api/settings`)
+        .then((r) => r.json())
+        .then((res) => {
+          const promo = res?.data?.homepage?.promoImages;
+          if (promo?.writeStory) setWriteStoryImg(promo.writeStory);
+          if (promo?.campusNews) setCampusNewsImg(promo.campusNews);
+        })
+        .catch(() => {
+          /* keep current */
+        });
+    }
+  }, []);
   return (
     <section aria-label="Student participation" className="bg-white section-pad">
       <div className="container-tsc">
@@ -26,7 +65,7 @@ export function ParticipationSection() {
             >
               <div className="relative aspect-[16/10] overflow-hidden sm:aspect-auto sm:min-h-[280px]">
                 <Image
-                  src="/images/participation/write-story.jpg"
+                  src={writeStoryImg}
                   alt="A student writing notes in a library — share your story with TSC"
                   fill
                   sizes="(max-width: 640px) 100vw, 40vw"
@@ -62,7 +101,7 @@ export function ParticipationSection() {
             >
               <div className="relative aspect-[16/10] overflow-hidden sm:order-2 sm:aspect-auto sm:min-h-[280px]">
                 <Image
-                  src="/images/participation/campus-news.jpg"
+                  src={campusNewsImg}
                   alt="Students in a classroom — share what is happening on your campus"
                   fill
                   sizes="(max-width: 640px) 100vw, 40vw"

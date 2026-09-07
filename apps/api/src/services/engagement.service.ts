@@ -7,50 +7,130 @@ import Notification from '../models/Notification';
 import SavedItem from '../models/SavedItem';
 import { ApiError } from '../utils/apiError';
 
-/** Community submissions (story / campus news) + review workflow. */
+import Story from '../models/Story';
+import User from '../models/User';
+import { slugify } from '../utils/slugify';
+
+/** Community submissions (story / campus news / articles) + review workflow. */
 export const submissionService = {
-  async submitStory(payload: Record<string, unknown>) {
+  async submitStory(payload: Record<string, unknown>, userId?: string) {
     const doc = await StorySubmission.create({
+      user: userId || undefined,
       name: payload.name,
       email: payload.email,
       phone: payload.phone || undefined,
       college: payload.college,
       city: payload.city,
       state: payload.state,
-      storyTitle: payload.title,
-      storyCategory: payload.category,
-      storyContent: payload.content,
+      storyTitle: payload.title || payload.storyTitle,
+      storyCategory: payload.category || payload.storyCategory || 'student',
+      storyContent: payload.content || payload.storyContent,
+      images: Array.isArray(payload.images) ? payload.images : payload.image ? [payload.image] : [],
       videoUrl: payload.videoUrl || undefined,
-      socialLinks: payload.social,
+      socialLinks: payload.social || payload.socialLinks,
       consent: true,
       status: 'pending',
     });
     return doc;
   },
 
-  async submitCampusNews(payload: Record<string, unknown>) {
+  async submitCampusNews(payload: Record<string, unknown>, userId?: string) {
     const doc = await CampusSubmission.create({
+      user: userId || undefined,
       name: payload.name,
       email: payload.email,
       college: payload.college,
-      campus: payload.campus,
+      campus: payload.campus || payload.college,
       city: payload.city,
       state: payload.state,
-      newsTitle: payload.title,
-      category: payload.category,
-      description: payload.description,
+      newsTitle: payload.title || payload.newsTitle,
+      category: payload.category || 'campus',
+      description: payload.description || payload.content,
       eventDate: payload.eventDate ? new Date(payload.eventDate as string) : undefined,
-      supportingLinks: payload.links,
+      images: Array.isArray(payload.images) ? payload.images : payload.image ? [payload.image] : [],
+      supportingLinks: payload.links || payload.supportingLinks,
       consent: true,
       status: 'pending',
     });
     return doc;
+  },
+
+  async getMySubmissions(userId: string, email?: string) {
+    const query = email ? { $or: [{ user: userId }, { email: email.toLowerCase() }] } : { user: userId };
+    const [stories, campus] = await Promise.all([
+      StorySubmission.find(query).sort({ createdAt: -1 }),
+      CampusSubmission.find(query).sort({ createdAt: -1 }),
+    ]);
+    return { stories, campus };
   },
 
   async moderate(kind: 'story' | 'campus', id: string, status: string, reviewNote?: string, reviewer?: string) {
     const model: Model<any> = kind === 'story' ? StorySubmission : CampusSubmission;
     const doc = await model.findByIdAndUpdate(id, { status, reviewNote, reviewedBy: reviewer }, { new: true });
     if (!doc) throw ApiError.notFound('Submission not found');
+
+    const title = kind === 'story' ? doc.storyTitle : doc.newsTitle;
+    let targetUserId = doc.user ? String(doc.user) : undefined;
+    if (!targetUserId && doc.email) {
+      const u = await User.findOne({ email: doc.email.toLowerCase() });
+      if (u) targetUserId = String(u._id);
+    }
+
+    // When a story is approved by admin/editor, automatically publish to Story collection if not exists
+    if (kind === 'story' && status === 'approved') {
+      const baseSlug = slugify(doc.storyTitle || 'story');
+      let uniqueSlug = baseSlug;
+      let counter = 1;
+      while (await Story.findOne({ slug: uniqueSlug })) {
+        uniqueSlug = `${baseSlug}-${counter++}`;
+      }
+
+      const validCategories: Array<'student' | 'startup' | 'campus'> = ['student', 'startup', 'campus'];
+      const rawCategory = (doc.storyCategory || 'student').toLowerCase();
+      const storyCat = validCategories.includes(rawCategory as any) ? (rawCategory as 'student' | 'startup' | 'campus') : 'student';
+
+      await Story.create({
+        title: doc.storyTitle,
+        slug: uniqueSlug,
+        dek: doc.storyContent ? doc.storyContent.slice(0, 160).trim() + '…' : 'Student submission on TSC',
+        category: storyCat,
+        content: doc.storyContent,
+        image: doc.images && doc.images.length > 0 ? doc.images[0] : '/images/hero/hero-collab.jpg',
+        imageAlt: doc.storyTitle,
+        author: doc.user || reviewer,
+        readingTime: Math.max(1, Math.ceil((doc.storyContent?.split(' ').length || 100) / 200)),
+        status: 'published',
+        featured: false,
+        submittedBy: doc.name,
+      });
+
+      if (targetUserId) {
+        await Notification.create({
+          user: targetUserId,
+          title: `🎉 Article Approved & Published!`,
+          body: `Your article "${title}" has been approved by our editorial team and is now live on THE STUDENT CHAPTERS™!`,
+          type: 'submission',
+          link: `/stories/${uniqueSlug}`,
+        });
+      }
+    } else if (targetUserId) {
+      if (status === 'rejected') {
+        await Notification.create({
+          user: targetUserId,
+          title: `Submission Update: ${title}`,
+          body: `Your submission "${title}" was not approved. Editorial feedback: ${reviewNote || 'Please review guidelines and resubmit.'}`,
+          type: 'submission',
+        });
+      } else if (status === 'under review') {
+        await Notification.create({
+          user: targetUserId,
+          title: `In Review: ${title}`,
+          body: `Your submission "${title}" is currently under review by our editors.`,
+          type: 'submission',
+        });
+      }
+    }
+
     return doc;
   },
 };

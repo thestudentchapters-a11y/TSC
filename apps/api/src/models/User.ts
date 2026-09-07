@@ -19,6 +19,7 @@ const UserSchema = new Schema(
     instagram: { type: String, trim: true },
     avatarUrl: { type: String, trim: true },
     role: { type: String, enum: ['member', 'editor', 'admin'], default: 'member', index: true },
+    customPermissions: [{ type: String }],
     isActive: { type: Boolean, default: true },
     refreshTokens: [{ type: String, select: false }],
   },

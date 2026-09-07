@@ -16,7 +16,7 @@ import { CommunitySection } from '@/components/home/CommunitySection';
 import { WhatsAppSection } from '@/components/home/WhatsAppSection';
 import { CTASection } from '@/components/common/CTASection';
 import {
-  getArticles, getStories, getCampuses, getOpportunities, getEditions, getEpisodes, getEvents, getCampaign,
+  getArticles, getStories, getCampuses, getOpportunities, getEditions, getEpisodes, getEvents, getCampaign, getSiteSettings,
 } from '@/lib/data';
 import { site } from '@/lib/site';
 
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [articles, stories, campuses, opportunities, editions, episodes, events, campaign] = await Promise.all([
+  const [articles, stories, campuses, opportunities, editions, episodes, events, campaign, settings] = await Promise.all([
     getArticles(),
     getStories(),
     getCampuses(),
@@ -38,13 +38,14 @@ export default async function HomePage() {
     getEpisodes(),
     getEvents(),
     getCampaign(),
+    getSiteSettings(),
   ]);
 
   const latestEdition = [...editions].sort((a, b) => b.year - a.year)[0];
 
   return (
     <>
-      <Hero />
+      <Hero initialPanels={settings?.homepage?.heroPanels} />
       <AnimatedTicker />
       <IntroSection />
       <NewsSection articles={articles} />
@@ -56,8 +57,8 @@ export default async function HomePage() {
       <EventsSection events={events} />
       <LegalSection />
       <CampaignSection campaign={campaign} />
-      <ParticipationSection />
-      <CommunitySection />
+      <ParticipationSection initialImages={settings?.homepage?.promoImages} />
+      <CommunitySection initialBg={settings?.homepage?.promoImages?.communityBg} />
       <WhatsAppSection />
       <CTASection
         eyebrow="Start Your Chapter"

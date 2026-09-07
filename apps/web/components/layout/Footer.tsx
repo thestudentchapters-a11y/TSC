@@ -102,17 +102,22 @@ function FooterColumn({ title, links }: { title: string; links: { label: string;
     <nav aria-label={title}>
       <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-gold">{title}</h3>
       <ul className="mt-5 space-y-2.5">
-        {links.map((l) => (
-          <li key={l.href + l.label}>
-            <Link
-              href={l.href}
-              className="group inline-flex items-center gap-2 text-sm font-medium text-cream/85 transition-colors hover:text-white"
-            >
-              <span aria-hidden className="h-1.5 w-1.5 rounded-[2px] bg-gold/70 transition-all group-hover:scale-125 group-hover:bg-gold" />
-              <span className="transition-transform group-hover:translate-x-0.5">{l.label}</span>
-            </Link>
-          </li>
-        ))}
+        {links.map((l) => {
+          const isExternal = l.href.startsWith('http');
+          return (
+            <li key={l.href + l.label}>
+              <Link
+                href={l.href}
+                target={isExternal ? '_blank' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}
+                className="group inline-flex items-center gap-2 text-sm font-medium text-cream/85 transition-colors hover:text-white"
+              >
+                <span aria-hidden className="h-1.5 w-1.5 rounded-[2px] bg-gold/70 transition-all group-hover:scale-125 group-hover:bg-gold" />
+                <span className="transition-transform group-hover:translate-x-0.5">{l.label}</span>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );

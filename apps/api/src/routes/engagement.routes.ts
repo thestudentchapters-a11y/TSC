@@ -6,17 +6,20 @@ import { validate } from '../middleware/validate';
 import { formLimiter } from '../middleware/rateLimit';
 import { optionalAuth } from '../middleware/auth';
 import {
-  contact, listSaved, registerForEvent, submitCampusNews, submitStory, toggleSaved,
+  contact, getMySubmissions, listSaved, registerForEvent, submitCampusNews, submitStory, toggleSaved,
 } from '../controllers/engagement.controller';
 import { requireAuth } from '../middleware/auth';
 
 export const engagementRouter = Router();
 
-/* Public forms — rate-limited + validated + honeypot protected */
-engagementRouter.post('/api/submissions/story', formLimiter, validate(storySubmissionSchema), submitStory);
-engagementRouter.post('/api/submissions/campus', formLimiter, validate(campusSubmissionSchema), submitCampusNews);
+/* Public & member submission forms — rate-limited + validated + honeypot protected */
+engagementRouter.post('/api/submissions/story', formLimiter, optionalAuth, validate(storySubmissionSchema), submitStory);
+engagementRouter.post('/api/submissions/campus', formLimiter, optionalAuth, validate(campusSubmissionSchema), submitCampusNews);
 engagementRouter.post('/api/contact', formLimiter, validate(contactSchema), contact);
 engagementRouter.post('/api/events/:id/register', formLimiter, optionalAuth, validate(eventRegistrationSchema), registerForEvent);
+
+/* Submissions tracking (member auth) */
+engagementRouter.get('/api/submissions/my', requireAuth, getMySubmissions);
 
 /* Saved items (auth) */
 engagementRouter.post('/api/saved', requireAuth, toggleSaved);

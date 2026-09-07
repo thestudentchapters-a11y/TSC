@@ -15,6 +15,7 @@ import { Category, Tag } from '../models/Taxonomy';
 import Notification from '../models/Notification';
 import Membership from '../models/Membership';
 import User from '../models/User';
+import SiteSettings from '../models/SiteSettings';
 import { StorySubmission, CampusSubmission } from '../models/Submission';
 
 import { createContentService } from '../services/content.service';
@@ -201,6 +202,19 @@ export function registerRoutes(app: Router) {
     })
   );
 
+  app.put(
+    '/api/users/:id/permissions',
+    requireAuth,
+    requireAdmin,
+    asyncHandler(async (req: Request, res) => {
+      const { permissions } = req.body as { permissions: string[] };
+      if (!Array.isArray(permissions)) throw ApiError.badRequest('Permissions must be an array of strings');
+      const user = await User.findByIdAndUpdate(req.params.id, { customPermissions: permissions }, { new: true });
+      if (!user) throw ApiError.notFound('User not found');
+      res.json({ success: true, data: user });
+    })
+  );
+
   app.get(
     '/api/admin/stats',
     requireAuth,
@@ -222,6 +236,25 @@ export function registerRoutes(app: Router) {
         success: true,
         data: { members, newMembers, pendingStories, pendingCampus, articles, upcomingEvents, activeOpps, episodes, campusCount },
       });
+    })
+  );
+
+  /* ── Site Settings (Admin & Public) ────────────────────────────────── */
+  app.get(
+    '/api/settings',
+    asyncHandler(async (_req, res) => {
+      const doc = await SiteSettings.findById('global').lean();
+      res.json({ success: true, data: doc });
+    })
+  );
+
+  app.put(
+    '/api/settings',
+    requireAuth,
+    requireAdmin,
+    asyncHandler(async (req: Request, res) => {
+      const doc = await SiteSettings.findByIdAndUpdate('global', { ...req.body, _id: 'global' }, { upsert: true, new: true });
+      res.json({ success: true, data: doc });
     })
   );
 }

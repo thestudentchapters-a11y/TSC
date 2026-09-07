@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const PANELS = [
+export const DEFAULT_HERO_PANELS = [
   { src: '/images/hero/hero-campus-walk.jpg', alt: 'Students walking across a green university campus at golden hour', cls: 'col-start-1 row-start-1 row-span-3', speed: -28 },
   { src: '/images/hero/hero-classroom.jpg', alt: 'A lively classroom discussion with a professor at the whiteboard', cls: 'col-start-2 row-start-1 row-span-2', speed: 20 },
   { src: '/images/hero/hero-fest.jpg', alt: 'Students cheering at an illuminated college cultural festival stage', cls: 'col-start-3 row-start-1 row-span-3', speed: -20 },
@@ -21,12 +21,14 @@ const PANELS = [
   { src: '/images/hero/hero-podcast.jpg', alt: 'Two microphones set up for a TSC podcast recording', cls: 'col-start-3 row-start-4 row-span-2', speed: -16 },
 ];
 
+export type HeroPanelData = { src: string; alt: string; cls?: string; speed?: number };
+
 function HeroPanel({
   panel,
   index,
   progress,
 }: {
-  panel: (typeof PANELS)[number];
+  panel: (typeof DEFAULT_HERO_PANELS)[number];
   index: number;
   progress: MotionValue<number>;
 }) {
@@ -77,10 +79,65 @@ function HeadlineLine({ text, delay, accent = false }: { text: string; delay: nu
   );
 }
 
-export function Hero() {
+export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; alt: string }> }) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const [panels, setPanels] = useState(DEFAULT_HERO_PANELS);
+
+  useEffect(() => {
+    // 1. Check props first
+    if (initialPanels && initialPanels.length > 0) {
+      setPanels(
+        DEFAULT_HERO_PANELS.map((defaultPanel, i) => ({
+          ...defaultPanel,
+          src: initialPanels[i]?.src || defaultPanel.src,
+          alt: initialPanels[i]?.alt || defaultPanel.alt,
+        }))
+      );
+      return;
+    }
+
+    // 2. Check local storage / API
+    try {
+      const stored = window.localStorage.getItem('tsc.admin.heroPanels');
+      if (stored) {
+        const parsed = JSON.parse(stored) as Array<{ src: string; alt: string }>;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setPanels(
+            DEFAULT_HERO_PANELS.map((defaultPanel, i) => ({
+              ...defaultPanel,
+              src: parsed[i]?.src || defaultPanel.src,
+              alt: parsed[i]?.alt || defaultPanel.alt,
+            }))
+          );
+        }
+      }
+    } catch {
+      /* noop */
+    }
+
+    const api = process.env.NEXT_PUBLIC_API_URL;
+    if (api) {
+      fetch(`${api}/api/settings`)
+        .then((r) => r.json())
+        .then((res) => {
+          const apiPanels = res?.data?.homepage?.heroPanels;
+          if (Array.isArray(apiPanels) && apiPanels.length > 0) {
+            setPanels(
+              DEFAULT_HERO_PANELS.map((defaultPanel, i) => ({
+                ...defaultPanel,
+                src: apiPanels[i]?.src || defaultPanel.src,
+                alt: apiPanels[i]?.alt || defaultPanel.alt,
+              }))
+            );
+          }
+        })
+        .catch(() => {
+          /* keep default */
+        });
+    }
+  }, [initialPanels]);
 
   return (
     <section ref={sectionRef} aria-label="Hero" className="relative overflow-hidden bg-cream">
@@ -151,8 +208,8 @@ export function Hero() {
         {/* Collage */}
         <div className="relative lg:col-span-7">
           <div className="grid h-[480px] grid-cols-2 grid-rows-6 gap-3 sm:h-[560px] sm:gap-4 lg:h-[600px] lg:grid-cols-4">
-            {PANELS.map((p, i) => (
-              <HeroPanel key={p.src} panel={p} index={i} progress={scrollYProgress} />
+            {panels.map((p, i) => (
+              <HeroPanel key={`${p.src}-${i}`} panel={p} index={i} progress={scrollYProgress} />
             ))}
           </div>
 
