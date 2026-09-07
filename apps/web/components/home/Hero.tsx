@@ -97,7 +97,7 @@ export function Hero() {
               <span className="absolute h-full w-full animate-pulse-dot rounded-full bg-gold" />
               <span className="relative h-2 w-2 rounded-full bg-gold" />
             </span>
-            The Student Chapters | India&apos;s Student &amp; Youth Platform
+            The Student Chapters™ | India&apos;s Student &amp; Youth Platform
           </motion.p>
 
           <h1 className="mt-6 font-display text-[2.6rem] font-bold leading-[1.04] tracking-tight sm:text-6xl lg:text-[4.2rem]">
@@ -112,7 +112,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5, ease: EASE }}
           >
-            The Student Chapters is a platform built for the next generation — bringing together student
+            The Student Chapters™ is a platform built for the next generation — bringing together student
             stories, campus news, career opportunities, current affairs, events, podcasts, legal awareness
             and communities from across India.
           </motion.p>
@@ -131,15 +131,21 @@ export function Hero() {
             </Button>
           </motion.div>
 
-          <motion.p
-            className="mt-8 flex items-center gap-2.5 font-serif text-lg italic text-gold-deep"
+          <motion.div
+            className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2.5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.78 }}
           >
-            <Sparkles aria-hidden className="h-4 w-4 text-gold" />
-            Discover. Learn. Connect. Create.
-          </motion.p>
+            <p className="flex items-center gap-2.5 font-serif text-lg italic text-gold-deep">
+              <Sparkles aria-hidden className="h-4 w-4 text-gold" />
+              Discover. Learn. Connect. Create.
+            </p>
+            <span aria-hidden className="hidden text-gold-deep/40 sm:inline">•</span>
+            <span className="inline-flex items-center rounded-full border border-gold/40 bg-gold-50/80 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-gold-deep shadow-sm">
+              Students are Watching, Observing &amp; Learning
+            </span>
+          </motion.div>
         </div>
 
         {/* Collage */}

@@ -9,7 +9,7 @@ import { Button } from '@/components/common/Button';
 import { CTASection } from '@/components/common/CTASection';
 
 export const metadata: Metadata = {
-  title: 'About — THE STUDENT CHAPTERS',
+  title: 'About — THE STUDENT CHAPTERS™',
   description:
     'TSC exists to amplify student and youth voices and connect young people with information, opportunities, communities and experiences that help them grow.',
   alternates: { canonical: '/about' },
@@ -21,7 +21,7 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="About TSC"
         title="More Than News. A Platform for the Next Generation."
-        description="THE STUDENT CHAPTERS (TSC) is India's student and youth platform where students discover information, opportunities, stories, communities and experiences while also contributing their own voices."
+        description="THE STUDENT CHAPTERS™ (TSC) is India's student and youth platform where students discover information, opportunities, stories, communities and experiences while also contributing their own voices."
       />
 
       {/* About TSC */}
@@ -40,15 +40,21 @@ export default function AboutPage() {
               <p className="mt-4 text-[15px] leading-8 text-muted">
                 They are creators, entrepreneurs, researchers, artists, leaders, changemakers and future
                 professionals. But great ideas and great stories often remain inside classrooms and campuses.
-                The Student Chapters exists to bring those voices out. We connect students and young people
+                The Student Chapters™ exists to bring those voices out. We connect students and young people
                 with the stories, opportunities, information, people and experiences that can help them move
                 forward.
               </p>
             </Reveal>
             <Reveal delay={0.1}>
-              <p className="font-serif text-xl italic text-brand">
-                Your Campus. Your Voice. Your Future.
-              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="font-serif text-xl italic text-brand">
+                  Your Campus. Your Voice. Your Future.
+                </p>
+                <span aria-hidden className="hidden sm:inline text-hairline">•</span>
+                <span className="rounded-full border border-gold/40 bg-gold-50 px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-gold-deep">
+                  Students are Watching, Observing &amp; Learning
+                </span>
+              </div>
             </Reveal>
             <Reveal delay={0.15}>
               <p className="text-[15px] leading-8 text-muted">

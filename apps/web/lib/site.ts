@@ -4,21 +4,23 @@
  * SiteSettings — they are never hardcoded to unknown URLs.
  */
 export const site = {
-  name: 'THE STUDENT CHAPTERS',
+  name: 'THE STUDENT CHAPTERS™',
   shortName: 'TSC',
   tagline: 'Your Campus. Your Voice. Your Future.',
+  motto: 'Students are Watching, Observing & Learning',
   concept: 'Discover. Learn. Connect. Create.',
   description:
-    'The Student Chapters is a platform built for the next generation — bringing together student stories, campus news, career opportunities, current affairs, events, podcasts, legal awareness and communities from across India.',
+    'The Student Chapters™ is a platform built for the next generation — bringing together student stories, campus news, career opportunities, current affairs, events, podcasts, legal awareness and communities from across India.',
+  address: 'B-HUB, Maurya Lok Complex, New Dak Bunglow Rd, Patna, Bihar 800001',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
   email: '', // [TO BE CONFIGURED] official contact email — set via admin → Settings
   whatsappUrl: process.env.NEXT_PUBLIC_WHATSAPP_URL ?? '',
   konnectxUrl: process.env.NEXT_PUBLIC_KONNECTX_URL ?? '',
   social: {
     instagram: 'https://www.instagram.com/studentchapters/',
-    youtube: '', // [TO BE CONFIGURED]
-    linkedin: '', // [TO BE CONFIGURED]
-    facebook: '', // [TO BE CONFIGURED]
+    youtube: 'https://www.youtube.com/channel/UC8IGnEOSxDVqd1AviLa-5qA',
+    linkedin: 'https://in.linkedin.com/company/the-student-chapters',
+    facebook: 'https://www.facebook.com/people/The-Student-Chapters/61562542822959/',
   },
 } as const;
 

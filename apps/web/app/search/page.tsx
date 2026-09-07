@@ -9,7 +9,7 @@ import { searchAll } from '@/lib/data';
 import { cn, formatDate } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Search — THE STUDENT CHAPTERS',
+  title: 'Search — THE STUDENT CHAPTERS™',
   description: 'Search across TSC news, stories, campuses, podcasts, events, opportunities, current affairs and legal awareness.',
   alternates: { canonical: '/search' },
 };

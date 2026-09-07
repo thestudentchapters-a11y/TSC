@@ -62,7 +62,7 @@ export default function MembershipPage() {
     setBusy(false);
     if (res.ok) {
       setDone(true);
-      push('Welcome to THE STUDENT CHAPTERS — your chapter starts now.', 'success');
+      push('Welcome to THE STUDENT CHAPTERS™ — your chapter starts now.', 'success');
     } else {
       push(res.error ?? 'Registration failed. Please try again.', 'error');
     }
@@ -193,7 +193,7 @@ export default function MembershipPage() {
 
                 <Checkbox
                   id="m-consent"
-                  label="I consent to joining THE STUDENT CHAPTERS community and agree to be contacted about membership, opportunities and TSC initiatives. I understand I can opt out anytime."
+                  label="I consent to joining THE STUDENT CHAPTERS™ community and agree to be contacted about membership, opportunities and TSC initiatives. I understand I can opt out anytime."
                   checked={form.consent}
                   onChange={(e) => set('consent', e.target.checked)}
                   error={errors.consent}

@@ -1,4 +1,4 @@
-# THE STUDENT CHAPTERS (TSC) — Full-Stack Platform
+# THE STUDENT CHAPTERS™ (TSC) — Full-Stack Platform
 
 **India's student & youth media, community and opportunity platform.**
 *Your Campus. Your Voice. Your Future.* — Discover. Learn. Connect. Create.
@@ -196,4 +196,4 @@ podcast player demo (E01).
 
 ---
 
-Built for THE STUDENT CHAPTERS — *the future isn't something you wait for. You build it.*
+Built for THE STUDENT CHAPTERS™ — *the future isn't something you wait for. You build it.*

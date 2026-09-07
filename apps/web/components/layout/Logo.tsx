@@ -14,7 +14,7 @@ export function Logo({ dark = false, compact = false, className = '', imageClass
   return (
     <Link
       href="/"
-      aria-label="THE STUDENT CHAPTERS — Home"
+      aria-label="THE STUDENT CHAPTERS™ — Home"
       className={cn('group inline-flex shrink-0 items-center transition-opacity hover:opacity-95', className)}
     >
       <div
@@ -25,7 +25,7 @@ export function Logo({ dark = false, compact = false, className = '', imageClass
       >
         <Image
           src="/TSC%20Logo.png"
-          alt="The Student Chapters"
+          alt="The Student Chapters™"
           width={160}
           height={108}
           priority

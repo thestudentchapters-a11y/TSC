@@ -32,7 +32,7 @@ const isObjectId = (v: string) => mongoose.Types.ObjectId.isValid(v) && /^[a-f\d
 export function registerRoutes(app: Router) {
   /* ── Health ─────────────────────────────────────────────────────────── */
   app.get('/health', (_req, res) => {
-    res.json({ success: true, service: 'THE STUDENT CHAPTERS API', time: new Date().toISOString() });
+    res.json({ success: true, service: 'THE STUDENT CHAPTERS™ API', time: new Date().toISOString() });
   });
 
   /* ── Auth + engagement ──────────────────────────────────────────────── */

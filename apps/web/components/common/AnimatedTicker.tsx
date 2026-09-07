@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
 const TICKER_ITEMS = [
+  'Students are Watching, Observing & Learning',
   'Campus Updates',
   'Student Achievements',
   'Jobs & Internships',

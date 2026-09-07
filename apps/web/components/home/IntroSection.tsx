@@ -32,6 +32,9 @@ export function IntroSection() {
             <h2 className="mt-4 font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
               Where Students Discover, Share &amp; Connect.
             </h2>
+            <p className="mt-3 font-serif text-lg italic text-gold-deep">
+              &ldquo;Students are Watching, Observing &amp; Learning&rdquo;
+            </p>
           </Reveal>
           <Reveal delay={0.16}>
             <div className="relative mt-7 h-px w-24 bg-hairline">
@@ -45,7 +48,7 @@ export function IntroSection() {
             <p className="text-[15px] leading-8 text-muted sm:text-base">
               Students today are not just learners. They are creators, entrepreneurs, researchers, artists,
               leaders, changemakers and future professionals. But great ideas and great stories often remain
-              inside classrooms and campuses. The Student Chapters exists to bring those voices out. We
+              inside classrooms and campuses. The Student Chapters™ exists to bring those voices out. We
               connect students and young people with the stories, opportunities, information, people and
               experiences that can help them move forward.
             </p>

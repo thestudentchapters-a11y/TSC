@@ -21,9 +21,9 @@ export default function AdminSocialLinksPage() {
 
   const rows: { key: keyof typeof links; label: string; icon: typeof Instagram; hint: string }[] = [
     { key: 'instagram', label: 'Instagram', icon: Instagram, hint: 'Official handle: instagram.com/studentchapters' },
-    { key: 'youtube', label: 'YouTube', icon: Youtube, hint: 'Channel URL — [TO BE CONFIGURED]' },
-    { key: 'linkedin', label: 'LinkedIn', icon: Linkedin, hint: 'Company page URL — [TO BE CONFIGURED]' },
-    { key: 'facebook', label: 'Facebook', icon: Facebook, hint: 'Page URL — [TO BE CONFIGURED]' },
+    { key: 'youtube', label: 'YouTube', icon: Youtube, hint: 'Official channel: youtube.com/channel/UC8IGnEOSxDVqd1AviLa-5qA' },
+    { key: 'linkedin', label: 'LinkedIn', icon: Linkedin, hint: 'Company page: in.linkedin.com/company/the-student-chapters' },
+    { key: 'facebook', label: 'Facebook', icon: Facebook, hint: 'Official page: facebook.com/people/The-Student-Chapters/61562542822959/' },
     { key: 'whatsapp', label: 'WhatsApp Community', icon: MessageCircle, hint: 'Invite link for the TSC community channel' },
     { key: 'konnectx', label: 'KonnectX', icon: Globe, hint: 'KonnectX profile/channel link' },
   ];

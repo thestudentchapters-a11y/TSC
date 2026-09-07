@@ -23,7 +23,7 @@ async function issueMembership(userId: unknown) {
   await Membership.create({ user: userId, memberCode, status: 'active' });
   await Notification.create({
     user: userId,
-    title: 'Welcome to THE STUDENT CHAPTERS',
+    title: 'Welcome to THE STUDENT CHAPTERS™',
     body: 'Your chapter starts here. Explore stories, opportunities and events.',
     type: 'info',
   });

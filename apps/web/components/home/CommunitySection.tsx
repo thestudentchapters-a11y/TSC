@@ -57,7 +57,7 @@ export function CommunitySection() {
         <Reveal delay={0.2}>
           <div className="mt-12 flex justify-center">
             <Button href="/membership" size="lg" arrow>
-              Join the Student Chapters / Become a Member
+              Join the Student Chapters™ / Become a Member
             </Button>
           </div>
         </Reveal>

@@ -106,7 +106,7 @@ export default function DashboardPage() {
               <Sparkles aria-hidden className="h-4 w-4" /> Membership
             </h2>
             <p className="mt-3 text-[13.5px] leading-6 text-ink/70">
-              Active member of THE STUDENT CHAPTERS. Be heard. Be discovered. Be connected. Be informed. Be
+              Active member of THE STUDENT CHAPTERS™. Be heard. Be discovered. Be connected. Be informed. Be
               involved.
             </p>
             <p className="mt-2 text-[11px] italic text-muted">Full membership data syncs when the API is connected.</p>

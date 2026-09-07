@@ -8,7 +8,7 @@ async function main() {
   const app = createApp();
 
   const server = app.listen(env.port, () => {
-    logger.info(`THE STUDENT CHAPTERS API listening on :${env.port} (${env.nodeEnv})`);
+    logger.info(`THE STUDENT CHAPTERS™ API listening on :${env.port} (${env.nodeEnv})`);
   });
 
   const shutdown = async (signal: string) => {

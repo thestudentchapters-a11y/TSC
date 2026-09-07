@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Globe, Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Globe, Instagram, Mail, MapPin, MessageCircle, Youtube, Linkedin, Facebook } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Field, Input, Textarea, Checkbox, FormSuccess } from '@/components/forms/Form';
 import { Button } from '@/components/common/Button';
@@ -115,29 +115,38 @@ export default function ContactPage() {
                 <Mail aria-hidden className="h-4 w-4 text-brand" />
                 Email: <span className="font-semibold text-ink/70">[TO BE CONFIGURED]</span>
               </p>
-              <p className="flex items-center gap-3 text-sm text-muted">
-                <MapPin aria-hidden className="h-4 w-4 text-brand" />
-                Office: <span className="font-semibold text-ink/70">[TO BE CONFIGURED — shown only when supplied]</span>
+              <p className="flex items-start gap-3 text-sm text-muted">
+                <MapPin aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                <span>Office: <span className="font-semibold text-ink/85">{site.address}</span></span>
               </p>
               <div className="flex flex-wrap gap-2.5 border-t border-hairline pt-4">
-                <a href={site.social.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
-                  <Instagram aria-hidden className="h-3.5 w-3.5" /> Instagram
+                <a href={site.social.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
+                  <Instagram aria-hidden className="h-3.5 w-3.5 text-brand" /> Instagram
+                </a>
+                <a href={site.social.youtube} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
+                  <Youtube aria-hidden className="h-3.5 w-3.5 text-red-600" /> YouTube
+                </a>
+                <a href={site.social.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
+                  <Linkedin aria-hidden className="h-3.5 w-3.5 text-blue-700" /> LinkedIn
+                </a>
+                <a href={site.social.facebook} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
+                  <Facebook aria-hidden className="h-3.5 w-3.5 text-blue-600" /> Facebook
                 </a>
                 {site.whatsappUrl ? (
-                  <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
-                    <MessageCircle aria-hidden className="h-3.5 w-3.5" /> WhatsApp
+                  <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
+                    <MessageCircle aria-hidden className="h-3.5 w-3.5 text-emerald-600" /> WhatsApp
                   </a>
                 ) : (
-                  <span className="inline-flex cursor-default items-center gap-2 rounded-full border border-dashed border-hairline px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted/60" title="Link to be configured">
+                  <span className="inline-flex cursor-default items-center gap-2 rounded-full border border-dashed border-hairline px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-muted/60" title="Link to be configured">
                     <MessageCircle aria-hidden className="h-3.5 w-3.5" /> WhatsApp
                   </span>
                 )}
                 {site.konnectxUrl ? (
-                  <a href={site.konnectxUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
-                    <Globe aria-hidden className="h-3.5 w-3.5" /> KonnectX
+                  <a href={site.konnectxUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
+                    <Globe aria-hidden className="h-3.5 w-3.5 text-brand" /> KonnectX
                   </a>
                 ) : (
-                  <span className="inline-flex cursor-default items-center gap-2 rounded-full border border-dashed border-hairline px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted/60" title="Link to be configured">
+                  <span className="inline-flex cursor-default items-center gap-2 rounded-full border border-dashed border-hairline px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-muted/60" title="Link to be configured">
                     <Globe aria-hidden className="h-3.5 w-3.5" /> KonnectX
                   </span>
                 )}

@@ -15,7 +15,7 @@ const SECTIONS = [
 export default function AdminHomepagePage() {
   const { push } = useToast();
   const [enabled, setEnabled] = useState<Record<string, boolean>>(Object.fromEntries(SECTIONS.map((s) => [s, true])));
-  const [heroKicker, setHeroKicker] = useState("The Student Chapters | India's Student & Youth Platform");
+  const [heroKicker, setHeroKicker] = useState("The Student Chapters™ | India's Student & Youth Platform");
   const [campaignHref, setCampaignHref] = useState('/campaigns/all-india-career-awareness');
 
   return (

@@ -62,7 +62,7 @@ export function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="your@email.com"
-        className="w-full rounded-[4px] border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-cream placeholder:text-cream/40 focus:border-gold focus:outline-none"
+        className="w-full rounded-[4px] border border-white/25 bg-white/10 px-4 py-2.5 text-sm text-cream placeholder:text-cream/60 focus:border-gold focus:bg-white/15 focus:outline-none"
       />
       <input
         type="text"
@@ -77,7 +77,7 @@ export function NewsletterForm() {
       <button
         type="submit"
         disabled={busy}
-        className="inline-flex items-center justify-center gap-2 rounded-[4px] bg-gold px-5 py-2.5 font-display text-xs font-bold uppercase tracking-[0.1em] text-ink transition-colors hover:bg-gold-deep disabled:opacity-60"
+        className="inline-flex items-center justify-center gap-2 rounded-[4px] bg-gold px-5 py-2.5 font-display text-xs font-bold uppercase tracking-[0.12em] text-ink transition-all hover:bg-gold-deep hover:shadow-md disabled:opacity-60"
       >
         <Send aria-hidden className="h-3.5 w-3.5" />
         {busy ? 'Subscribing…' : 'Subscribe'}
