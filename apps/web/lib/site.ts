@@ -66,6 +66,8 @@ export const mainNav: NavLink[] = [
       { label: 'Membership', href: '/membership', description: 'What membership includes.' },
       { label: 'Share Your Story', href: '/share-your-story', description: 'Your journey could inspire someone else.' },
       { label: 'Share Campus News', href: '/share-campus-news', description: "What's happening at your campus?" },
+      { label: 'KonnectX', href: '/konnectx', description: 'Social learning & student networking platform.' },
+      { label: 'MY TAG APP', href: '/mytagapp', description: 'Admission EdTech portal & e-Career counseling.' },
     ],
   },
 ];
@@ -87,8 +89,8 @@ export const footerNav = {
     { label: 'Share Your Story', href: '/share-your-story' },
     { label: 'Share Campus News', href: '/share-campus-news' },
     { label: 'Campaigns', href: '/campaigns' },
-    { label: 'KonnectX', href: site.konnectxUrl || 'https://konnectx.app/' },
-    { label: 'MY TAG APP', href: 'https://mytagapp.com/' },
+    { label: 'KonnectX', href: '/konnectx' },
+    { label: 'MY TAG APP', href: '/mytagapp' },
   ],
   about: [
     { label: 'About Us', href: '/about' },

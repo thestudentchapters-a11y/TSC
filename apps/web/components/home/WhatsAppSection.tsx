@@ -41,18 +41,9 @@ export function WhatsAppSection() {
               <MessageCircle aria-hidden className="h-4 w-4" /> Join WhatsApp Community — link to be configured
             </span>
           )}
-          {konnectxReady ? (
-            <Button href={site.konnectxUrl} variant="outline" size="md" arrow className="w-full sm:w-auto">
-              <Globe aria-hidden className="h-4 w-4" /> Connect on KonnectX
-            </Button>
-          ) : (
-            <span
-              title="Link to be configured by the admin team"
-              className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-[4px] border border-dashed border-hairline bg-cream px-6 py-3 font-display text-xs font-bold uppercase tracking-[0.08em] text-muted sm:w-auto"
-            >
-              <Globe aria-hidden className="h-4 w-4" /> Connect on KonnectX — link to be configured
-            </span>
-          )}
+          <Button href="/konnectx" variant="outline" size="md" arrow className="w-full sm:w-auto">
+            <Globe aria-hidden className="h-4 w-4" /> Explore KonnectX
+          </Button>
         </div>
       </div>
     </section>
