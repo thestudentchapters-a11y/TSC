@@ -7,6 +7,8 @@
     "apps/*"
   ],
   "scripts": {
+    "build": "npm run build -w apps/web",
+    "vercel-build": "npm run build -w apps/web",
     "dev:web": "npm run dev -w apps/web",
     "dev:api": "npm run dev -w apps/api",
     "build:web": "npm run build -w apps/web",

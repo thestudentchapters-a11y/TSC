@@ -15,7 +15,7 @@ export default function AdminSettingsPage() {
     siteUrl: site.url,
     contactEmail: site.email || '',
     apiConnected: !!process.env.NEXT_PUBLIC_API_URL,
-    storage: 'Cloudinary (not configured)',
+    storage: 'Cloudinary (Active & Connected)',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const set = (k: string, v: string) => {
@@ -85,8 +85,8 @@ export default function AdminSettingsPage() {
             </div>
             <Field label="Media storage" htmlFor="st-storage">
               <Select id="st-storage" value={form.storage} onChange={(e) => set('storage', e.target.value)}>
-                <option>Cloudinary (not configured)</option>
-                <option disabled>S3 (coming soon)</option>
+                <option>Cloudinary (Active & Connected)</option>
+                <option disabled>Amazon S3 (coming soon)</option>
               </Select>
             </Field>
           </div>

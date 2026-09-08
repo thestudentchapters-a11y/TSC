@@ -17,18 +17,19 @@ export const revalidate = 300;
 
 export default async function CampaignPage() {
   const campaign = await getCampaign();
-  const released = campaign.episodes.filter((e) => e.status === 'Released');
-  const upcoming = campaign.episodes.filter((e) => e.status === 'Coming Soon');
+  const episodes = campaign?.episodes ?? [];
+  const released = episodes.filter((e) => e.status === 'Released');
+  const upcoming = episodes.filter((e) => e.status === 'Coming Soon');
 
   return (
     <>
-      <PageHeader dark eyebrow={campaign.eyebrow} title={
+      <PageHeader dark eyebrow={campaign?.eyebrow || 'Campaigns • Nationwide'} title={
         <>
           All India Career Awareness
           <span className="mt-1 block text-gold">Youth Documentary Series</span>
         </>
       }>
-        <p className="font-serif text-xl italic text-cream sm:text-2xl">{campaign.headline}</p>
+        <p className="font-serif text-xl italic text-cream sm:text-2xl">{campaign?.headline || 'Real Careers. Real People. Real Possibilities.'}</p>
       </PageHeader>
 
       <section className="section-pad">
@@ -53,7 +54,7 @@ export default async function CampaignPage() {
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-3 lg:col-span-5">
-              {campaign.stills.map((s, i) => (
+              {(campaign?.stills ?? []).map((s, i) => (
                 <Reveal key={s.image} delay={i * 0.1}>
                   <div className="group relative overflow-hidden rounded-md">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -72,7 +73,7 @@ export default async function CampaignPage() {
             <div>
               <h2 className="font-display text-sm font-bold uppercase tracking-[0.18em] text-brand">Career categories covered</h2>
               <div className="mt-4 flex flex-wrap gap-2">
-                {campaign.categories.map((c) => (
+                {(campaign?.categories ?? []).map((c) => (
                   <span key={c} className="rounded-full border border-hairline bg-white px-3.5 py-2 text-[12px] font-bold uppercase tracking-[0.08em] text-ink/70">
                     {c}
                   </span>
@@ -82,7 +83,7 @@ export default async function CampaignPage() {
             <div>
               <h2 className="font-display text-sm font-bold uppercase tracking-[0.18em] text-brand">Filmed across India</h2>
               <div className="mt-4 flex flex-wrap gap-2">
-                {campaign.locations.map((l) => (
+                {(campaign?.locations ?? []).map((l) => (
                   <span key={l} className="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand-50 px-3.5 py-2 text-[12px] font-bold text-brand">
                     <MapPin aria-hidden className="h-3 w-3" /> {l}
                   </span>
@@ -99,7 +100,7 @@ export default async function CampaignPage() {
               possibilities. [Demo episode listings — video embeds are configured by the editorial team.]
             </p>
             <StaggerGrid className="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {campaign.episodes.map((ep) => (
+              {(campaign?.episodes ?? []).map((ep) => (
                 <StaggerItem key={ep.id}>
                   <article className="card-base card-hover group flex h-full flex-col overflow-hidden">
                     <div className="relative aspect-video overflow-hidden">
@@ -138,7 +139,7 @@ export default async function CampaignPage() {
           <div className="mt-16 border-t border-hairline pt-12">
             <h2 className="font-display text-2xl font-bold tracking-tight">Professionals featured</h2>
             <StaggerGrid className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {campaign.episodes.map((ep) => (
+              {(campaign?.episodes ?? []).map((ep) => (
                 <StaggerItem key={ep.id}>
                   <div className="flex items-center gap-4 rounded-md border border-hairline bg-white p-4">
                     <span aria-hidden className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-50 font-display text-sm font-bold text-brand">

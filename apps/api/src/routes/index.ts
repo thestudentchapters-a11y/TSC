@@ -28,6 +28,7 @@ import { engagementRouter } from './engagement.routes';
 import { hiringRouter } from './hiring.routes';
 import { moderateSubmissionSchema } from '../validators';
 import { validate } from '../middleware/validate';
+import { env } from '../config/env';
 import { ApiError } from '../utils/apiError';
 
 const isObjectId = (v: string) => mongoose.Types.ObjectId.isValid(v) && /^[a-f\d]{24}$/i.test(v);
@@ -119,6 +120,57 @@ export function registerRoutes(app: Router) {
   contentRoutes('/api/categories', Category, ['section'], false);
   contentRoutes('/api/tags', Tag, undefined, false);
   contentRoutes('/api/media', Media, ['type'], false);
+
+  /* ── Cloudinary Media Upload (admin/editor) ─────────────────────────── */
+  app.post(
+    '/api/media/upload',
+    asyncHandler(async (req: AuthRequest, res) => {
+      const { file, altText, caption } = req.body;
+      if (!file) {
+        return res.status(400).json({ success: false, error: 'Image file (data URL or base64) is required.' });
+      }
+
+      if (!env.cloudinary.cloudName || !env.cloudinary.apiKey || !env.cloudinary.apiSecret) {
+        return res.status(500).json({ success: false, error: 'Cloudinary is not configured in server environment.' });
+      }
+
+      const auth = Buffer.from(`${env.cloudinary.apiKey}:${env.cloudinary.apiSecret}`).toString('base64');
+      const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${env.cloudinary.cloudName}/image/upload`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${auth}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          file,
+          folder: 'tsc_media',
+        }),
+      });
+
+      const cloudData = (await cloudRes.json()) as any;
+      if (!cloudRes.ok) {
+        return res.status(500).json({ success: false, error: cloudData.error?.message || 'Failed to upload to Cloudinary' });
+      }
+
+      const mediaDoc = await Media.create({
+        url: cloudData.secure_url || cloudData.url,
+        publicId: cloudData.public_id,
+        filename: cloudData.original_filename || `tsc-upload-${Date.now()}`,
+        altText: altText || 'Uploaded media asset',
+        caption: caption || '',
+        type: 'image',
+        dimensions: { width: cloudData.width, height: cloudData.height },
+        sizeBytes: cloudData.bytes,
+        uploadedBy: req.user?._id,
+      });
+
+      res.status(201).json({
+        success: true,
+        data: mediaDoc,
+        url: mediaDoc.url,
+      });
+    })
+  );
 
   /* ── Submission moderation (admin/editor) ───────────────────────────── */
   app.get(

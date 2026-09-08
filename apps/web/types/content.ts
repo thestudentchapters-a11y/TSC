@@ -82,9 +82,9 @@ export interface Campus {
   image: string;
   imageAlt: string;
   categories: string[];
-  latestStory: { title: string; slug: string; date: string };
-  upcomingEvent: { title: string; slug: string; date: string };
-  counts: { stories: number; events: number; contributors: number };
+  latestStory?: { title: string; slug?: string; date?: string };
+  upcomingEvent?: { title: string; slug?: string; date?: string };
+  counts?: { stories?: number; events?: number; contributors?: number };
   demo?: boolean;
 }
 

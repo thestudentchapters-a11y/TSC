@@ -7,7 +7,7 @@ async function main() {
   await connectDB();
   const app = createApp();
 
-  const server = app.listen(env.port, () => {
+  const server = app.listen(env.port, '0.0.0.0', () => {
     logger.info(`THE STUDENT CHAPTERS™ API listening on :${env.port} (${env.nodeEnv})`);
   });
 

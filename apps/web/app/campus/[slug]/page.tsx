@@ -126,43 +126,51 @@ export default async function CampusProfilePage({ params }: Props) {
             <aside className="space-y-6 lg:col-span-4">
               <div className="card-base p-5">
                 <h3 className="font-display text-sm font-bold uppercase tracking-[0.14em]">At a glance</h3>
-                <dl className="mt-4 space-y-3 text-sm">
+                <dl className="mt-4 space-y-2 text-xs">
                   <div className="flex items-center justify-between">
                     <dt className="flex items-center gap-2 text-muted"><PenLine aria-hidden className="h-4 w-4 text-brand" /> Stories</dt>
-                    <dd className="font-display font-bold">{campus.counts.stories}</dd>
+                    <dd className="font-display font-bold">{campus.counts?.stories ?? 0}</dd>
                   </div>
                   <div className="flex items-center justify-between">
                     <dt className="flex items-center gap-2 text-muted"><Calendar aria-hidden className="h-4 w-4 text-brand" /> Events</dt>
-                    <dd className="font-display font-bold">{campus.counts.events}</dd>
+                    <dd className="font-display font-bold">{campus.counts?.events ?? 0}</dd>
                   </div>
                   <div className="flex items-center justify-between">
                     <dt className="flex items-center gap-2 text-muted"><Users aria-hidden className="h-4 w-4 text-brand" /> Contributors</dt>
-                    <dd className="font-display font-bold">{campus.counts.contributors}</dd>
+                    <dd className="font-display font-bold">{campus.counts?.contributors ?? 0}</dd>
                   </div>
                 </dl>
                 <p className="mt-3 text-[11px] italic text-muted">Demo counts — real metrics populate from the API.</p>
               </div>
 
-              <div className="rounded-md border border-brand/20 bg-brand-50 p-5">
-                <h3 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-[0.14em] text-brand">
-                  <Lightbulb aria-hidden className="h-4 w-4" /> From this campus
-                </h3>
-                <ul className="mt-4 space-y-3 text-sm">
-                  <li className="flex items-start gap-2 text-ink/80">
-                    <Award aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
-                    {campus.latestStory.title}
-                  </li>
-                  <li className="flex items-start gap-2 text-ink/80">
-                    <Calendar aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
-                    {campus.upcomingEvent.title} — {formatDate(campus.upcomingEvent.date)}
-                  </li>
-                </ul>
-                <div className="mt-4">
-                  <TextCTA href={`/events/${campus.upcomingEvent.slug}`} className="!text-[11.5px]">
-                    View Event
-                  </TextCTA>
+              {(campus.latestStory?.title || campus.upcomingEvent?.title) && (
+                <div className="rounded-md border border-brand/20 bg-brand-50 p-5">
+                  <h3 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-[0.14em] text-brand">
+                    <Lightbulb aria-hidden className="h-4 w-4" /> From this campus
+                  </h3>
+                  <ul className="mt-4 space-y-3 text-sm">
+                    {campus.latestStory?.title && (
+                      <li className="flex items-start gap-2 text-ink/80">
+                        <Award aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                        {campus.latestStory.title}
+                      </li>
+                    )}
+                    {campus.upcomingEvent?.title && (
+                      <li className="flex items-start gap-2 text-ink/80">
+                        <Calendar aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                        {campus.upcomingEvent.title} {campus.upcomingEvent.date ? `— ${formatDate(campus.upcomingEvent.date)}` : ''}
+                      </li>
+                    )}
+                  </ul>
+                  {campus.upcomingEvent?.slug && (
+                    <div className="mt-4">
+                      <TextCTA href={`/events/${campus.upcomingEvent.slug}`} className="!text-[11.5px]">
+                        View Event
+                      </TextCTA>
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
 
               <div className="rounded-md border border-gold/40 bg-gold-50 p-5">
                 <h3 className="font-display text-sm font-bold uppercase tracking-[0.14em] text-gold-deep">
