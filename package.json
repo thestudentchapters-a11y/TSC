@@ -8,17 +8,20 @@
   ],
   "scripts": {
     "build": "npm run build -w apps/web",
+    "build:all": "npm run build:api && npm run build:web",
+    "build:web": "npm run build -w apps/web",
+    "build:api": "npm run build -w apps/api",
     "vercel-build": "npm run build -w apps/web",
     "dev:web": "npm run dev -w apps/web",
     "dev:api": "npm run dev -w apps/api",
-    "build:web": "npm run build -w apps/web",
-    "build:api": "npm run build -w apps/api",
+    "start": "npm run start -w apps/web",
     "start:web": "npm run start -w apps/web",
     "start:api": "npm run start -w apps/api",
     "seed": "npm run seed -w apps/api",
     "install:all": "npm install"
   },
   "engines": {
-    "node": ">=18.17.0"
+    "node": ">=18.17.0",
+    "npm": ">=9.0.0"
   }
 }

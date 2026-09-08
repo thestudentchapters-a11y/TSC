@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3000"
   },
+  "engines": {
+    "node": ">=18.17.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "framer-motion": "^11.11.7",
     "lucide-react": "^0.451.0",
