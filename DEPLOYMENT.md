@@ -38,7 +38,7 @@ This guide covers deploying the **Next.js Frontend on Vercel** and the **Node.js
    - **Name**: `tsc-api`
    - **Root Directory**: `apps/api`
    - **Runtime**: `Node`
-   - **Build Command**: `npm install && npm run build`
+   - **Build Command**: `npm install --include=dev && npm run build`
    - **Start Command**: `npm start`
 4. Add **Environment Variables**:
    | Variable | Value |
