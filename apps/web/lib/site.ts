@@ -14,7 +14,9 @@ export const site = {
   address: 'B-HUB, Maurya Lok Complex, New Dak Bunglow Rd, Patna, Bihar 800001',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
   email: '', // [TO BE CONFIGURED] official contact email — set via admin → Settings
-  whatsappUrl: process.env.NEXT_PUBLIC_WHATSAPP_URL ?? '',
+  whatsappUrl:
+    process.env.NEXT_PUBLIC_WHATSAPP_URL ??
+    'https://whatsapp.com/channel/0029VajGqlK60eBkTXgEAK2m',
   konnectxUrl: process.env.NEXT_PUBLIC_KONNECTX_URL ?? 'https://konnectx.app/',
   social: {
     instagram: 'https://www.instagram.com/studentchapters/',

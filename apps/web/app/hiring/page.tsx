@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Briefcase,
@@ -110,7 +110,7 @@ const AVAILABILITY_OPTIONS = [
   'Flexible / Remote Project-Based',
 ];
 
-export default function HiringPage() {
+function HiringContent() {
   const searchParams = useSearchParams();
   const { push } = useToast();
 
@@ -814,5 +814,13 @@ export default function HiringPage() {
         </div>
       </section>
     </>
+  );
+}
+
+export default function HiringPage() {
+  return (
+    <Suspense fallback={<div className="container-tsc py-16 text-center text-muted">Loading hiring portal...</div>}>
+      <HiringContent />
+    </Suspense>
   );
 }

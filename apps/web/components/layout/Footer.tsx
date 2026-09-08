@@ -1,16 +1,17 @@
 import Link from 'next/link';
-import { Instagram, Youtube, Linkedin, Facebook, MessageCircle, Globe, MapPin } from 'lucide-react';
+import Image from 'next/image';
+import { Instagram, Youtube, Linkedin, Facebook, MessageCircle, MapPin } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 import { NewsletterForm } from '@/components/layout/NewsletterForm';
 import { footerNav, site } from '@/lib/site';
 
 const socials = [
+  { label: 'KonnectX', href: site.konnectxUrl || 'https://konnectx.app/', imageSrc: '/konnectXfooter.png', configured: true },
   { label: 'Instagram', href: site.social.instagram, icon: Instagram, configured: !!site.social.instagram },
   { label: 'YouTube', href: site.social.youtube, icon: Youtube, configured: !!site.social.youtube },
   { label: 'LinkedIn', href: site.social.linkedin, icon: Linkedin, configured: !!site.social.linkedin },
   { label: 'Facebook', href: site.social.facebook, icon: Facebook, configured: !!site.social.facebook },
   { label: 'WhatsApp', href: site.whatsappUrl, icon: MessageCircle, configured: !!site.whatsappUrl },
-  { label: 'KonnectX', href: site.konnectxUrl, icon: Globe, configured: !!site.konnectxUrl },
 ];
 
 export function Footer() {
@@ -48,7 +49,17 @@ export function Footer() {
                     title="Link to be configured by admin"
                     className="flex h-9 w-9 cursor-default items-center justify-center rounded-full border border-white/20 text-cream/40"
                   >
-                    <Icon aria-hidden className="h-4 w-4" />
+                    {s.imageSrc ? (
+                      <Image
+                        src={s.imageSrc}
+                        alt={s.label}
+                        width={20}
+                        height={20}
+                        className="h-5 w-5 object-contain opacity-40"
+                      />
+                    ) : (
+                      Icon && <Icon aria-hidden className="h-4 w-4" />
+                    )}
                   </span>
                 );
               }
@@ -59,9 +70,19 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${s.label} (opens in a new tab)`}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-cream/90 transition-all hover:border-gold hover:bg-gold/10 hover:text-gold"
+                  className="group flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-cream/90 transition-all hover:border-gold hover:bg-gold/10 hover:text-gold"
                 >
-                  <Icon aria-hidden className="h-4 w-4" />
+                  {s.imageSrc ? (
+                    <Image
+                      src={s.imageSrc}
+                      alt={s.label}
+                      width={24}
+                      height={24}
+                      className="h-5 w-5 object-contain transition-transform duration-200 group-hover:scale-110"
+                    />
+                  ) : (
+                    Icon && <Icon aria-hidden className="h-4 w-4" />
+                  )}
                 </a>
               );
             })}

@@ -20,19 +20,19 @@ export function Logo({ dark = false, compact = false, className = '', imageClass
       <div
         className={cn(
           'relative flex items-center justify-center transition-all duration-300',
-          dark ? 'rounded-lg bg-white/95 p-1.5 shadow-sm ring-1 ring-white/20' : ''
+          dark ? 'rounded-xl bg-white/95 p-2 shadow-sm ring-1 ring-white/20' : ''
         )}
       >
         <Image
-          src="/TSC%20Logo.png"
+          src="/TSC Logo.png"
           alt="The Student Chapters™"
-          width={160}
-          height={108}
+          width={240}
+          height={188}
           priority
           className={cn(
-            'h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105 sm:h-12',
-            dark && 'h-9 sm:h-10',
-            compact && 'h-8 sm:h-9',
+            'h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 sm:h-14 lg:h-[58px]',
+            dark && 'h-14 sm:h-16 lg:h-[68px]',
+            compact && 'h-9 sm:h-10 lg:h-11',
             imageClassName
           )}
         />

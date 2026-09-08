@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ExternalLink,
   Globe,
@@ -106,7 +107,18 @@ export default function KonnectXPage() {
         title="The Future of Social Learning & Real Networking."
         description="Where education meets opportunity. Connect, create, and grow with the next generation of social networking designed for students, teachers, and professionals."
       >
-        <div className="flex flex-wrap items-center gap-3 pt-2">
+        <div className="mb-6 inline-flex items-center gap-3 rounded-xl border border-hairline bg-cream/70 px-4 py-2.5 shadow-sm">
+          <Image
+            src="/konnect logo.png"
+            alt="KonnectX Logo"
+            width={160}
+            height={48}
+            className="h-9 sm:h-11 w-auto object-contain"
+            priority
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 pt-1">
           {/* CTA 1: Official Website */}
           <Button href={OFFICIAL_URL} size="md" arrow>
             <Globe aria-hidden className="h-4 w-4" /> Visit konnectx.app
@@ -226,6 +238,15 @@ export default function KonnectXPage() {
           </div>
 
           <div className="flex flex-col gap-4 rounded-xl border border-white/15 bg-white/[0.05] p-8 lg:col-span-5">
+            <div className="inline-flex w-fit items-center rounded-lg bg-white/90 px-3 py-1.5 shadow-sm">
+              <Image
+                src="/konnect logo.png"
+                alt="KonnectX Logo"
+                width={130}
+                height={36}
+                className="h-7 w-auto object-contain"
+              />
+            </div>
             <h3 className="font-display text-xl font-bold text-white">Ready to connect?</h3>
             <p className="text-xs leading-5 text-white/70">
               Open KonnectX on your browser or install on your phone to get started in less than a minute.

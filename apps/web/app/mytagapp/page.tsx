@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ExternalLink,
   GraduationCap,
@@ -128,7 +129,18 @@ export default function MyTagAppPage() {
         title="MyTAG App — Admission EdTech Portal & e-Career Counseling."
         description="A common platform for students, schools & colleges. Easy application & admission process, secure fee payments, scholarship schemes, side-by-side college comparison, and rank predictors."
       >
-        <div className="flex flex-wrap items-center gap-3 pt-2">
+        <div className="mb-6 inline-flex items-center gap-3 rounded-xl border border-hairline bg-ink/40 px-4 py-2.5 shadow-sm">
+          <Image
+            src="/MyTAGAPP_logo.png"
+            alt="MyTAG App Logo"
+            width={180}
+            height={50}
+            className="h-10 sm:h-12 w-auto object-contain"
+            priority
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 pt-1">
           {/* CTA 1: Official Portal */}
           <Button href={OFFICIAL_URL} size="md" arrow>
             <Globe aria-hidden className="h-4 w-4" /> Visit mytagapp.com
@@ -280,6 +292,15 @@ export default function MyTagAppPage() {
           </div>
 
           <div className="flex flex-col gap-4 rounded-xl border border-white/15 bg-white/[0.05] p-8 lg:col-span-5">
+            <div className="inline-flex w-fit items-center rounded-lg bg-white/90 px-3 py-1.5 shadow-sm">
+              <Image
+                src="/MyTAGAPP_logo.png"
+                alt="MyTAG App Logo"
+                width={140}
+                height={38}
+                className="h-7 w-auto object-contain"
+              />
+            </div>
             <h3 className="font-display text-xl font-bold text-white">Start Your Application</h3>
             <p className="text-xs leading-5 text-white/70">
               Explore thousands of accredited courses and colleges or speak with an e-counselor on MyTAG App.

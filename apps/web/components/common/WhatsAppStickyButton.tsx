@@ -10,10 +10,10 @@ import { site } from '@/lib/site';
 export function WhatsAppStickyButton() {
   const [hovered, setHovered] = useState(false);
 
-  // Use configured URL or default friendly chat link
+  // Use configured URL or default channel link
   const targetUrl =
     site.whatsappUrl ||
-    'https://api.whatsapp.com/send?text=Hi%20TSC%20Team!%20I%20would%20like%20to%20connect%20with%20The%20Student%20Chapters.';
+    'https://whatsapp.com/channel/0029VajGqlK60eBkTXgEAK2m';
 
   return (
     <div className="fixed bottom-6 right-6 z-[110] flex items-center gap-3">
