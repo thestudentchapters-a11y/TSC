@@ -42,3 +42,8 @@ export const updateMe = asyncHandler(async (req: AuthRequest, res: Response) => 
   const data = await authService.me(String(user._id));
   res.json({ success: true, data });
 });
+
+export const changeCredentials = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const user = await authService.changeCredentials(String(req.user!._id), req.body);
+  res.json({ success: true, message: 'Account credentials updated successfully', data: { user } });
+});

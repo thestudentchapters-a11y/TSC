@@ -43,7 +43,7 @@ export default function LoginPage() {
     setBusy(false);
     if (res.ok) {
       push('Welcome back to TSC.', 'success');
-      window.location.href = email.startsWith('admin') ? '/admin' : '/dashboard';
+      window.location.href = (res.role === 'admin' || res.role === 'editor') ? '/admin' : '/dashboard';
     } else {
       setGeneralError(res.error ?? 'Invalid email or password. Please try again.');
     }
@@ -100,11 +100,6 @@ export default function LoginPage() {
               </Link>
             </p>
           </form>
-          <p className="mt-5 rounded-md border border-dashed border-hairline bg-white px-4 py-3 text-center text-xs leading-5 text-muted">
-            Demo mode (no API connected): any valid email works; passwords of 6+ characters. Start an email
-            with <code className="rounded bg-cream px-1">admin</code> or <code className="rounded bg-cream px-1">editor</code> to preview
-            those roles.
-          </p>
         </div>
       </section>
     </>

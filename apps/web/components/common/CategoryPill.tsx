@@ -39,17 +39,7 @@ export function CategoryPill({
   return <span className={cls}>{children}</span>;
 }
 
-/** Small DEMO chip marking seeded sample content. */
+/** Small DEMO chip marking seeded sample content — disabled for production. */
 export function DemoChip({ className }: { className?: string }) {
-  return (
-    <span
-      title="Demo content — replace via the admin panel"
-      className={cn(
-        'inline-flex items-center rounded-full border border-gold/50 bg-gold-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-gold-deep',
-        className
-      )}
-    >
-      Demo
-    </span>
-  );
+  return null;
 }

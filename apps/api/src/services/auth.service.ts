@@ -100,6 +100,40 @@ export const authService = {
     const membership = await Membership.findOne({ user: userId }).sort({ createdAt: -1 });
     return { user: toPublicUser(user), membership };
   },
+
+  async changeCredentials(
+    userId: string,
+    payload: { currentPassword?: string; newEmail?: string; newPassword?: string; name?: string }
+  ) {
+    const user = await User.findById(userId).select('+passwordHash');
+    if (!user) throw ApiError.notFound('User not found');
+
+    if (payload.currentPassword) {
+      const isMatch = await user.comparePassword(payload.currentPassword);
+      if (!isMatch) throw ApiError.badRequest('Current password does not match');
+    }
+
+    if (payload.newEmail && payload.newEmail.trim().toLowerCase() !== user.email) {
+      const cleanEmail = payload.newEmail.trim().toLowerCase();
+      const exists = await User.findOne({ email: cleanEmail, _id: { $ne: user._id } });
+      if (exists) throw ApiError.conflict('An account with this email already exists');
+      user.email = cleanEmail;
+    }
+
+    if (payload.newPassword) {
+      if (payload.newPassword.length < 6) {
+        throw ApiError.badRequest('New password must be at least 6 characters long');
+      }
+      user.passwordHash = payload.newPassword;
+    }
+
+    if (payload.name && payload.name.trim()) {
+      user.name = payload.name.trim();
+    }
+
+    await user.save();
+    return toPublicUser(user);
+  },
 };
 
 function toPublicUser(user: IUser) {

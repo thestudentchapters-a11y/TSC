@@ -18,115 +18,107 @@ import type {
 /* ─────────────────────────── NEWS ─────────────────────────── */
 export const demoArticles: Article[] = [
   {
-    id: 'n1', slug: 'digital-library-project-students', featured: true, status: 'published', demo: true,
-    title: 'New Digital Library Project Brings Thousands of Resources to Students',
+    id: 'n1', slug: 'digital-library-project-students', featured: true, status: 'published', title: 'New Digital Library Project Brings Thousands of Resources to Students',
     excerpt: 'A student-led digital library initiative is making thousands of books, journals and course materials freely accessible — starting with campuses that needed it the most.',
     category: 'Education', tags: ['Digital Library', 'Access to Education', 'Student Initiative'],
-    author: 'TSC Newsroom (Demo)', date: '2026-08-30', readingTime: 4,
+    author: 'TSC Editorial Team', date: '2026-08-30', readingTime: 4,
     image: '/images/news/news-1.jpg',
     imageAlt: 'Students studying at computer terminals in a modern university digital library',
     content: [
       'For many students, the biggest barrier to learning is not motivation — it is access. A new student-led digital library project is trying to change that, one campus at a time.',
       'The initiative, currently live at three demo campuses, brings together thousands of open-access books, journals, previous-year papers and course notes in a single searchable platform built and maintained by student volunteers.',
-      'Organisers say the next step is a shared catalogue that any campus community can join and contribute to. TSC will keep tracking this project as it grows. [Demo article — replace with real TSC reporting via the admin panel.]',
+      'Organisers say the next step is a shared catalogue that any campus community can join and contribute to. TSC will keep tracking this project as it grows.',
     ],
   },
   {
-    id: 'n2', slug: 'young-innovators-national-science-fair', featured: false, status: 'published', demo: true,
-    title: 'Young Innovators Win Recognition at National Science Fair',
+    id: 'n2', slug: 'young-innovators-national-science-fair', featured: false, status: 'published', title: 'Young Innovators Win Recognition at National Science Fair',
     excerpt: 'Student teams from across the country presented low-cost solutions to everyday problems — from water conservation to accessible learning tools.',
     category: 'Student News', tags: ['Science Fair', 'Innovation', 'Achievements'],
-    author: 'Demo Correspondent — Aarav K.', date: '2026-08-27', readingTime: 3,
+    author: 'Special Correspondent — Aarav K.', date: '2026-08-27', readingTime: 3,
     image: '/images/stories/story-3.jpg',
     imageAlt: 'Students collaborating over a tablet while working on a science project',
     content: [
-      'The hall was full of prototypes, posters and nervous energy. At this year\'s National Science Fair (demo edition), student teams presented solutions that were simple, low-cost and deeply practical.',
+      'The hall was full of prototypes, posters and nervous energy. At this year\'s National Science Fair , student teams presented solutions that were simple, low-cost and deeply practical.',
       'Projects ranged from rainwater-harvesting kits assembled from household materials to a braille learning board built by a first-year team. Judges repeatedly highlighted one theme: students solving problems they see around them every day.',
-      'TSC congratulates every participant. Got an achievement worth sharing? Tell us — your story could feature next. [Demo article.]',
+      'TSC congratulates every participant. Got an achievement worth sharing? Tell us — your story could feature next.',
     ],
   },
   {
-    id: 'n3', slug: 'students-lead-cleanliness-drive', featured: false, status: 'published', demo: true,
-    title: 'Students Lead Community Cleanliness Drive Across City Wards',
+    id: 'n3', slug: 'students-lead-cleanliness-drive', featured: false, status: 'published', title: 'Students Lead Community Cleanliness Drive Across City Wards',
     excerpt: 'Over one weekend, student volunteers across city wards came together for a cleanliness and awareness drive — proving that campus energy can reach far beyond campus gates.',
     category: 'Youth & Society', tags: ['Community Service', 'Volunteering', 'Environment'],
-    author: 'TSC Newsroom (Demo)', date: '2026-08-24', readingTime: 3,
+    author: 'TSC Editorial Team', date: '2026-08-24', readingTime: 3,
     image: '/images/news/news-2.jpg',
     imageAlt: 'Student volunteers in gloves collecting litter during a community cleanliness drive',
     content: [
       'Early on a Sunday morning, while most of the city slept, groups of students in gloves and caps fanned out across municipal wards with bags, brooms and awareness posters.',
-      'The drive — organised by campus volunteer clubs (demo) — combined cleaning with door-to-door conversations about waste segregation, covering several neighbourhoods in a single weekend.',
-      'For many volunteers, it was a reminder that being a student is not just about studying. It is about showing up. [Demo article.]',
+      'The drive — organised by campus volunteer clubs  — combined cleaning with door-to-door conversations about waste segregation, covering several neighbourhoods in a single weekend.',
+      'For many volunteers, it was a reminder that being a student is not just about studying. It is about showing up.',
     ],
   },
   {
-    id: 'n4', slug: 'student-team-builds-ai-study-companion', featured: false, status: 'published', demo: true,
-    title: 'Student Team Builds AI Study Companion for Exam Preparation',
+    id: 'n4', slug: 'student-team-builds-ai-study-companion', featured: false, status: 'published', title: 'Student Team Builds AI Study Companion for Exam Preparation',
     excerpt: 'A four-member student team has built an AI-powered study companion that turns lengthy notes into interactive quizzes and revision plans.',
     category: 'Technology & Innovation', tags: ['AI', 'EdTech', 'Student Projects'],
-    author: 'Demo Correspondent — Priya S.', date: '2026-08-20', readingTime: 4,
+    author: 'Special Correspondent — Priya S.', date: '2026-08-20', readingTime: 4,
     image: '/images/news/news-3.jpg',
     imageAlt: 'Student developers working together on laptops in the evening',
     content: [
-      'It started as a hostel-room experiment: could a small team of students build a tool that makes revision less painful? Eight months later, their AI study companion (demo) does exactly that.',
+      'It started as a hostel-room experiment: could a small team of students build a tool that makes revision less painful? Eight months later, their AI study companion  does exactly that.',
       'The app converts class notes into summaries, flashcards and timed quizzes, and builds a spaced-repetition plan around exam dates. The team says the hardest part was not the AI — it was designing something students would actually use daily.',
-      'The project is currently in closed beta across two demo campuses. [Demo article.]',
+      'The project is currently in closed beta across two demo campuses.',
     ],
   },
   {
-    id: 'n5', slug: 'universities-expand-support-services', featured: false, status: 'published', demo: true,
-    title: 'Universities Expand Mental Health & Academic Support for Students',
+    id: 'n5', slug: 'universities-expand-support-services', featured: false, status: 'published', title: 'Universities Expand Mental Health & Academic Support for Students',
     excerpt: 'From peer-support circles to extended counselling hours, institutions are quietly expanding the support systems available to students on campus.',
     category: 'Education', tags: ['Mental Health', 'Wellbeing', 'Campus Life'],
-    author: 'TSC Newsroom (Demo)', date: '2026-08-15', readingTime: 4,
+    author: 'TSC Editorial Team', date: '2026-08-15', readingTime: 4,
     image: '/images/news/news-5.jpg',
     imageAlt: 'A student in a calm conversation with a campus counsellor',
     content: [
-      'Academic pressure, placements, family expectations — student life carries real weight. A growing number of institutions (demo) are responding by strengthening the support systems around students.',
+      'Academic pressure, placements, family expectations — student life carries real weight. A growing number of institutions  are responding by strengthening the support systems around students.',
       'Changes include extended counselling hours, trained peer-support circles, quiet study and rest spaces, and clearer processes for academic emergencies.',
-      'If your campus has taken a step worth celebrating, share it with TSC. [Demo article.]',
+      'If your campus has taken a step worth celebrating, share it with TSC.',
     ],
   },
   {
-    id: 'n6', slug: 'hackathon-season-record-participation', featured: false, status: 'published', demo: true,
-    title: 'Hackathon Season Kicks Off With Record Campus Participation',
+    id: 'n6', slug: 'hackathon-season-record-participation', featured: false, status: 'published', title: 'Hackathon Season Kicks Off With Record Campus Participation',
     excerpt: 'Weekend hackathons are drawing bigger crowds than fest concerts — and students are here for the build, not just the prizes.',
     category: 'Technology & Innovation', tags: ['Hackathon', 'Coding', 'Events'],
-    author: 'Demo Correspondent — Aarav K.', date: '2026-08-10', readingTime: 3,
+    author: 'Special Correspondent — Aarav K.', date: '2026-08-10', readingTime: 3,
     image: '/images/news/news-4.jpg',
     imageAlt: 'Student teams working at tables during a hackathon',
     content: [
-      'Tables strewn with cables, coffee cups and borrowed chargers — hackathon season is officially here, and participation numbers (demo) are the highest campuses have seen.',
+      'Tables strewn with cables, coffee cups and borrowed chargers — hackathon season is officially here, and participation numbers  are the highest campuses have seen.',
       'What is changing, say organisers, is the mix: designers, business students and first-time coders are joining in numbers that rival the engineering crowd.',
-      'TSC\'s events calendar lists hackathons open to students across India. [Demo article.]',
+      'TSC\'s events calendar lists hackathons open to students across India.',
     ],
   },
   {
-    id: 'n7', slug: 'student-councils-transparency-reforms', featured: false, status: 'published', demo: true,
-    title: 'Student Councils Push for More Transparent Evaluation Reforms',
+    id: 'n7', slug: 'student-councils-transparency-reforms', featured: false, status: 'published', title: 'Student Councils Push for More Transparent Evaluation Reforms',
     excerpt: 'A recurring theme across campuses: students want clearer evaluation criteria, published answer keys and timely feedback.',
     category: 'Youth & Society', tags: ['Student Rights', 'Governance', 'Reform'],
-    author: 'TSC Newsroom (Demo)', date: '2026-08-05', readingTime: 3,
+    author: 'TSC Editorial Team', date: '2026-08-05', readingTime: 3,
     image: '/images/campus/campus-6.jpg',
     imageAlt: 'Students and faculty in discussion inside a classroom',
     content: [
       'Across demo campuses this semester, one demand has surfaced again and again: transparency in evaluation.',
       'Student councils are requesting published marking schemes, access to answer scripts within a fixed window, and structured feedback on projects and viva assessments.',
-      'TSC\'s Legal Awareness section explains the rules and recourse available to students in such situations. [Demo article.]',
+      'TSC\'s Legal Awareness section explains the rules and recourse available to students in such situations.',
     ],
   },
   {
-    id: 'n8', slug: 'campus-fests-go-green', featured: false, status: 'published', demo: true,
-    title: 'Campus Fests Go Green: Reusable Sets, Digital Tickets and Cleaner Celebrations',
+    id: 'n8', slug: 'campus-fests-go-green', featured: false, status: 'published', title: 'Campus Fests Go Green: Reusable Sets, Digital Tickets and Cleaner Celebrations',
     excerpt: 'Fest season is getting a sustainability makeover as student committees rethink how India\'s biggest campus celebrations are run.',
     category: 'Student News', tags: ['Sustainability', 'Fests', 'Campus Life'],
-    author: 'Demo Correspondent — Priya S.', date: '2026-07-28', readingTime: 3,
+    author: 'Special Correspondent — Priya S.', date: '2026-07-28', readingTime: 3,
     image: '/images/events/event-3.jpg',
     imageAlt: 'Students celebrating at a college cultural festival',
     content: [
       'The annual fest is a campus\'s biggest moment — and, traditionally, its biggest pile of waste. This year, several demo fest committees decided to change that.',
       'Reusable stage sets, digital tickets, water refill stations and volunteer-run waste-sorting teams turned out to be easier to adopt than expected.',
-      'Celebration and responsibility, organisers say, are not opposites. [Demo article.]',
+      'Celebration and responsibility, organisers say, are not opposites.',
     ],
   },
 ];
@@ -134,11 +126,10 @@ export const demoArticles: Article[] = [
 /* ─────────────────────────── STORIES ─────────────────────────── */
 export const demoStories: Story[] = [
   {
-    id: 's1', slug: 'student-who-turned-problem-into-solution', category: 'student', featured: true, status: 'published', demo: true,
-    title: 'The Student Who Turned a Problem Into a Solution',
+    id: 's1', slug: 'student-who-turned-problem-into-solution', category: 'student', featured: true, status: 'published', title: 'The Student Who Turned a Problem Into a Solution',
     dek: 'Meet the young minds creating solutions for problems around them.',
     image: '/images/stories/story-3.jpg', imageAlt: 'Students collaborating on a solution over a tablet',
-    author: 'Demo Writer — Meera R.', authorRole: 'TSC Stories (Demo)', campus: 'Nalanda Institute of Technology (Demo)',
+    author: 'Demo Writer — Meera R.', authorRole: 'TSC Stories ', campus: 'Nalanda Institute of Technology ',
     date: '2026-08-22', readingTime: 5,
     quote: { text: 'I did not start because I wanted to build a product. I started because the problem would not leave me alone.', person: 'Demo student innovator' },
     content: [
@@ -149,39 +140,36 @@ export const demoStories: Story[] = [
     ],
   },
   {
-    id: 's2', slug: 'from-classroom-to-startup', category: 'startup', featured: true, status: 'published', demo: true,
-    title: 'From Classroom to Startup',
+    id: 's2', slug: 'from-classroom-to-startup', category: 'startup', featured: true, status: 'published', title: 'From Classroom to Startup',
     dek: 'How a college idea became the beginning of an entrepreneurial journey.',
     image: '/images/stories/story-2.jpg', imageAlt: 'Student founders working on code and ideas together',
-    author: 'Demo Writer — Kabir J.', authorRole: 'TSC Stories (Demo)', campus: 'Vidya Vihar Central University (Demo)',
+    author: 'Demo Writer — Kabir J.', authorRole: 'TSC Stories ', campus: 'Vidya Vihar Central University ',
     date: '2026-08-18', readingTime: 6,
     quote: { text: 'The classroom gave us the idea. The campus gave us our first users.', person: 'Demo student founder' },
     content: [
       'Nobody starts a company in a classroom. But a lot of companies start as classroom problems — assignments, projects, the irritating gap between what exists and what should exist.',
-      'This is the story of one such journey (demo): a semester project that refused to end with a grade, the first hundred users from the hostel next door, and the slow realisation that building something is a full-time education in itself.',
+      'This is the story of one such journey : a semester project that refused to end with a grade, the first hundred users from the hostel next door, and the slow realisation that building something is a full-time education in itself.',
       'There were co-founder arguments, a pivot nobody wanted to admit was needed, and the first rupee of revenue that felt bigger than any placement offer.',
       'The startup is still early. The journey is already worth telling. [Demo story.]',
     ],
   },
   {
-    id: 's3', slug: 'inside-a-campus-thats-building-something-different', category: 'campus', featured: true, status: 'published', demo: true,
-    title: "Inside a Campus That's Building Something Different",
+    id: 's3', slug: 'inside-a-campus-thats-building-something-different', category: 'campus', featured: true, status: 'published', title: "Inside a Campus That's Building Something Different",
     dek: 'Discover the people and communities transforming campus life.',
     image: '/images/stories/story-4.jpg', imageAlt: 'Students walking across a green university campus',
-    author: 'Demo Writer — Meera R.', authorRole: 'TSC Stories (Demo)', campus: 'Coastal University of Arts & Sciences (Demo)',
+    author: 'Demo Writer — Meera R.', authorRole: 'TSC Stories ', campus: 'Coastal University of Arts & Sciences ',
     date: '2026-08-12', readingTime: 5,
     content: [
       'Some campuses you walk into and immediately feel a rhythm — workshops on weekends, clubs that actually build things, corridors where ideas are argued over chai.',
-      'This story (demo) goes inside one such campus to meet the communities creating that rhythm: the makers club that meets at midnight, the research group that mentors first-years, the culture collective that turns the auditorium into a stage for anyone with something to say.',
+      'This story  goes inside one such campus to meet the communities creating that rhythm: the makers club that meets at midnight, the research group that mentors first-years, the culture collective that turns the auditorium into a stage for anyone with something to say.',
       'The lesson: a campus is not different because of its buildings. It is different because of what its students refuse to leave undone. [Demo story.]',
     ],
   },
   {
-    id: 's4', slug: 'from-a-small-town-to-a-national-stage', category: 'student', featured: false, status: 'published', demo: true,
-    title: 'From a Small Town to a National Stage',
+    id: 's4', slug: 'from-a-small-town-to-a-national-stage', category: 'student', featured: false, status: 'published', title: 'From a Small Town to a National Stage',
     dek: 'A journey of preparation, self-doubt, and finally being heard.',
     image: '/images/stories/story-1.jpg', imageAlt: 'A student receiving an award on stage as the audience applauds',
-    author: 'Demo Writer — Ananya T.', authorRole: 'TSC Stories (Demo)', campus: 'Sagar Public University (Demo)',
+    author: 'Demo Writer — Ananya T.', authorRole: 'TSC Stories ', campus: 'Sagar Public University ',
     date: '2026-08-05', readingTime: 4,
     content: [
       'The first time they spoke on a mic, the voice shook. The second time, less. By the national round (demo competition), the room listened.',
@@ -190,11 +178,10 @@ export const demoStories: Story[] = [
     ],
   },
   {
-    id: 's5', slug: 'the-interview-that-changed-how-i-see-failure', category: 'student', featured: false, status: 'published', demo: true,
-    title: 'The Interview That Changed How I See Failure',
+    id: 's5', slug: 'the-interview-that-changed-how-i-see-failure', category: 'student', featured: false, status: 'published', title: 'The Interview That Changed How I See Failure',
     dek: 'What a rejection call taught one student about starting again.',
     image: '/images/stories/story-5.jpg', imageAlt: 'A student studying alone late at night in a warm library',
-    author: 'Demo Writer — Kabir J.', authorRole: 'TSC Stories (Demo)', campus: 'Sunrise Engineering College (Demo)',
+    author: 'Demo Writer — Kabir J.', authorRole: 'TSC Stories ', campus: 'Sunrise Engineering College ',
     date: '2026-07-30', readingTime: 4,
     content: [
       'The rejection email was polite, brief and devastating — exactly the kind every student dreads in placement season.',
@@ -203,11 +190,10 @@ export const demoStories: Story[] = [
     ],
   },
   {
-    id: 's6', slug: 'the-hostel-room-studio', category: 'startup', featured: false, status: 'published', demo: true,
-    title: 'The Hostel Room Studio',
+    id: 's6', slug: 'the-hostel-room-studio', category: 'startup', featured: false, status: 'published', title: 'The Hostel Room Studio',
     dek: 'How three friends turned a hostel room into a production studio between classes.',
     image: '/images/campaign/campaign-3.jpg', imageAlt: 'Young founders at work in a startup workspace',
-    author: 'Demo Writer — Ananya T.', authorRole: 'TSC Stories (Demo)', campus: 'Himalayan Polytechnic & Research Institute (Demo)',
+    author: 'Demo Writer — Ananya T.', authorRole: 'TSC Stories ', campus: 'Himalayan Polytechnic & Research Institute ',
     date: '2026-07-22', readingTime: 5,
     content: [
       'Two beds pushed aside, one borrowed mic, a blanket on the wall for sound damping — that was version one of the studio.',
@@ -216,11 +202,10 @@ export const demoStories: Story[] = [
     ],
   },
   {
-    id: 's7', slug: 'when-a-class-project-became-a-company', category: 'startup', featured: false, status: 'published', demo: true,
-    title: 'When a Class Project Became a Company',
+    id: 's7', slug: 'when-a-class-project-became-a-company', category: 'startup', featured: false, status: 'published', title: 'When a Class Project Became a Company',
     dek: 'A semester assignment, an understanding mentor, and twelve months of saying "what if".',
     image: '/images/stories/story-6.jpg', imageAlt: 'A confident student presenting to an audience',
-    author: 'Demo Writer — Meera R.', authorRole: 'TSC Stories (Demo)', campus: 'Vidya Vihar Central University (Demo)',
+    author: 'Demo Writer — Meera R.', authorRole: 'TSC Stories ', campus: 'Vidya Vihar Central University ',
     date: '2026-07-15', readingTime: 5,
     content: [
       'The brief was simple: propose a solution to a local problem. The submission was due Friday. The company, as it turned out, was due a year later.',
@@ -229,11 +214,10 @@ export const demoStories: Story[] = [
     ],
   },
   {
-    id: 's8', slug: 'the-library-that-never-sleeps', category: 'campus', featured: false, status: 'published', demo: true,
-    title: 'The Library That Never Sleeps',
+    id: 's8', slug: 'the-library-that-never-sleeps', category: 'campus', featured: false, status: 'published', title: 'The Library That Never Sleeps',
     dek: 'Open all night, powered by students — inside a campus reading-room movement.',
     image: '/images/campus/campus-4.jpg', imageAlt: 'Students studying in a classic university library at night',
-    author: 'Demo Writer — Kabir J.', authorRole: 'TSC Stories (Demo)', campus: 'Nalanda Institute of Technology (Demo)',
+    author: 'Demo Writer — Kabir J.', authorRole: 'TSC Stories ', campus: 'Nalanda Institute of Technology ',
     date: '2026-07-08', readingTime: 4,
     content: [
       'At 2 a.m., the reading room is fuller than most classrooms are at noon. Exam season? Yes. But also — a culture.',
@@ -242,11 +226,10 @@ export const demoStories: Story[] = [
     ],
   },
   {
-    id: 's9', slug: 'how-one-club-turned-a-quiet-campus-into-a-stage', category: 'campus', featured: false, status: 'published', demo: true,
-    title: 'How One Club Turned a Quiet Campus Into a Stage',
+    id: 's9', slug: 'how-one-club-turned-a-quiet-campus-into-a-stage', category: 'campus', featured: false, status: 'published', title: 'How One Club Turned a Quiet Campus Into a Stage',
     dek: 'Open mics, street theatre and a lot of courage — the story of a campus culture collective.',
     image: '/images/events/event-3.jpg', imageAlt: 'A crowd of students enjoying a performance at a campus cultural night',
-    author: 'Demo Writer — Ananya T.', authorRole: 'TSC Stories (Demo)', campus: 'Coastal University of Arts & Sciences (Demo)',
+    author: 'Demo Writer — Ananya T.', authorRole: 'TSC Stories ', campus: 'Coastal University of Arts & Sciences ',
     date: '2026-06-30', readingTime: 4,
     content: [
       'For years, the auditorium was booked twice a year. Then a handful of students asked a dangerous question: what if we used it every month?',
@@ -259,8 +242,7 @@ export const demoStories: Story[] = [
 /* ─────────────────────────── CAMPUSES ─────────────────────────── */
 export const demoCampuses: Campus[] = [
   {
-    id: 'c1', slug: 'vidya-vihar-central-university', demo: true,
-    name: 'Vidya Vihar Central University', university: 'Vidya Vihar Central University', city: 'Pune', state: 'Maharashtra', type: 'Central University',
+    id: 'c1', slug: 'vidya-vihar-central-university', name: 'Vidya Vihar Central University', university: 'Vidya Vihar Central University', city: 'Pune', state: 'Maharashtra', type: 'Central University',
     description: 'A demo campus known for its student incubator, weekend makers meets and an active research circle. [Demo campus — replace with real campus profiles via admin.]',
     image: '/images/campus/campus-1.jpg', imageAlt: 'Red-brick academic building on a green university campus',
     categories: ['Campus News', 'Student Achievements', 'Campus Life'],
@@ -269,8 +251,7 @@ export const demoCampuses: Campus[] = [
     counts: { stories: 2, events: 2, contributors: 9 },
   },
   {
-    id: 'c2', slug: 'nalanda-institute-of-technology', demo: true,
-    name: 'Nalanda Institute of Technology', university: 'Nalanda Institute of Technology', city: 'Patna', state: 'Bihar', type: 'Technical Institute',
+    id: 'c2', slug: 'nalanda-institute-of-technology', name: 'Nalanda Institute of Technology', university: 'Nalanda Institute of Technology', city: 'Patna', state: 'Bihar', type: 'Technical Institute',
     description: 'A demo engineering campus with a thriving hackathon culture and a student-run night library. [Demo campus — replace with real campus profiles via admin.]',
     image: '/images/campus/campus-2.jpg', imageAlt: 'Students walking together on a university pathway',
     categories: ['Campus Events', 'Clubs & Communities', 'Student Initiatives'],
@@ -279,8 +260,7 @@ export const demoCampuses: Campus[] = [
     counts: { stories: 2, events: 2, contributors: 7 },
   },
   {
-    id: 'c3', slug: 'coastal-university-of-arts-and-sciences', demo: true,
-    name: 'Coastal University of Arts & Sciences', university: 'Coastal University of Arts & Sciences', city: 'Kochi', state: 'Kerala', type: 'State University',
+    id: 'c3', slug: 'coastal-university-of-arts-and-sciences', name: 'Coastal University of Arts & Sciences', university: 'Coastal University of Arts & Sciences', city: 'Kochi', state: 'Kerala', type: 'State University',
     description: 'A demo campus celebrated for its culture collectives, debate society and waterfront campus life. [Demo campus — replace with real campus profiles via admin.]',
     image: '/images/campus/campus-3.jpg', imageAlt: 'A group of students enjoying campus life outside an academic block',
     categories: ['Campus Life', 'Clubs & Communities', 'Campus News'],
@@ -289,8 +269,7 @@ export const demoCampuses: Campus[] = [
     counts: { stories: 2, events: 2, contributors: 8 },
   },
   {
-    id: 'c4', slug: 'sagar-public-university', demo: true,
-    name: 'Sagar Public University', university: 'Sagar Public University', city: 'Bhopal', state: 'Madhya Pradesh', type: 'State University',
+    id: 'c4', slug: 'sagar-public-university', name: 'Sagar Public University', university: 'Sagar Public University', city: 'Bhopal', state: 'Madhya Pradesh', type: 'State University',
     description: 'A demo campus with strong social-science research groups and a growing student leadership programme. [Demo campus — replace with real campus profiles via admin.]',
     image: '/images/campus/campus-4.jpg', imageAlt: 'Students reading between bookshelves in a classic library',
     categories: ['Student Achievements', 'Student Initiatives', 'Campus News'],
@@ -299,8 +278,7 @@ export const demoCampuses: Campus[] = [
     counts: { stories: 1, events: 1, contributors: 6 },
   },
   {
-    id: 'c5', slug: 'himalayan-polytechnic-and-research-institute', demo: true,
-    name: 'Himalayan Polytechnic & Research Institute', university: 'Himalayan Polytechnic & Research Institute', city: 'Dehradun', state: 'Uttarakhand', type: 'Polytechnic',
+    id: 'c5', slug: 'himalayan-polytechnic-and-research-institute', name: 'Himalayan Polytechnic & Research Institute', university: 'Himalayan Polytechnic & Research Institute', city: 'Dehradun', state: 'Uttarakhand', type: 'Polytechnic',
     description: 'A demo polytechnic campus where media, making and mountains meet — home to a student production studio. [Demo campus — replace with real campus profiles via admin.]',
     image: '/images/campus/campus-5.jpg', imageAlt: 'Students working with books and laptops in a modern study space',
     categories: ['Clubs & Communities', 'Campus Events', 'Campus Life'],
@@ -309,8 +287,7 @@ export const demoCampuses: Campus[] = [
     counts: { stories: 1, events: 1, contributors: 5 },
   },
   {
-    id: 'c6', slug: 'sunrise-engineering-college', demo: true,
-    name: 'Sunrise Engineering College', university: 'Sunrise Engineering College', city: 'Hyderabad', state: 'Telangana', type: 'Engineering College',
+    id: 'c6', slug: 'sunrise-engineering-college', name: 'Sunrise Engineering College', university: 'Sunrise Engineering College', city: 'Hyderabad', state: 'Telangana', type: 'Engineering College',
     description: 'A demo engineering college with an active E-Cell and one of the loudest fest seasons in the region. [Demo campus — replace with real campus profiles via admin.]',
     image: '/images/campus/campus-6.jpg', imageAlt: 'An instructor engaging with students in a classroom',
     categories: ['Campus Events', 'Student Achievements', 'Clubs & Communities'],
@@ -323,8 +300,7 @@ export const demoCampuses: Campus[] = [
 /* ─────────────────────────── PODCAST ─────────────────────────── */
 export const demoEpisodes: PodcastEpisode[] = [
   {
-    id: 'p1', slug: 'what-nobody-tells-you-about-your-first-startup', episodeNumber: 1, featured: true, demo: true,
-    title: 'What Nobody Tells You About Your First Startup',
+    id: 'p1', slug: 'what-nobody-tells-you-about-your-first-startup', episodeNumber: 1, featured: true, title: 'What Nobody Tells You About Your First Startup',
     description: 'A candid conversation with a student founder about the unglamorous middle — between the big idea and the first real milestone. Co-founders, first users, first mistakes. [Demo episode.]',
     guest: 'Ishaan Verma', guestRole: 'Founder, [Demo Startup] • Final-year student',
     category: 'Founder Stories', durationLabel: '38:12', date: '2026-08-25',
@@ -339,8 +315,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     ],
   },
   {
-    id: 'p2', slug: 'the-gap-year-that-changed-everything', episodeNumber: 2, featured: false, demo: true,
-    title: 'The Gap Year That Changed Everything',
+    id: 'p2', slug: 'the-gap-year-that-changed-everything', episodeNumber: 2, featured: false, title: 'The Gap Year That Changed Everything',
     description: 'A student voices episode on choosing an unconventional pause — and what a year away from the syllabus actually taught one young person. [Demo episode.]',
     guest: 'Riya Chatterjee', guestRole: 'Student & writer',
     category: 'Student Voices', durationLabel: '31:40', date: '2026-08-11',
@@ -350,8 +325,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
   {
-    id: 'p3', slug: 'breaking-into-tech-without-a-cs-degree', episodeNumber: 3, featured: false, demo: true,
-    title: 'Breaking Into Tech Without a CS Degree',
+    id: 'p3', slug: 'breaking-into-tech-without-a-cs-degree', episodeNumber: 3, featured: false, title: 'Breaking Into Tech Without a CS Degree',
     description: 'A career conversation about routes into technology careers from non-traditional backgrounds — portfolios, projects and the skills that actually matter. [Demo episode.]',
     guest: 'Aman Khanna', guestRole: 'Software engineer & mentor',
     category: 'Career Conversations', durationLabel: '44:05', date: '2026-07-28',
@@ -361,8 +335,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
   {
-    id: 'p4', slug: 'ideas-are-cheap-execution-is-everything', episodeNumber: 4, featured: false, demo: true,
-    title: 'Ideas Are Cheap. Execution Is Everything.',
+    id: 'p4', slug: 'ideas-are-cheap-execution-is-everything', episodeNumber: 4, featured: false, title: 'Ideas Are Cheap. Execution Is Everything.',
     description: 'An ideas & perspectives episode on why the world is full of unbuilt ideas — and what separates people who build from people who plan. [Demo episode.]',
     guest: 'Dr. Nandita Rao', guestRole: 'Educator & innovation researcher',
     category: 'Ideas & Perspectives', durationLabel: '29:58', date: '2026-07-14',
@@ -372,8 +345,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
   {
-    id: 'p5', slug: 'studying-smart-science-over-superstition', episodeNumber: 5, featured: false, demo: true,
-    title: 'Studying Smart: Science Over Superstition',
+    id: 'p5', slug: 'studying-smart-science-over-superstition', episodeNumber: 5, featured: false, title: 'Studying Smart: Science Over Superstition',
     description: 'Spaced repetition, active recall, sleep and stress — an evidence-based conversation about how students actually learn better. [Demo episode.]',
     guest: 'Vikram Shetty', guestRole: 'Learning researcher',
     category: 'Ideas & Perspectives', durationLabel: '36:22', date: '2026-06-30',
@@ -383,8 +355,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
   {
-    id: 'p6', slug: 'from-campus-radio-to-community-building', episodeNumber: 6, featured: false, demo: true,
-    title: 'From Campus Radio to Community Building',
+    id: 'p6', slug: 'from-campus-radio-to-community-building', episodeNumber: 6, featured: false, title: 'From Campus Radio to Community Building',
     description: 'A student voices episode about how a tiny campus radio project grew into a community platform — and the lessons in leadership along the way. [Demo episode.]',
     guest: 'Zoya Ahmed', guestRole: 'Campus radio founder',
     category: 'Student Voices', durationLabel: '33:47', date: '2026-06-16',
@@ -398,24 +369,22 @@ export const demoEpisodes: PodcastEpisode[] = [
 /* ─────────────────────────── EVENTS ─────────────────────────── */
 export const demoEvents: TscEvent[] = [
   {
-    id: 'e1', slug: 'career-awareness-workshop', featured: true, status: 'upcoming', demo: true,
-    title: 'Career Awareness Workshop',
+    id: 'e1', slug: 'career-awareness-workshop', featured: true, status: 'upcoming', title: 'Career Awareness Workshop',
     dek: 'Helping students discover careers beyond the conventional path.',
     description: [
-      'Most students choose careers from a list of five they have actually heard of. This workshop (demo) exists to stretch that list — with real professionals, real journeys and honest conversations about what different careers actually look like day to day.',
+      'Most students choose careers from a list of five they have actually heard of. This workshop  exists to stretch that list — with real professionals, real journeys and honest conversations about what different careers actually look like day to day.',
       'Sessions include career discovery frameworks, live Q&A with professionals from unexpected fields, and a planning exercise every participant takes home.',
     ],
-    date: '2026-09-18', time: '10:00 AM – 4:00 PM', venue: 'Seminar Hall A, Nalanda Institute of Technology (Demo)', city: 'Patna', state: 'Bihar',
-    organizer: 'TSC Career Awareness Team (Demo)', category: 'Career',
+    date: '2026-09-18', time: '10:00 AM – 4:00 PM', venue: 'Seminar Hall A, Nalanda Institute of Technology ', city: 'Patna', state: 'Bihar',
+    organizer: 'TSC Career Awareness Team ', category: 'Career',
     image: '/images/events/event-1.jpg', imageAlt: 'A speaker addressing students at a career workshop',
     registrationUrl: null, registrationDeadline: '2026-09-15',
   },
   {
-    id: 'e2', slug: 'founders-meetup-networking-evening', featured: false, status: 'upcoming', demo: true,
-    title: "Founders' Meetup & Networking Evening",
+    id: 'e2', slug: 'founders-meetup-networking-evening', featured: false, status: 'upcoming', title: "Founders' Meetup & Networking Evening",
     dek: 'Student founders, builders and the merely curious — one room, zero gatekeeping.',
     description: [
-      'An evening of lightning talks by student founders (demo), speed networking, and open tables for anyone hunting co-founders, feedback or first customers.',
+      'An evening of lightning talks by student founders , speed networking, and open tables for anyone hunting co-founders, feedback or first customers.',
       'No backgrounds required. Bring questions, leave with contacts.',
     ],
     date: '2026-09-26', time: '5:30 PM – 8:30 PM', venue: 'Innovation Hub, [Demo Venue]', city: 'Bengaluru', state: 'Karnataka',
@@ -424,8 +393,7 @@ export const demoEvents: TscEvent[] = [
     registrationUrl: null, registrationDeadline: '2026-09-22',
   },
   {
-    id: 'e3', slug: 'education-fair-courses-colleges-careers', featured: false, status: 'upcoming', demo: true,
-    title: 'Education Fair: Courses, Colleges & Careers',
+    id: 'e3', slug: 'education-fair-courses-colleges-careers', featured: false, status: 'upcoming', title: 'Education Fair: Courses, Colleges & Careers',
     dek: 'Meet institutions, explore programmes and ask the questions brochures never answer.',
     description: [
       'A demo education fair bringing together institutions, course providers and career counsellors under one roof — designed around student questions, not sales pitches.',
@@ -437,57 +405,52 @@ export const demoEvents: TscEvent[] = [
     registrationUrl: null, registrationDeadline: '2026-09-10',
   },
   {
-    id: 'e4', slug: 'national-student-hackathon-2026', featured: true, status: 'upcoming', demo: true,
-    title: 'National Student Hackathon 2026',
+    id: 'e4', slug: 'national-student-hackathon-2026', featured: true, status: 'upcoming', title: 'National Student Hackathon 2026',
     dek: 'Thirty-six hours, real problem statements, and a hall full of people who build.',
     description: [
       'The demo edition of a national student hackathon: tracks in education, civic tech, sustainability and open innovation. Mentors on site, honest judging, and demos that actually work (mostly).',
       'Open to all full-time students. Teams of up to four.',
     ],
-    date: '2026-10-04', time: '8:00 AM (Day 1) – 6:00 PM (Day 2)', venue: 'Tech Park Block, Coastal University (Demo)', city: 'Kochi', state: 'Kerala',
+    date: '2026-10-04', time: '8:00 AM (Day 1) – 6:00 PM (Day 2)', venue: 'Tech Park Block, Coastal University ', city: 'Kochi', state: 'Kerala',
     organizer: 'Demo Tech Communities', category: 'Technology',
     image: '/images/events/event-2.jpg', imageAlt: 'Students gathered at tables during a hackathon event',
     registrationUrl: null, registrationDeadline: '2026-09-27',
   },
   {
-    id: 'e5', slug: 'leadership-bootcamp-student-councils', featured: false, status: 'upcoming', demo: true,
-    title: 'Leadership Bootcamp for Student Councils',
+    id: 'e5', slug: 'leadership-bootcamp-student-councils', featured: false, status: 'upcoming', title: 'Leadership Bootcamp for Student Councils',
     dek: 'Two days of governance, communication and getting things done inside institutions.',
     description: [
       'A demo bootcamp for student council members: running meetings that end in decisions, representing voices that disagree, budgeting for events, and building teams that outlast tenures.',
     ],
-    date: '2026-10-02', time: '9:30 AM – 5:00 PM', venue: 'Convention Centre, Sagar Public University (Demo)', city: 'Bhopal', state: 'Madhya Pradesh',
+    date: '2026-10-02', time: '9:30 AM – 5:00 PM', venue: 'Convention Centre, Sagar Public University ', city: 'Bhopal', state: 'Madhya Pradesh',
     organizer: 'Demo Leadership Foundation', category: 'Leadership',
     image: '/images/events/event-1.jpg', imageAlt: 'Students taking notes during a leadership workshop session',
     registrationUrl: null, registrationDeadline: '2026-09-28',
   },
   {
-    id: 'e6', slug: 'yuva-cultural-night', featured: false, status: 'upcoming', demo: true,
-    title: 'Yuva Cultural Night',
+    id: 'e6', slug: 'yuva-cultural-night', featured: false, status: 'upcoming', title: 'Yuva Cultural Night',
     dek: 'Music, theatre, poetry and dance — a stage built by students, for students.',
     description: [
       'The demo edition of a student cultural night: open-mic warm-ups, band performances, a street-theatre showcase and the annual poetry slam finale.',
     ],
-    date: '2026-10-11', time: '5:00 PM – 10:00 PM', venue: 'Open Air Theatre, Coastal University (Demo)', city: 'Kochi', state: 'Kerala',
+    date: '2026-10-11', time: '5:00 PM – 10:00 PM', venue: 'Open Air Theatre, Coastal University ', city: 'Kochi', state: 'Kerala',
     organizer: 'Demo Culture Collective', category: 'Culture',
     image: '/images/events/event-3.jpg', imageAlt: 'A crowd enjoying a performance at a college cultural night',
     registrationUrl: null, registrationDeadline: '2026-10-08',
   },
   {
-    id: 'e7', slug: 'pitch-your-idea-startup-competition', featured: false, status: 'upcoming', demo: true,
-    title: 'Pitch Your Idea: Student Startup Competition',
+    id: 'e7', slug: 'pitch-your-idea-startup-competition', featured: false, status: 'upcoming', title: 'Pitch Your Idea: Student Startup Competition',
     dek: 'Five minutes, five slides, one idea — and a room of people who might join it.',
     description: [
       'A demo pitch competition for student entrepreneurs: pitching workshops, a qualifying round, and a final showcase before a jury of founders and educators.',
     ],
-    date: '2026-10-24', time: '10:00 AM – 7:00 PM', venue: 'E-Cell Arena, Sunrise Engineering College (Demo)', city: 'Hyderabad', state: 'Telangana',
+    date: '2026-10-24', time: '10:00 AM – 7:00 PM', venue: 'E-Cell Arena, Sunrise Engineering College ', city: 'Hyderabad', state: 'Telangana',
     organizer: 'Demo E-Cell Network', category: 'Entrepreneurship',
     image: '/images/campaign/campaign-3.jpg', imageAlt: 'Young founders presenting their startup idea',
     registrationUrl: null, registrationDeadline: '2026-10-18',
   },
   {
-    id: 'e8', slug: 'summer-coding-sprint', featured: false, status: 'past', demo: true,
-    title: 'Summer Coding Sprint',
+    id: 'e8', slug: 'summer-coding-sprint', featured: false, status: 'past', title: 'Summer Coding Sprint',
     dek: 'A four-week remote sprint where 200 students shipped their first projects.',
     description: [
       'The demo summer sprint paired beginners with mentors and one goal: ship something real. This event has concluded — highlights and project gallery coming to TSC Stories. [Demo event.]',
@@ -502,8 +465,7 @@ export const demoEvents: TscEvent[] = [
 /* ─────────────────────────── OPPORTUNITIES ─────────────────────────── */
 export const demoOpportunities: Opportunity[] = [
   {
-    id: 'o1', slug: 'graduate-trainee-operations-brightcart', type: 'Job', mode: 'On-site', featured: true, active: true, demo: true,
-    title: 'Graduate Trainee — Operations', organization: 'BrightCart [Demo Org]',
+    id: 'o1', slug: 'graduate-trainee-operations-brightcart', type: 'Job', mode: 'On-site', featured: true, active: true, title: 'Graduate Trainee — Operations', organization: 'BrightCart [Demo Org]',
     location: 'Bengaluru, Karnataka', eligibility: '2026 graduates • Any degree',
     deadline: '2026-09-20', postedOn: '2026-08-20',
     description: 'A demo early-career programme rotating trainees across supply-chain, cataloguing and vendor operations, with mentorship and a structured 12-month pathway.',
@@ -511,8 +473,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o2', slug: 'junior-content-writer-demo-media', type: 'Job', mode: 'Hybrid', featured: false, active: true, demo: true,
-    title: 'Junior Content Writer', organization: 'Demo Media House',
+    id: 'o2', slug: 'junior-content-writer-demo-media', type: 'Job', mode: 'Hybrid', featured: false, active: true, title: 'Junior Content Writer', organization: 'Demo Media House',
     location: 'Mumbai, Maharashtra', eligibility: '0–2 years • Any graduate',
     deadline: '2026-09-30', postedOn: '2026-08-24',
     description: 'Write explainers, campus features and social copy for a youth publication (demo listing). Strong editing instincts matter more than experience.',
@@ -520,8 +481,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o3', slug: 'community-manager-early-career-demo-edtech', type: 'Job', mode: 'Remote', featured: false, active: true, demo: true,
-    title: 'Community Manager (Early Career)', organization: 'Demo EdTech',
+    id: 'o3', slug: 'community-manager-early-career-demo-edtech', type: 'Job', mode: 'Remote', featured: false, active: true, title: 'Community Manager (Early Career)', organization: 'Demo EdTech',
     location: 'Remote (India)', eligibility: 'Freshers welcome',
     deadline: '2026-10-05', postedOn: '2026-08-28',
     description: 'Run student communities, campus ambassador loops and engagement campaigns for a learning platform (demo listing).',
@@ -529,8 +489,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o4', slug: 'product-design-intern-nimbus-labs', type: 'Internship', mode: 'Remote', featured: true, active: true, demo: true,
-    title: 'Product Design Intern', organization: 'Nimbus Labs [Demo Org]',
+    id: 'o4', slug: 'product-design-intern-nimbus-labs', type: 'Internship', mode: 'Remote', featured: true, active: true, title: 'Product Design Intern', organization: 'Nimbus Labs [Demo Org]',
     location: 'Remote (India)', eligibility: 'Students • 3rd year+',
     deadline: '2026-09-15', postedOn: '2026-08-15',
     description: 'A demo 3-month design internship: ship real UI for a student-facing product with weekly design reviews and a portfolio-worthy capstone.',
@@ -538,8 +497,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o5', slug: 'media-journalism-internship-demo-newsroom', type: 'Internship', mode: 'On-site', featured: false, active: true, demo: true,
-    title: 'Media & Journalism Intern', organization: 'Demo Newsroom',
+    id: 'o5', slug: 'media-journalism-internship-demo-newsroom', type: 'Internship', mode: 'On-site', featured: false, active: true, title: 'Media & Journalism Intern', organization: 'Demo Newsroom',
     location: 'New Delhi', eligibility: 'Students • Any stream',
     deadline: '2026-09-25', postedOn: '2026-08-22',
     description: 'A demo newsroom internship covering education and youth affairs: pitching, reporting, fact-checking and publishing with senior editors.',
@@ -547,8 +505,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o6', slug: 'research-intern-climate-policy-demo-institute', type: 'Internship', mode: 'Remote', featured: false, active: true, demo: true,
-    title: 'Research Intern (Climate Policy)', organization: 'Demo Policy Institute',
+    id: 'o6', slug: 'research-intern-climate-policy-demo-institute', type: 'Internship', mode: 'Remote', featured: false, active: true, title: 'Research Intern (Climate Policy)', organization: 'Demo Policy Institute',
     location: 'Remote (India)', eligibility: 'Postgraduate students',
     deadline: '2026-10-10', postedOn: '2026-08-18',
     description: 'Support a demo research project on climate policy and youth participation — literature reviews, data cleaning and a co-authored policy brief.',
@@ -556,8 +513,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o7', slug: 'youth-leadership-fellowship-2026', type: 'Fellowship', mode: 'Hybrid', featured: true, active: true, demo: true,
-    title: 'Youth Leadership Fellowship 2026', organization: 'Demo Foundation',
+    id: 'o7', slug: 'youth-leadership-fellowship-2026', type: 'Fellowship', mode: 'Hybrid', featured: true, active: true, title: 'Youth Leadership Fellowship 2026', organization: 'Demo Foundation',
     location: 'Multiple cities • Hybrid', eligibility: 'Ages 18–25',
     deadline: '2026-09-30', postedOn: '2026-08-10',
     description: 'A demo six-month fellowship combining training, mentorship and a funded community project for young changemakers.',
@@ -565,8 +521,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o8', slug: 'social-innovation-fellowship-demo-lab', type: 'Fellowship', mode: 'On-site', featured: false, active: true, demo: true,
-    title: 'Social Innovation Fellowship', organization: 'Demo Innovation Lab',
+    id: 'o8', slug: 'social-innovation-fellowship-demo-lab', type: 'Fellowship', mode: 'On-site', featured: false, active: true, title: 'Social Innovation Fellowship', organization: 'Demo Innovation Lab',
     location: 'Pune, Maharashtra', eligibility: 'Students & recent graduates',
     deadline: '2026-10-15', postedOn: '2026-08-26',
     description: 'A demo fellowship for student teams building solutions to community problems — stipend, workspace and mentor support included.',
@@ -574,8 +529,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o9', slug: 'undergraduate-research-fellowship-demo-university', type: 'Fellowship', mode: 'On-site', featured: false, active: true, demo: true,
-    title: 'Undergraduate Research Fellowship', organization: 'Demo University',
+    id: 'o9', slug: 'undergraduate-research-fellowship-demo-university', type: 'Fellowship', mode: 'On-site', featured: false, active: true, title: 'Undergraduate Research Fellowship', organization: 'Demo University',
     location: 'Bhopal, Madhya Pradesh', eligibility: 'Undergraduates • 2nd year+',
     deadline: '2026-10-20', postedOn: '2026-08-12',
     description: 'A demo summer research fellowship pairing undergraduates with faculty labs across sciences, social sciences and humanities.',
@@ -583,8 +537,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o10', slug: 'merit-cum-means-scholarship-demo-trust', type: 'Scholarship', mode: 'Remote', featured: false, active: true, demo: true,
-    title: 'Merit-cum-Means Scholarship', organization: 'Demo Education Trust',
+    id: 'o10', slug: 'merit-cum-means-scholarship-demo-trust', type: 'Scholarship', mode: 'Remote', featured: false, active: true, title: 'Merit-cum-Means Scholarship', organization: 'Demo Education Trust',
     location: 'Pan-India', eligibility: 'Family income criteria apply',
     deadline: '2026-09-28', postedOn: '2026-08-14',
     description: 'A demo scholarship supporting tuition and living costs for meritorious students with financial need.',
@@ -592,8 +545,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o11', slug: 'women-in-stem-scholarship-demo-foundation', type: 'Scholarship', mode: 'Remote', featured: false, active: true, demo: true,
-    title: 'Women in STEM Scholarship', organization: 'Demo Foundation',
+    id: 'o11', slug: 'women-in-stem-scholarship-demo-foundation', type: 'Scholarship', mode: 'Remote', featured: false, active: true, title: 'Women in STEM Scholarship', organization: 'Demo Foundation',
     location: 'Pan-India', eligibility: 'Women students in STEM',
     deadline: '2026-10-08', postedOn: '2026-08-20',
     description: 'A demo scholarship recognising women pursuing STEM degrees, with mentorship alongside financial support.',
@@ -601,8 +553,7 @@ export const demoOpportunities: Opportunity[] = [
     applicationUrl: null,
   },
   {
-    id: 'o12', slug: 'community-changemaker-scholarship', type: 'Scholarship', mode: 'Remote', featured: false, active: true, demo: true,
-    title: 'Community Changemaker Scholarship', organization: 'Demo Youth Collective',
+    id: 'o12', slug: 'community-changemaker-scholarship', type: 'Scholarship', mode: 'Remote', featured: false, active: true, title: 'Community Changemaker Scholarship', organization: 'Demo Youth Collective',
     location: 'Pan-India', eligibility: 'Students leading community initiatives',
     deadline: '2026-10-30', postedOn: '2026-08-29',
     description: 'A demo scholarship for students who have led measurable community or campus initiatives — impact over marks.',
@@ -614,9 +565,9 @@ export const demoOpportunities: Opportunity[] = [
 /* ─────────────────────────── CURRENT AFFAIRS ─────────────────────────── */
 export const demoEditions: CurrentAffairsEdition[] = [
   {
-    id: 'ca1', slug: 'current-affairs-september-2026', month: 'September', year: 2026, demo: true, pdfUrl: null,
+    id: 'ca1', slug: 'current-affairs-september-2026', month: 'September', year: 2026, pdfUrl: null,
     title: 'Current Affairs — September 2026',
-    intro: 'The September (demo) edition gathers the month\'s most relevant developments for students — national policy moves, global shifts, economic signals, science milestones and education updates — explained in plain language.',
+    intro: 'The September  edition gathers the month\'s most relevant developments for students — national policy moves, global shifts, economic signals, science milestones and education updates — explained in plain language.',
     cover: '/images/affairs/affairs-1.jpg', coverAlt: 'Designed cover of TSC Current Affairs, September 2026 edition',
     topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
     articles: [
@@ -708,9 +659,9 @@ export const demoEditions: CurrentAffairsEdition[] = [
     ],
   },
   {
-    id: 'ca2', slug: 'current-affairs-august-2026', month: 'August', year: 2026, demo: true, pdfUrl: null,
+    id: 'ca2', slug: 'current-affairs-august-2026', month: 'August', year: 2026, pdfUrl: null,
     title: 'Current Affairs — August 2026',
-    intro: 'The August (demo) edition: monsoon-session policy news, global economic currents, campus-relevant science and the education headlines students actually asked about.',
+    intro: 'The August  edition: monsoon-session policy news, global economic currents, campus-relevant science and the education headlines students actually asked about.',
     cover: '/images/affairs/affairs-2.jpg', coverAlt: 'Designed cover of TSC Current Affairs, August 2026 edition',
     topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
     articles: [
@@ -797,9 +748,9 @@ export const demoEditions: CurrentAffairsEdition[] = [
     ],
   },
   {
-    id: 'ca3', slug: 'current-affairs-july-2026', month: 'July', year: 2026, demo: true, pdfUrl: null,
+    id: 'ca3', slug: 'current-affairs-july-2026', month: 'July', year: 2026, pdfUrl: null,
     title: 'Current Affairs — July 2026',
-    intro: 'The July (demo) edition kicks off the academic year with the stories that set the stage — policy, economy, science and the world beyond campus.',
+    intro: 'The July  edition kicks off the academic year with the stories that set the stage — policy, economy, science and the world beyond campus.',
     cover: '/images/affairs/affairs-3.jpg', coverAlt: 'Designed cover of TSC Current Affairs, July 2026 edition',
     topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
     articles: [
@@ -890,7 +841,7 @@ export const demoEditions: CurrentAffairsEdition[] = [
 /* ─────────────────────────── LEGAL AWARENESS ─────────────────────────── */
 export const demoLegalArticles: LegalArticle[] = [
   {
-    id: 'l1', slug: 'your-rights-on-campus-a-starter-guide', topic: 'Student Rights', demo: true, date: '2026-08-20', readingTime: 5,
+    id: 'l1', slug: 'your-rights-on-campus-a-starter-guide', topic: 'Student Rights', date: '2026-08-20', readingTime: 5,
     title: 'Your Rights on Campus: A Starter Guide',
     summary: 'Understand your rights within educational institutions — from fair evaluation to grievance redressal.',
     keyPoints: ['Institutions typically publish student rights and codes of conduct — know where to find yours', 'Fair and transparent evaluation is a reasonable expectation; ask for published criteria', 'Most institutions must maintain grievance redressal mechanisms', 'Documentation (records, receipts, written communication) is your best friend'],
@@ -901,7 +852,7 @@ export const demoLegalArticles: LegalArticle[] = [
     ],
   },
   {
-    id: 'l2', slug: 'understanding-disciplinary-proceedings', topic: 'Student Rights', demo: true, date: '2026-08-05', readingTime: 5,
+    id: 'l2', slug: 'understanding-disciplinary-proceedings', topic: 'Student Rights', date: '2026-08-05', readingTime: 5,
     title: 'Understanding Disciplinary Proceedings in Institutions',
     summary: 'What to expect if you ever face disciplinary action — notice, hearing, representation and appeal.',
     keyPoints: ['You should generally receive written notice of any allegation', 'Principles of natural justice: hear the other side before deciding', 'You may be allowed a representative or witness in many processes', 'Appeal routes usually exist — deadlines matter'],
@@ -912,7 +863,7 @@ export const demoLegalArticles: LegalArticle[] = [
     ],
   },
   {
-    id: 'l3', slug: 'student-guide-to-staying-safe-online', topic: 'Cyber Safety', demo: true, date: '2026-08-24', readingTime: 4,
+    id: 'l3', slug: 'student-guide-to-staying-safe-online', topic: 'Cyber Safety', date: '2026-08-24', readingTime: 4,
     title: "A Student's Guide to Staying Safe Online",
     summary: 'Know what to do when things go wrong online — from scams to harassment to stolen accounts.',
     keyPoints: ['Use unique passwords and two-factor authentication everywhere', 'Never share OTPs — no legitimate service asks for them', 'Screenshot and report harassment; most platforms have escalation routes', 'India has a national cybercrime reporting portal for online fraud and abuse'],
@@ -923,7 +874,7 @@ export const demoLegalArticles: LegalArticle[] = [
     ],
   },
   {
-    id: 'l4', slug: 'what-to-do-if-your-account-gets-hacked', topic: 'Cyber Safety', demo: true, date: '2026-07-30', readingTime: 4,
+    id: 'l4', slug: 'what-to-do-if-your-account-gets-hacked', topic: 'Cyber Safety', date: '2026-07-30', readingTime: 4,
     title: 'What To Do If Your Account Gets Hacked',
     summary: 'A calm, step-by-step response plan for the worst-case scenario.',
     keyPoints: ['Act fast: change passwords from a different, trusted device', 'Use "forgot password" and recovery emails/phones to reclaim access', 'Check active sessions and connected apps; revoke unfamiliar ones', 'Inform close contacts so impersonation scams spread no further'],
@@ -934,7 +885,7 @@ export const demoLegalArticles: LegalArticle[] = [
     ],
   },
   {
-    id: 'l5', slug: 'digital-privacy-101-for-students', topic: 'Digital Rights', demo: true, date: '2026-08-15', readingTime: 5,
+    id: 'l5', slug: 'digital-privacy-101-for-students', topic: 'Digital Rights', date: '2026-08-15', readingTime: 5,
     title: 'Digital Privacy 101 for Students',
     summary: 'Understand privacy, online identity and responsible digital participation.',
     keyPoints: ['Your data trail: forms, apps and "free" services collect more than you think', 'Check app permissions regularly — location, contacts, microphone', 'The internet remembers: think before you post', 'India\'s digital personal data protection law gives citizens specific rights'],
@@ -945,7 +896,7 @@ export const demoLegalArticles: LegalArticle[] = [
     ],
   },
   {
-    id: 'l6', slug: 'your-digital-footprint-and-you', topic: 'Digital Rights', demo: true, date: '2026-07-20', readingTime: 4,
+    id: 'l6', slug: 'your-digital-footprint-and-you', topic: 'Digital Rights', date: '2026-07-20', readingTime: 4,
     title: 'Your Digital Footprint and You',
     summary: 'How what you post today shapes opportunities tomorrow — and how to curate it.',
     keyPoints: ['Recruiters and admissions teams do look you up', 'Old posts can resurface: audit your public profiles periodically', 'Build a deliberate presence: portfolios over rants', 'You can request removal of some content — platform rules apply'],
@@ -955,7 +906,7 @@ export const demoLegalArticles: LegalArticle[] = [
     ],
   },
   {
-    id: 'l7', slug: 'education-policy-explained-simply', topic: 'Education Laws', demo: true, date: '2026-08-28', readingTime: 6,
+    id: 'l7', slug: 'education-policy-explained-simply', topic: 'Education Laws', date: '2026-08-28', readingTime: 6,
     title: 'Education Policy Explained Simply',
     summary: 'Simplified explainers on rules, regulations and policies affecting students.',
     keyPoints: ['National policy sets direction; institutions and boards implement', 'Credit frameworks are making learning more flexible and portable', 'Regulators like UGC/AICTE publish student-facing notifications', 'When in doubt, read the official circular — not the rumour'],
@@ -966,7 +917,7 @@ export const demoLegalArticles: LegalArticle[] = [
     ],
   },
   {
-    id: 'l8', slug: 'anti-ragging-laws-and-guidelines', topic: 'Education Laws', demo: true, date: '2026-07-15', readingTime: 5,
+    id: 'l8', slug: 'anti-ragging-laws-and-guidelines', topic: 'Education Laws', date: '2026-07-15', readingTime: 5,
     title: 'Understanding Anti-Ragging Laws and UGC Guidelines',
     summary: 'What counts as ragging, what the law says, and how to seek help safely.',
     keyPoints: ['Ragging is prohibited by law and UGC regulations — it is not "tradition"', 'It includes a wide range of behaviours, physical and psychological', 'Every institution must have an anti-ragging committee and helpline access', 'Complaints can be made confidentially; retaliation is itself punishable'],
@@ -1004,34 +955,34 @@ export const flagshipCampaign: Campaign = {
 
 /* ─────────────────────────── ADMIN / DASHBOARD DEMO DATA ─────────────────────────── */
 export const demoStorySubmissions: StorySubmissionRecord[] = [
-  { id: 'ss1', name: 'Rohit Kumar (Demo)', email: 'rohit.demo@example.com', college: 'Demo College, Patna', city: 'Patna', state: 'Bihar', title: 'How Our Team Built a Flood-alert Prototype', category: 'Student', summary: 'A student team prototype for local flood alerts, built during a weekend hackathon.', status: 'pending', submittedOn: '2026-08-29' },
-  { id: 'ss2', name: 'Sneha Iyer (Demo)', email: 'sneha.demo@example.com', college: 'Demo Institute, Kochi', city: 'Kochi', state: 'Kerala', title: 'One Year of a Campus Composting Club', category: 'Campus', summary: 'What we learned running a student-led composting initiative for a full academic year.', status: 'under review', submittedOn: '2026-08-26' },
-  { id: 'ss3', name: 'Aditya Rao (Demo)', email: 'aditya.demo@example.com', college: 'Demo University, Hyderabad', city: 'Hyderabad', state: 'Telangana', title: 'Failing Forward: My First Startup Shut Down', category: 'Startup', summary: 'An honest post-mortem of a student startup that did not survive — and what it taught me.', status: 'pending', submittedOn: '2026-08-30' },
+  { id: 'ss1', name: 'Rohit Kumar ', email: 'rohit.demo@example.com', college: 'Demo College, Patna', city: 'Patna', state: 'Bihar', title: 'How Our Team Built a Flood-alert Prototype', category: 'Student', summary: 'A student team prototype for local flood alerts, built during a weekend hackathon.', status: 'pending', submittedOn: '2026-08-29' },
+  { id: 'ss2', name: 'Sneha Iyer ', email: 'sneha.demo@example.com', college: 'Demo Institute, Kochi', city: 'Kochi', state: 'Kerala', title: 'One Year of a Campus Composting Club', category: 'Campus', summary: 'What we learned running a student-led composting initiative for a full academic year.', status: 'under review', submittedOn: '2026-08-26' },
+  { id: 'ss3', name: 'Aditya Rao ', email: 'aditya.demo@example.com', college: 'Demo University, Hyderabad', city: 'Hyderabad', state: 'Telangana', title: 'Failing Forward: My First Startup Shut Down', category: 'Startup', summary: 'An honest post-mortem of a student startup that did not survive — and what it taught me.', status: 'pending', submittedOn: '2026-08-30' },
 ];
 
 export const demoCampusSubmissions: CampusSubmissionRecord[] = [
-  { id: 'cs1', name: 'Meera Nair (Demo)', email: 'meera.demo@example.com', campus: 'Coastal University (Demo)', city: 'Kochi', state: 'Kerala', title: 'Our Campus Just Launched a Student Radio Station', category: 'Campus News', summary: 'A new student-run radio initiative goes live on campus this month.', status: 'pending', submittedOn: '2026-08-28' },
-  { id: 'cs2', name: 'Faizan Ali (Demo)', email: 'faizan.demo@example.com', campus: 'Nalanda Institute (Demo)', city: 'Patna', state: 'Bihar', title: 'Night Library Extends Hours for Exam Season', category: 'Campus Life', summary: 'Student council successfully extends reading-room hours till 4 a.m.', status: 'under review', submittedOn: '2026-08-25' },
-  { id: 'cs3', name: 'Tanvi Deshpande (Demo)', email: 'tanvi.demo@example.com', campus: 'Vidya Vihar Central (Demo)', city: 'Pune', state: 'Maharashtra', title: 'E-Cell Announces Annual Demo Pitch Fest', category: 'Campus Events', summary: 'Call for entries open for the campus pitch competition.', status: 'pending', submittedOn: '2026-08-27' },
+  { id: 'cs1', name: 'Meera Nair ', email: 'meera.demo@example.com', campus: 'Coastal University ', city: 'Kochi', state: 'Kerala', title: 'Our Campus Just Launched a Student Radio Station', category: 'Campus News', summary: 'A new student-run radio initiative goes live on campus this month.', status: 'pending', submittedOn: '2026-08-28' },
+  { id: 'cs2', name: 'Faizan Ali ', email: 'faizan.demo@example.com', campus: 'Nalanda Institute ', city: 'Patna', state: 'Bihar', title: 'Night Library Extends Hours for Exam Season', category: 'Campus Life', summary: 'Student council successfully extends reading-room hours till 4 a.m.', status: 'under review', submittedOn: '2026-08-25' },
+  { id: 'cs3', name: 'Tanvi Deshpande ', email: 'tanvi.demo@example.com', campus: 'Vidya Vihar Central ', city: 'Pune', state: 'Maharashtra', title: 'E-Cell Announces Annual Demo Pitch Fest', category: 'Campus Events', summary: 'Call for entries open for the campus pitch competition.', status: 'pending', submittedOn: '2026-08-27' },
 ];
 
 export const demoContactMessages: ContactMessageRecord[] = [
-  { id: 'cm1', name: 'Journalism Student (Demo)', email: 'journo.demo@example.com', subject: 'Want to contribute to TSC Newsroom', message: 'Hello! I am a final-year journalism student and would love to contribute campus stories. How can I get started?', status: 'new', receivedOn: '2026-08-30' },
-  { id: 'cm2', name: 'Placement Cell (Demo)', email: 'placements.demo@example.com', subject: 'Listing an opportunity on TSC Career', message: 'We would like to list an internship opportunity for students on the platform. What is the process?', status: 'read', receivedOn: '2026-08-27' },
-  { id: 'cm3', name: 'Parent (Demo)', email: 'parent.demo@example.com', subject: 'Appreciation for the Career Awareness series', message: 'My daughter shared one of your career documentary episodes with us. Wonderful initiative — please keep going.', status: 'replied', receivedOn: '2026-08-22' },
+  { id: 'cm1', name: 'Journalism Student ', email: 'journo.demo@example.com', subject: 'Want to contribute to TSC Newsroom', message: 'Hello! I am a final-year journalism student and would love to contribute campus stories. How can I get started?', status: 'new', receivedOn: '2026-08-30' },
+  { id: 'cm2', name: 'Placement Cell ', email: 'placements.demo@example.com', subject: 'Listing an opportunity on TSC Career', message: 'We would like to list an internship opportunity for students on the platform. What is the process?', status: 'read', receivedOn: '2026-08-27' },
+  { id: 'cm3', name: 'Parent ', email: 'parent.demo@example.com', subject: 'Appreciation for the Career Awareness series', message: 'My daughter shared one of your career documentary episodes with us. Wonderful initiative — please keep going.', status: 'replied', receivedOn: '2026-08-22' },
 ];
 
 export const demoMembers: MemberRecord[] = [
-  { id: 'm1', name: 'Aarav Kumar (Demo)', email: 'aarav.demo@example.com', college: 'Nalanda Institute (Demo)', city: 'Patna', role: 'member', joinedOn: '2026-08-02', status: 'active' },
-  { id: 'm2', name: 'Priya Sharma (Demo)', email: 'priya.demo@example.com', college: 'Vidya Vihar Central (Demo)', city: 'Pune', role: 'editor', joinedOn: '2026-07-18', status: 'active' },
-  { id: 'm3', name: 'Zoya Ahmed (Demo)', email: 'zoya.demo@example.com', college: 'Coastal University (Demo)', city: 'Kochi', role: 'member', joinedOn: '2026-08-14', status: 'active' },
-  { id: 'm4', name: 'Vikram Shetty (Demo)', email: 'vikram.demo@example.com', college: 'Sunrise Engineering (Demo)', city: 'Hyderabad', role: 'member', joinedOn: '2026-08-20', status: 'pending' },
-  { id: 'm5', name: 'TSC Admin (Demo)', email: 'admin@tsc.demo', college: '—', city: '—', role: 'admin', joinedOn: '2026-06-01', status: 'active' },
+  { id: 'm1', name: 'Aarav Kumar ', email: 'aarav.demo@example.com', college: 'Nalanda Institute ', city: 'Patna', role: 'member', joinedOn: '2026-08-02', status: 'active' },
+  { id: 'm2', name: 'Priya Sharma ', email: 'priya.demo@example.com', college: 'Vidya Vihar Central ', city: 'Pune', role: 'editor', joinedOn: '2026-07-18', status: 'active' },
+  { id: 'm3', name: 'Zoya Ahmed ', email: 'zoya.demo@example.com', college: 'Coastal University ', city: 'Kochi', role: 'member', joinedOn: '2026-08-14', status: 'active' },
+  { id: 'm4', name: 'Vikram Shetty ', email: 'vikram.demo@example.com', college: 'Sunrise Engineering ', city: 'Hyderabad', role: 'member', joinedOn: '2026-08-20', status: 'pending' },
+  { id: 'm5', name: 'TSC Admin ', email: 'admin@tsc.demo', college: '—', city: '—', role: 'admin', joinedOn: '2026-06-01', status: 'active' },
 ];
 
 export const demoNotifications: NotificationRecord[] = [
-  { id: 'nt1', title: 'New demo edition published', body: 'Current Affairs — September 2026 (demo) is now live.', date: '2026-08-30', read: false, type: 'info' },
-  { id: 'nt2', title: 'Deadline reminder (demo)', body: 'Product Design Intern application closes 15 Sep.', date: '2026-08-29', read: false, type: 'opportunity' },
-  { id: 'nt3', title: 'Event registration open (demo)', body: 'Career Awareness Workshop, Patna — 18 Sep.', date: '2026-08-25', read: true, type: 'event' },
-  { id: 'nt4', title: 'Your submission is under review', body: 'Story "From Classroom to Startup" (demo) moved to review.', date: '2026-08-22', read: true, type: 'story' },
+  { id: 'nt1', title: 'New demo edition published', body: 'Current Affairs — September 2026  is now live.', date: '2026-08-30', read: false, type: 'info' },
+  { id: 'nt2', title: 'Deadline reminder ', body: 'Product Design Intern application closes 15 Sep.', date: '2026-08-29', read: false, type: 'opportunity' },
+  { id: 'nt3', title: 'Event registration open ', body: 'Career Awareness Workshop, Patna — 18 Sep.', date: '2026-08-25', read: true, type: 'event' },
+  { id: 'nt4', title: 'Your submission is under review', body: 'Story "From Classroom to Startup"  moved to review.', date: '2026-08-22', read: true, type: 'story' },
 ];

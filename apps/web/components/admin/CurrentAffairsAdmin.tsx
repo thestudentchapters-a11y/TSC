@@ -296,8 +296,8 @@ export function CurrentAffairsAdmin() {
   return (
     <div className="space-y-8">
       {/* Header & Controls */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="max-w-2xl">
           <p className="eyebrow">Content Studio</p>
           <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">Current Affairs Management</h1>
           <p className="mt-1 text-sm text-muted">
@@ -305,7 +305,7 @@ export function CurrentAffairsAdmin() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-row items-center gap-3 shrink-0">
           <Button
             size="md"
             variant="outline"
@@ -329,6 +329,7 @@ export function CurrentAffairsAdmin() {
               setIsCreatingNew(true);
               setEditingEdition(newEd);
             }}
+            className="whitespace-nowrap shrink-0"
           >
             <Plus className="mr-1.5 h-4 w-4" /> New Edition
           </Button>
@@ -337,7 +338,7 @@ export function CurrentAffairsAdmin() {
             size="md"
             variant="primary"
             onClick={() => setIsAiModalOpen(true)}
-            className="shadow-lift ring-2 ring-gold/40 hover:ring-gold"
+            className="whitespace-nowrap shrink-0 shadow-lift ring-2 ring-gold/40 hover:ring-gold"
           >
             <Sparkles className="mr-1.5 h-4 w-4 text-gold animate-spin-slow" /> Auto-Generate with AI
           </Button>

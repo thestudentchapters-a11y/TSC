@@ -49,15 +49,9 @@ export function PageHeader({
   );
 }
 
-/** Demo-content notice used on detail pages. */
+/** Demo-content notice — disabled for production. */
 export function DemoNotice({ className }: { className?: string }) {
-  return (
-    <p className={cn('flex flex-wrap items-center gap-2 rounded-md border border-gold/40 bg-gold-50/60 px-4 py-3 text-xs leading-5 text-ink/70', className)}>
-      <DemoChip />
-      This is sample demo content for preview — not real TSC reporting. The editorial team publishes and
-      replaces content via the admin panel.
-    </p>
-  );
+  return null;
 }
 
 /** Renders long-form paragraphs with editorial styling. */

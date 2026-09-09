@@ -16,7 +16,7 @@ export interface AuthUser {
 interface AuthContextValue {
   user: AuthUser | null;
   ready: boolean;
-  login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ ok: boolean; role?: Role; error?: string }>;
   register: (payload: RegisterPayload) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
   getToken: () => string | null;
@@ -75,59 +75,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(
-    async (email: string, password: string): Promise<{ ok: boolean; error?: string }> => {
-      const api = process.env.NEXT_PUBLIC_API_URL;
-      if (api) {
-        try {
-          const res = await fetch(`${api}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-          });
-          const json = await res.json();
-          if (!res.ok) return { ok: false, error: json?.message ?? 'Login failed' };
-          persist(json.data?.user ?? json.user);
-          if (json.data?.token ?? json.token) {
-            window.localStorage.setItem('tsc.token', String(json.data?.token ?? json.token));
-          }
-          return { ok: true };
-        } catch {
-          return { ok: false, error: 'Could not reach the API. Is the server running?' };
+    async (email: string, password: string): Promise<{ ok: boolean; role?: Role; error?: string }> => {
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      try {
+        const res = await fetch(`${api}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+        });
+        const json = await res.json();
+        if (!res.ok) return { ok: false, error: json?.message ?? 'Invalid email or password' };
+        const loggedUser = json.data?.user ?? json.user;
+        persist(loggedUser);
+        if (json.data?.token ?? json.token) {
+          window.localStorage.setItem('tsc.token', String(json.data?.token ?? json.token));
         }
+        return { ok: true, role: loggedUser?.role };
+      } catch {
+        return { ok: false, error: 'Authentication server unavailable. Please make sure the API is running.' };
       }
-      // Demo mode
-      if (!email.includes('@') || password.length < 6) {
-        return { ok: false, error: 'Enter a valid email and a password of at least 6 characters.' };
-      }
-      const role: Role = email.startsWith('admin') ? 'admin' : email.startsWith('editor') ? 'editor' : 'member';
-      persist({ id: `demo-${role}`, name: `TSC ${role === 'member' ? 'Member' : role === 'editor' ? 'Editor' : 'Admin'} (Demo)`, email, role });
-      return { ok: true };
     },
     [persist]
   );
 
   const register = useCallback(
     async (payload: RegisterPayload): Promise<{ ok: boolean; error?: string }> => {
-      const api = process.env.NEXT_PUBLIC_API_URL;
-      if (api) {
-        try {
-          const res = await fetch(`${api}/api/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          const json = await res.json();
-          if (!res.ok) return { ok: false, error: json?.message ?? 'Registration failed' };
-          return { ok: true };
-        } catch {
-          return { ok: false, error: 'Could not reach the API. Is the server running?' };
-        }
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      try {
+        const res = await fetch(`${api}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const json = await res.json();
+        if (!res.ok) return { ok: false, error: json?.message ?? 'Registration failed' };
+        return { ok: true };
+      } catch {
+        return { ok: false, error: 'Registration server unavailable. Please make sure the API is running.' };
       }
-      // Demo mode — accepts and confirms
-      persist({ id: 'demo-member', name: payload.name, email: payload.email, role: 'member', college: payload.college, city: payload.city });
-      return { ok: true };
     },
-    [persist]
+    []
   );
 
   const logout = useCallback(() => {

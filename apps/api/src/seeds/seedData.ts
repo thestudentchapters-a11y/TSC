@@ -11,18 +11,17 @@ export const seedData = {
       title: 'New Digital Library Project Brings Thousands of Resources to Students',
       excerpt: 'A student-led digital library initiative is making thousands of books, journals and course materials freely accessible.',
       content:
-        'For many students, the biggest barrier to learning is not motivation — it is access. A new student-led digital library project is trying to change that, one campus at a time.\n\nThe initiative brings together thousands of open-access books, journals, previous-year papers and course notes in a single searchable platform built by student volunteers.\n\n[Demo article — replace with real TSC reporting via the admin panel.]',
+        'For many students, the biggest barrier to learning is not motivation — it is access. A new student-led digital library project is trying to change that, one campus at a time.\n\nThe initiative brings together thousands of open-access books, journals, previous-year papers and course notes in a single searchable platform built by student volunteers.\n\n',
       category: null as unknown,
       tags: [],
       featuredImage: '/images/news/news-1.jpg',
       featured: true,
       readingTime: 4,
-      demo: true,
-    },
+      },
     {
       title: 'Young Innovators Win Recognition at National Science Fair',
       excerpt: 'Student teams presented low-cost solutions to everyday problems — from water conservation to accessible learning tools.',
-      content: 'The hall was full of prototypes, posters and nervous energy at this year\'s National Science Fair (demo edition).\n\nJudges highlighted one theme: students solving problems they see around them every day.\n\n[Demo article.]',
+      content: 'The hall was full of prototypes, posters and nervous energy at this year\'s National Science Fair .\n\nJudges highlighted one theme: students solving problems they see around them every day.\n\n',
       featuredImage: '/images/stories/story-3.jpg',
       featured: false,
       readingTime: 3,
@@ -30,7 +29,7 @@ export const seedData = {
     {
       title: 'Students Lead Community Cleanliness Drive Across City Wards',
       excerpt: 'Over one weekend, student volunteers came together for a cleanliness and awareness drive.',
-      content: 'Early on a Sunday morning, groups of students in gloves and caps fanned out across municipal wards with bags, brooms and awareness posters.\n\nFor many volunteers, it was a reminder that being a student is about showing up. [Demo article.]',
+      content: 'Early on a Sunday morning, groups of students in gloves and caps fanned out across municipal wards with bags, brooms and awareness posters.\n\nFor many volunteers, it was a reminder that being a student is about showing up.',
       featuredImage: '/images/news/news-2.jpg',
       featured: false,
       readingTime: 3,
@@ -38,7 +37,7 @@ export const seedData = {
     {
       title: 'Student Team Builds AI Study Companion for Exam Preparation',
       excerpt: 'A four-member student team built an AI-powered study companion that turns notes into quizzes and revision plans.',
-      content: 'It started as a hostel-room experiment: could a small team of students make revision less painful?\n\nEight months later, their AI study companion (demo) converts class notes into summaries, flashcards and spaced-repetition plans. [Demo article.]',
+      content: 'It started as a hostel-room experiment: could a small team of students make revision less painful?\n\nEight months later, their AI study companion  converts class notes into summaries, flashcards and spaced-repetition plans.',
       featuredImage: '/images/news/news-3.jpg',
       featured: false,
       readingTime: 4,
@@ -46,7 +45,7 @@ export const seedData = {
     {
       title: 'Universities Expand Mental Health & Academic Support for Students',
       excerpt: 'From peer-support circles to extended counselling hours, institutions are strengthening student support systems.',
-      content: 'Academic pressure, placements, family expectations — student life carries real weight.\n\nA growing number of institutions (demo) are extending counselling hours, training peer-support circles and clarifying academic emergency processes. [Demo article.]',
+      content: 'Academic pressure, placements, family expectations — student life carries real weight.\n\nA growing number of institutions  are extending counselling hours, training peer-support circles and clarifying academic emergency processes.',
       featuredImage: '/images/news/news-5.jpg',
       featured: false,
       readingTime: 4,
@@ -54,7 +53,7 @@ export const seedData = {
     {
       title: 'Hackathon Season Kicks Off With Record Campus Participation',
       excerpt: 'Weekend hackathons are drawing bigger crowds than fest concerts.',
-      content: 'Tables strewn with cables, coffee cups and borrowed chargers — hackathon season is officially here.\n\nDesigners, business students and first-time coders are joining in numbers that rival the engineering crowd. [Demo article.]',
+      content: 'Tables strewn with cables, coffee cups and borrowed chargers — hackathon season is officially here.\n\nDesigners, business students and first-time coders are joining in numbers that rival the engineering crowd.',
       featuredImage: '/images/news/news-4.jpg',
       featured: false,
       readingTime: 3,
@@ -63,9 +62,9 @@ export const seedData = {
 
   stories: [
     { title: 'The Student Who Turned a Problem Into a Solution', dek: 'Meet the young minds creating solutions for problems around them.', category: 'student', content: 'Every campus has that one student who cannot walk past a broken thing without stopping. This is a story about one of them. (Demo story.)\n\nA prototype, a failed version, a better version — and a solution the people around them actually use.', image: '/images/stories/story-3.jpg', readingTime: 5, featured: true },
-    { title: 'From Classroom to Startup', dek: 'How a college idea became the beginning of an entrepreneurial journey.', category: 'startup', content: 'Nobody starts a company in a classroom. But a lot of companies start as classroom problems.\n\nThis is the story of one such journey (demo) — a semester project that refused to end with a grade.', image: '/images/stories/story-2.jpg', readingTime: 6, featured: true },
+    { title: 'From Classroom to Startup', dek: 'How a college idea became the beginning of an entrepreneurial journey.', category: 'startup', content: 'Nobody starts a company in a classroom. But a lot of companies start as classroom problems.\n\nThis is the story of one such journey  — a semester project that refused to end with a grade.', image: '/images/stories/story-2.jpg', readingTime: 6, featured: true },
     { title: "Inside a Campus That's Building Something Different", dek: 'Discover the people and communities transforming campus life.', category: 'campus', content: 'Some campuses you walk into and immediately feel a rhythm — workshops on weekends, clubs that actually build things.\n\nThis demo story meets the communities creating that rhythm.', image: '/images/stories/story-4.jpg', readingTime: 5, featured: true },
-    { title: 'From a Small Town to a National Stage', dek: 'A journey of preparation, self-doubt, and finally being heard.', category: 'student', content: 'The first time they spoke on a mic, the voice shook. By the national round (demo), the room listened.', image: '/images/stories/story-1.jpg', readingTime: 4 },
+    { title: 'From a Small Town to a National Stage', dek: 'A journey of preparation, self-doubt, and finally being heard.', category: 'student', content: 'The first time they spoke on a mic, the voice shook. By the national round , the room listened.', image: '/images/stories/story-1.jpg', readingTime: 4 },
     { title: 'The Interview That Changed How I See Failure', dek: 'What a rejection call taught one student about starting again.', category: 'student', content: 'The rejection email was polite, brief and devastating. The feedback call that followed reframed everything. [Demo story.]', image: '/images/stories/story-5.jpg', readingTime: 4 },
     { title: 'The Hostel Room Studio', dek: 'How three friends turned a hostel room into a production studio between classes.', category: 'startup', content: 'Two beds pushed aside, one borrowed mic, a blanket on the wall for sound damping — version one of the studio. [Demo story.]', image: '/images/campaign/campaign-3.jpg', readingTime: 5 },
     { title: 'When a Class Project Became a Company', dek: 'A semester assignment, an understanding mentor, and twelve months of saying "what if".', category: 'startup', content: 'The brief was simple: propose a solution to a local problem. The company, as it turned out, was due a year later. [Demo story.]', image: '/images/stories/story-6.jpg', readingTime: 5 },
@@ -92,13 +91,13 @@ export const seedData = {
   ],
 
   events: [
-    { title: 'Career Awareness Workshop', dek: 'Helping students discover careers beyond the conventional path.', description: 'Sessions include career discovery frameworks, live Q&A with professionals and a planning exercise. [Demo event.]', date: '2026-09-18', startTime: '10:00 AM – 4:00 PM', venue: 'Seminar Hall A, Nalanda Institute (Demo)', city: 'Patna', state: 'Bihar', organizer: 'TSC Career Awareness Team (Demo)', category: 'Career', registrationDeadline: '2026-09-15', image: '/images/events/event-1.jpg', status: 'upcoming', featured: true },
+    { title: 'Career Awareness Workshop', dek: 'Helping students discover careers beyond the conventional path.', description: 'Sessions include career discovery frameworks, live Q&A with professionals and a planning exercise. [Demo event.]', date: '2026-09-18', startTime: '10:00 AM – 4:00 PM', venue: 'Seminar Hall A, Nalanda Institute ', city: 'Patna', state: 'Bihar', organizer: 'TSC Career Awareness Team ', category: 'Career', registrationDeadline: '2026-09-15', image: '/images/events/event-1.jpg', status: 'upcoming', featured: true },
     { title: "Founders' Meetup & Networking Evening", dek: 'Student founders, builders and the merely curious — one room, zero gatekeeping.', description: 'Lightning talks, speed networking and open tables for co-founder hunting. [Demo event.]', date: '2026-09-26', startTime: '5:30 PM – 8:30 PM', venue: 'Innovation Hub, [Demo Venue]', city: 'Bengaluru', state: 'Karnataka', organizer: 'Demo E-Cell Collective', category: 'Networking', registrationDeadline: '2026-09-22', image: '/images/events/event-4.jpg', status: 'upcoming' },
     { title: 'Education Fair: Courses, Colleges & Careers', dek: 'Meet institutions, explore programmes, ask real questions.', description: 'Sessions on admissions timelines, scholarships and portfolio building. [Demo event.]', date: '2026-09-12', startTime: '9:00 AM – 6:00 PM', venue: 'Main Auditorium, [Demo Campus]', city: 'Ranchi', state: 'Jharkhand', organizer: 'Demo Education Collective', category: 'Education', registrationDeadline: '2026-09-10', image: '/images/campus/campus-1.jpg', status: 'upcoming' },
-    { title: 'National Student Hackathon 2026', dek: 'Thirty-six hours, real problem statements, a hall full of builders.', description: 'Tracks in education, civic tech, sustainability and open innovation. [Demo event.]', date: '2026-10-04', startTime: '8:00 AM (Day 1)', venue: 'Tech Park Block, Coastal University (Demo)', city: 'Kochi', state: 'Kerala', organizer: 'Demo Tech Communities', category: 'Technology', registrationDeadline: '2026-09-27', image: '/images/events/event-2.jpg', status: 'upcoming', featured: true },
-    { title: 'Leadership Bootcamp for Student Councils', dek: 'Governance, communication and getting things done inside institutions.', description: 'A demo bootcamp for student council members. [Demo event.]', date: '2026-10-02', startTime: '9:30 AM – 5:00 PM', venue: 'Convention Centre, Sagar Public University (Demo)', city: 'Bhopal', state: 'Madhya Pradesh', organizer: 'Demo Leadership Foundation', category: 'Leadership', registrationDeadline: '2026-09-28', image: '/images/events/event-1.jpg', status: 'upcoming' },
-    { title: 'Yuva Cultural Night', dek: 'Music, theatre, poetry and dance — a stage built by students.', description: 'Open-mic warm-ups, band performances and the annual poetry slam finale. [Demo event.]', date: '2026-10-11', startTime: '5:00 PM – 10:00 PM', venue: 'Open Air Theatre, Coastal University (Demo)', city: 'Kochi', state: 'Kerala', organizer: 'Demo Culture Collective', category: 'Culture', registrationDeadline: '2026-10-08', image: '/images/events/event-3.jpg', status: 'upcoming' },
-    { title: 'Pitch Your Idea: Student Startup Competition', dek: 'Five minutes, five slides, one idea.', description: 'Pitching workshops, a qualifying round and a final showcase. [Demo event.]', date: '2026-10-24', startTime: '10:00 AM – 7:00 PM', venue: 'E-Cell Arena, Sunrise Engineering (Demo)', city: 'Hyderabad', state: 'Telangana', organizer: 'Demo E-Cell Network', category: 'Entrepreneurship', registrationDeadline: '2026-10-18', image: '/images/campaign/campaign-3.jpg', status: 'upcoming' },
+    { title: 'National Student Hackathon 2026', dek: 'Thirty-six hours, real problem statements, a hall full of builders.', description: 'Tracks in education, civic tech, sustainability and open innovation. [Demo event.]', date: '2026-10-04', startTime: '8:00 AM (Day 1)', venue: 'Tech Park Block, Coastal University ', city: 'Kochi', state: 'Kerala', organizer: 'Demo Tech Communities', category: 'Technology', registrationDeadline: '2026-09-27', image: '/images/events/event-2.jpg', status: 'upcoming', featured: true },
+    { title: 'Leadership Bootcamp for Student Councils', dek: 'Governance, communication and getting things done inside institutions.', description: 'A demo bootcamp for student council members. [Demo event.]', date: '2026-10-02', startTime: '9:30 AM – 5:00 PM', venue: 'Convention Centre, Sagar Public University ', city: 'Bhopal', state: 'Madhya Pradesh', organizer: 'Demo Leadership Foundation', category: 'Leadership', registrationDeadline: '2026-09-28', image: '/images/events/event-1.jpg', status: 'upcoming' },
+    { title: 'Yuva Cultural Night', dek: 'Music, theatre, poetry and dance — a stage built by students.', description: 'Open-mic warm-ups, band performances and the annual poetry slam finale. [Demo event.]', date: '2026-10-11', startTime: '5:00 PM – 10:00 PM', venue: 'Open Air Theatre, Coastal University ', city: 'Kochi', state: 'Kerala', organizer: 'Demo Culture Collective', category: 'Culture', registrationDeadline: '2026-10-08', image: '/images/events/event-3.jpg', status: 'upcoming' },
+    { title: 'Pitch Your Idea: Student Startup Competition', dek: 'Five minutes, five slides, one idea.', description: 'Pitching workshops, a qualifying round and a final showcase. [Demo event.]', date: '2026-10-24', startTime: '10:00 AM – 7:00 PM', venue: 'E-Cell Arena, Sunrise Engineering ', city: 'Hyderabad', state: 'Telangana', organizer: 'Demo E-Cell Network', category: 'Entrepreneurship', registrationDeadline: '2026-10-18', image: '/images/campaign/campaign-3.jpg', status: 'upcoming' },
     { title: 'Summer Coding Sprint', dek: 'A four-week remote sprint where 200 students shipped their first projects.', description: 'This event has concluded. [Demo event.]', date: '2026-08-15', startTime: 'Remote • Evenings', venue: 'Online', city: 'Remote', state: 'Pan-India', organizer: 'Demo Tech Communities', category: 'Technology', registrationDeadline: '2026-08-01', image: '/images/news/news-4.jpg', status: 'past' },
   ],
 
@@ -122,7 +121,7 @@ export const seedData = {
       month: 'September',
       year: 2026,
       title: 'Current Affairs — September 2026',
-      intro: 'The September (demo) edition gathers the month\'s most relevant developments for students — national policy moves, global shifts, economic signals, science milestones and education updates — explained in plain language.',
+      intro: 'The September  edition gathers the month\'s most relevant developments for students — national policy moves, global shifts, economic signals, science milestones and education updates — explained in plain language.',
       cover: '/images/affairs/affairs-1.jpg',
       topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
       articles: [
@@ -217,7 +216,7 @@ export const seedData = {
       month: 'August',
       year: 2026,
       title: 'Current Affairs — August 2026',
-      intro: 'The August (demo) edition: monsoon-session policy news, global economic currents, campus-relevant science and the education headlines students actually asked about.',
+      intro: 'The August  edition: monsoon-session policy news, global economic currents, campus-relevant science and the education headlines students actually asked about.',
       cover: '/images/affairs/affairs-2.jpg',
       topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
       articles: [
@@ -307,7 +306,7 @@ export const seedData = {
       month: 'July',
       year: 2026,
       title: 'Current Affairs — July 2026',
-      intro: 'The July (demo) edition kicks off the academic year with the stories that set the stage — policy, economy, science and the world beyond campus.',
+      intro: 'The July  edition kicks off the academic year with the stories that set the stage — policy, economy, science and the world beyond campus.',
       cover: '/images/affairs/affairs-3.jpg',
       topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
       articles: [
@@ -396,14 +395,14 @@ export const seedData = {
   ],
 
   legal: [
-    { title: 'Your Rights on Campus: A Starter Guide', topic: 'Student Rights', summary: 'Understand your rights within educational institutions.', content: 'Campuses run on rules — but rules exist to protect students as much as institutions.\n\nThis starter guide (demo) covers evaluation criteria, grievance redressal and appeal routes. Always check your own institution\'s statutes.', keyPoints: ['Know where your institution publishes student rights', 'Fair, transparent evaluation is a reasonable expectation', 'Grievance redressal channels must exist', 'Keep written records'], readingTime: 5 },
-    { title: 'Understanding Disciplinary Proceedings in Institutions', topic: 'Student Rights', summary: 'What to expect if you ever face disciplinary action.', content: 'This explainer outlines the typical anatomy of a disciplinary process: notice, response, hearing, decision and appeal.\n\nRespond in writing, keep copies, respect deadlines. [Demo content.]', keyPoints: ['Written notice of allegations', 'Right to be heard', 'Representation may be allowed', 'Appeal routes exist'], readingTime: 5 },
-    { title: "A Student's Guide to Staying Safe Online", topic: 'Cyber Safety', summary: 'Know what to do when things go wrong online.', content: 'Phishing, job scams, OTP fraud and harassment — basic cyber hygiene for students, plus where to report cybercrime in India. [Demo content.]', keyPoints: ['Unique passwords + 2FA', 'Never share OTPs', 'Screenshot and report harassment', 'National cybercrime reporting portal'], readingTime: 4 },
-    { title: 'What To Do If Your Account Gets Hacked', dek: undefined as unknown as string, topic: 'Cyber Safety', summary: 'A calm, step-by-step response plan.', content: 'Reclaim, review, revoke, report — the four steps to recovering a hacked account. [Demo content.]', keyPoints: ['Change passwords from a trusted device', 'Use recovery options', 'Check active sessions', 'Warn close contacts'], readingTime: 4 },
-    { title: 'Digital Privacy 101 for Students', topic: 'Digital Rights', summary: 'Understand privacy, online identity and responsible digital participation.', content: 'Every quiz app and scholarship form adds a row to your digital footprint.\n\nThis explainer introduces data collection, consent, app permissions and India\'s data protection framework. [Demo content.]', keyPoints: ['Review app permissions', 'Understand consent', 'India has a data protection law', 'Curate your digital footprint'], readingTime: 5 },
-    { title: 'Your Digital Footprint and You', topic: 'Digital Rights', summary: 'How what you post today shapes opportunities tomorrow.', content: 'Your digital footprint is your second CV. Small deliberate steps change how the internet introduces you. [Demo content.]', keyPoints: ['Audit public profiles', 'Build a deliberate presence', 'Request removals where possible'], readingTime: 4 },
-    { title: 'Education Policy Explained Simply', topic: 'Education Laws', summary: 'Simplified explainers on rules and policies affecting students.', content: 'Education policy shapes admissions, exams, flexibility and what your degree is worth.\n\nFor anything that affects your academics, the official circular is the source of truth. [Demo content.]', keyPoints: ['Policy flows from national frameworks to campus notices', 'Credit frameworks add flexibility', 'Check official circulars first'], readingTime: 6 },
-    { title: 'Understanding Anti-Ragging Laws and UGC Guidelines', topic: 'Education Laws', summary: 'What counts as ragging, what the law says, how to seek help.', content: 'Ragging is prohibited by law and UGC regulations — it is not "tradition".\n\nInstitutions must have anti-ragging committees and helpline access; complaints can be confidential. [Demo content.]', keyPoints: ['Ragging is banned — physical and psychological', 'Committees and helplines are mandatory', 'Confidential complaints are possible'], readingTime: 5 },
+    { title: 'Your Rights on Campus: A Starter Guide', topic: 'Student Rights', summary: 'Understand your rights within educational institutions.', content: 'Campuses run on rules — but rules exist to protect students as much as institutions.\n\nThis starter guide  covers evaluation criteria, grievance redressal and appeal routes. Always check your own institution\'s statutes.', keyPoints: ['Know where your institution publishes student rights', 'Fair, transparent evaluation is a reasonable expectation', 'Grievance redressal channels must exist', 'Keep written records'], readingTime: 5 },
+    { title: 'Understanding Disciplinary Proceedings in Institutions', topic: 'Student Rights', summary: 'What to expect if you ever face disciplinary action.', content: 'This explainer outlines the typical anatomy of a disciplinary process: notice, response, hearing, decision and appeal.\n\nRespond in writing, keep copies, respect deadlines.', keyPoints: ['Written notice of allegations', 'Right to be heard', 'Representation may be allowed', 'Appeal routes exist'], readingTime: 5 },
+    { title: "A Student's Guide to Staying Safe Online", topic: 'Cyber Safety', summary: 'Know what to do when things go wrong online.', content: 'Phishing, job scams, OTP fraud and harassment — basic cyber hygiene for students, plus where to report cybercrime in India.', keyPoints: ['Unique passwords + 2FA', 'Never share OTPs', 'Screenshot and report harassment', 'National cybercrime reporting portal'], readingTime: 4 },
+    { title: 'What To Do If Your Account Gets Hacked', dek: undefined as unknown as string, topic: 'Cyber Safety', summary: 'A calm, step-by-step response plan.', content: 'Reclaim, review, revoke, report — the four steps to recovering a hacked account.', keyPoints: ['Change passwords from a trusted device', 'Use recovery options', 'Check active sessions', 'Warn close contacts'], readingTime: 4 },
+    { title: 'Digital Privacy 101 for Students', topic: 'Digital Rights', summary: 'Understand privacy, online identity and responsible digital participation.', content: 'Every quiz app and scholarship form adds a row to your digital footprint.\n\nThis explainer introduces data collection, consent, app permissions and India\'s data protection framework.', keyPoints: ['Review app permissions', 'Understand consent', 'India has a data protection law', 'Curate your digital footprint'], readingTime: 5 },
+    { title: 'Your Digital Footprint and You', topic: 'Digital Rights', summary: 'How what you post today shapes opportunities tomorrow.', content: 'Your digital footprint is your second CV. Small deliberate steps change how the internet introduces you.', keyPoints: ['Audit public profiles', 'Build a deliberate presence', 'Request removals where possible'], readingTime: 4 },
+    { title: 'Education Policy Explained Simply', topic: 'Education Laws', summary: 'Simplified explainers on rules and policies affecting students.', content: 'Education policy shapes admissions, exams, flexibility and what your degree is worth.\n\nFor anything that affects your academics, the official circular is the source of truth.', keyPoints: ['Policy flows from national frameworks to campus notices', 'Credit frameworks add flexibility', 'Check official circulars first'], readingTime: 6 },
+    { title: 'Understanding Anti-Ragging Laws and UGC Guidelines', topic: 'Education Laws', summary: 'What counts as ragging, what the law says, how to seek help.', content: 'Ragging is prohibited by law and UGC regulations — it is not "tradition".\n\nInstitutions must have anti-ragging committees and helpline access; complaints can be confidential.', keyPoints: ['Ragging is banned — physical and psychological', 'Committees and helplines are mandatory', 'Confidential complaints are possible'], readingTime: 5 },
   ],
 
   campaign: {
@@ -430,21 +429,21 @@ export const seedData = {
   ],
 
   storySubmissions: [
-    { name: 'Rohit Kumar (Demo)', email: 'rohit.demo@example.com', college: 'Demo College, Patna', city: 'Patna', state: 'Bihar', storyTitle: 'How Our Team Built a Flood-alert Prototype', storyCategory: 'Student', storyContent: 'A student team prototype for local flood alerts, built during a weekend hackathon. [Demo submission.]', consent: true, status: 'pending' },
-    { name: 'Sneha Iyer (Demo)', email: 'sneha.demo@example.com', college: 'Demo Institute, Kochi', city: 'Kochi', state: 'Kerala', storyTitle: 'One Year of a Campus Composting Club', storyCategory: 'Campus', storyContent: 'What we learned running a student-led composting initiative for a full year. [Demo submission.]', consent: true, status: 'under review' },
-    { name: 'Aditya Rao (Demo)', email: 'aditya.demo@example.com', college: 'Demo University, Hyderabad', city: 'Hyderabad', state: 'Telangana', storyTitle: 'Failing Forward: My First Startup Shut Down', storyCategory: 'Startup', storyContent: 'An honest post-mortem of a student startup that did not survive. [Demo submission.]', consent: true, status: 'pending' },
+    { name: 'Rohit Kumar ', email: 'rohit.demo@example.com', college: 'Demo College, Patna', city: 'Patna', state: 'Bihar', storyTitle: 'How Our Team Built a Flood-alert Prototype', storyCategory: 'Student', storyContent: 'A student team prototype for local flood alerts, built during a weekend hackathon. [Demo submission.]', consent: true, status: 'pending' },
+    { name: 'Sneha Iyer ', email: 'sneha.demo@example.com', college: 'Demo Institute, Kochi', city: 'Kochi', state: 'Kerala', storyTitle: 'One Year of a Campus Composting Club', storyCategory: 'Campus', storyContent: 'What we learned running a student-led composting initiative for a full year. [Demo submission.]', consent: true, status: 'under review' },
+    { name: 'Aditya Rao ', email: 'aditya.demo@example.com', college: 'Demo University, Hyderabad', city: 'Hyderabad', state: 'Telangana', storyTitle: 'Failing Forward: My First Startup Shut Down', storyCategory: 'Startup', storyContent: 'An honest post-mortem of a student startup that did not survive. [Demo submission.]', consent: true, status: 'pending' },
   ],
 
   campusSubmissions: [
-    { name: 'Meera Nair (Demo)', email: 'meera.demo@example.com', college: 'Coastal University (Demo)', campus: 'Coastal University (Demo)', city: 'Kochi', state: 'Kerala', newsTitle: 'Our Campus Just Launched a Student Radio Station', category: 'Campus News', description: 'A new student-run radio initiative goes live this month. [Demo submission.]', consent: true, status: 'pending' },
-    { name: 'Faizan Ali (Demo)', email: 'faizan.demo@example.com', college: 'Nalanda Institute (Demo)', campus: 'Nalanda Institute (Demo)', city: 'Patna', state: 'Bihar', newsTitle: 'Night Library Extends Hours for Exam Season', category: 'Campus Life', description: 'Student council extends reading-room hours till 4 a.m. [Demo submission.]', consent: true, status: 'under review' },
-    { name: 'Tanvi Deshpande (Demo)', email: 'tanvi.demo@example.com', college: 'Vidya Vihar Central (Demo)', campus: 'Vidya Vihar Central (Demo)', city: 'Pune', state: 'Maharashtra', newsTitle: 'E-Cell Announces Annual Demo Pitch Fest', category: 'Campus Events', description: 'Call for entries open for the campus pitch competition. [Demo submission.]', consent: true, status: 'pending' },
+    { name: 'Meera Nair ', email: 'meera.demo@example.com', college: 'Coastal University ', campus: 'Coastal University ', city: 'Kochi', state: 'Kerala', newsTitle: 'Our Campus Just Launched a Student Radio Station', category: 'Campus News', description: 'A new student-run radio initiative goes live this month. [Demo submission.]', consent: true, status: 'pending' },
+    { name: 'Faizan Ali ', email: 'faizan.demo@example.com', college: 'Nalanda Institute ', campus: 'Nalanda Institute ', city: 'Patna', state: 'Bihar', newsTitle: 'Night Library Extends Hours for Exam Season', category: 'Campus Life', description: 'Student council extends reading-room hours till 4 a.m. [Demo submission.]', consent: true, status: 'under review' },
+    { name: 'Tanvi Deshpande ', email: 'tanvi.demo@example.com', college: 'Vidya Vihar Central ', campus: 'Vidya Vihar Central ', city: 'Pune', state: 'Maharashtra', newsTitle: 'E-Cell Announces Annual Demo Pitch Fest', category: 'Campus Events', description: 'Call for entries open for the campus pitch competition. [Demo submission.]', consent: true, status: 'pending' },
   ],
 
   contactMessages: [
-    { name: 'Journalism Student (Demo)', email: 'journo.demo@example.com', subject: 'Want to contribute to TSC Newsroom', message: 'Final-year journalism student looking to contribute campus stories.', status: 'new' },
-    { name: 'Placement Cell (Demo)', email: 'placements.demo@example.com', subject: 'Listing an opportunity on TSC Career', message: 'We would like to list an internship opportunity.', status: 'read' },
-    { name: 'Parent (Demo)', email: 'parent.demo@example.com', subject: 'Appreciation for the Career Awareness series', message: 'Wonderful initiative — please keep going.', status: 'replied' },
+    { name: 'Journalism Student ', email: 'journo.demo@example.com', subject: 'Want to contribute to TSC Newsroom', message: 'Final-year journalism student looking to contribute campus stories.', status: 'new' },
+    { name: 'Placement Cell ', email: 'placements.demo@example.com', subject: 'Listing an opportunity on TSC Career', message: 'We would like to list an internship opportunity.', status: 'read' },
+    { name: 'Parent ', email: 'parent.demo@example.com', subject: 'Appreciation for the Career Awareness series', message: 'Wonderful initiative — please keep going.', status: 'replied' },
   ],
 };
 

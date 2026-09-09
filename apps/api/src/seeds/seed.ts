@@ -40,13 +40,13 @@ async function seed() {
     ContactMessage.deleteMany({}), SiteSettings.deleteMany({}),
   ]);
 
-  /* Demo accounts (member / editor / admin) */
+  /* Official Administrative & Newsroom Accounts */
   const [admin, editor, member] = await User.create([
-    { name: 'TSC Admin (Demo)', email: 'admin@tsc.demo', passwordHash: 'admin12345', role: 'admin' },
-    { name: 'TSC Editor (Demo)', email: 'editor@tsc.demo', passwordHash: 'editor12345', role: 'editor' },
-    { name: 'Aarav Kumar (Demo)', email: 'member@tsc.demo', passwordHash: 'member12345', role: 'member', college: 'Nalanda Institute (Demo)', city: 'Patna' },
+    { name: 'TSC Administrator', email: 'admin@thestudentchapters.org', passwordHash: 'TSCAdmin@2026!', role: 'admin' },
+    { name: 'TSC Senior Editor', email: 'editor@thestudentchapters.org', passwordHash: 'TSCEditor@2026!', role: 'editor' },
+    { name: 'Aarav Sharma', email: 'member@thestudentchapters.org', passwordHash: 'TSCMember@2026!', role: 'member', college: 'Patna University', city: 'Patna' },
   ]);
-  await Membership.create({ user: member._id, memberCode: 'TSC-DEMO01', status: 'active' });
+  await Membership.create({ user: member._id, memberCode: 'TSC-IND001', status: 'active' });
 
   /* News */
   const articles = await Article.insertMany(
@@ -104,10 +104,10 @@ async function seed() {
   console.log(`
 ✅ Seed complete!
 
-   Demo accounts (passwords as below):
-   • admin@tsc.demo   / admin12345    (admin)
-   • editor@tsc.demo  / editor12345   (editor)
-   • member@tsc.demo  / member12345   (member)
+   Official Administrative Accounts:
+   • admin@thestudentchapters.org   / TSCAdmin@2026!    (Administrator)
+   • editor@thestudentchapters.org  / TSCEditor@2026!   (Senior Editor)
+   • member@thestudentchapters.org  / TSCMember@2026!   (Member)
 
    ${articles.length} news articles · ${seedData.stories.length} stories · ${campuses.length} campuses
    ${seedData.podcasts.length} podcast episodes · ${seedData.events.length} events · ${seedData.opportunities.length} opportunities
