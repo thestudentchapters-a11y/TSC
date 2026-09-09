@@ -24,7 +24,7 @@ export function Logo({ dark = false, compact = false, className = '', imageClass
         )}
       >
         <Image
-          src="/TSC Logo.png"
+          src="/TSC%20Logo.png"
           alt="The Student Chapters™"
           width={240}
           height={188}

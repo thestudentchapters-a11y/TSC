@@ -10,7 +10,14 @@ export interface ICurrentAffairsEdition {
   cover: string;
   coverAlt: string;
   topics: Array<'India' | 'World' | 'Economy' | 'Science & Technology' | 'Education'>;
-  articles: Array<{ title: string; category: string; summary: string; readingTime: number }>;
+  articles: Array<{
+    title: string;
+    category: string;
+    summary: string;
+    content?: string[];
+    keyPoints?: string[];
+    readingTime: number;
+  }>;
   pdfUrl?: string;
   author?: mongoose.Types.ObjectId | string;
   status: 'draft' | 'published' | 'archived';
@@ -33,6 +40,8 @@ const EditionSchema = new Schema(
         title: String,
         category: String,
         summary: String,
+        content: [{ type: String }],
+        keyPoints: [{ type: String }],
         readingTime: { type: Number, default: 4 },
       },
     ],

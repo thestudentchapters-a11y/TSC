@@ -2,10 +2,14 @@ import { createApp } from './app';
 import { connectDB, disconnectDB } from './config/db';
 import { env } from './config/env';
 import { logger } from './utils/logger';
+import { startMonthlyEditionScheduler } from './services/currentAffairsScheduler.service';
 
 async function main() {
   await connectDB();
   const app = createApp();
+
+  // Start automated monthly Current Affairs auto-release scheduler
+  startMonthlyEditionScheduler();
 
   const server = app.listen(env.port, '0.0.0.0', () => {
     logger.info(`THE STUDENT CHAPTERS™ API listening on :${env.port} (${env.nodeEnv})`);

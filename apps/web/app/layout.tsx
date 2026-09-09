@@ -22,9 +22,14 @@ export const metadata: Metadata = {
     'student chapters', 'TSC', 'India students', 'campus news', 'student stories',
     'internships India', 'fellowships', 'student podcast', 'campus events',
     'current affairs students', 'legal awareness students', 'youth platform India',
+    'career counseling', 'campus ambassador India',
   ],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: 'website',
+    locale: 'en_IN',
     siteName: site.name,
     title: `${site.name} — ${site.tagline}`,
     description: site.description,
@@ -37,13 +42,35 @@ export const metadata: Metadata = {
     description: site.description,
     images: ['/images/og-default.jpg'],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'TSC',
+  },
+  formatDetection: {
+    telephone: false,
+    email: true,
+    address: true,
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: '#1457A2',
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
 };
 
 const jsonLd = {

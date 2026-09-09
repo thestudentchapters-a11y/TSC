@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Instagram, Youtube, Linkedin, Facebook, MessageCircle, MapPin } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 import { NewsletterForm } from '@/components/layout/NewsletterForm';
@@ -15,6 +18,13 @@ const socials = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
+
+  // Hide on standalone PDF dossier views
+  if (pathname?.endsWith('/pdf') || pathname?.includes('/pdf/')) {
+    return null;
+  }
+
   const year = new Date().getFullYear();
   return (
     <footer className="bg-brand-dark text-cream">

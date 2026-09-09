@@ -69,6 +69,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                   >
                     <Link
                       href={item.href}
+                      onClick={onClose}
                       className="flex items-center gap-2.5 rounded-sm px-2 py-2.5 font-display text-[15px] font-bold text-ink transition-colors hover:bg-brand-50 hover:text-brand"
                     >
                       <span aria-hidden className="h-1.5 w-1.5 rounded-[2px] bg-gold" />
@@ -80,7 +81,8 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                           <li key={child.href + child.label}>
                             <Link
                               href={child.href}
-                              className="block rounded-sm px-2 py-1.5 text-[13px] font-medium text-muted transition-colors hover:text-brand"
+                              onClick={onClose}
+                              className="block rounded-sm px-2 py-2 text-[13px] font-medium text-muted transition-colors hover:text-brand"
                             >
                               {child.label}
                             </Link>

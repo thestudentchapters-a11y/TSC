@@ -154,6 +154,8 @@ export interface AffairArticle {
   title: string;
   category: AffairTopic;
   summary: string;
+  content?: string[];
+  keyPoints?: string[];
   readingTime: number;
 }
 

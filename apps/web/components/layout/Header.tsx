@@ -38,6 +38,11 @@ export function Header() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
 
+  // Hide the global website navbar on standalone PDF dossier views
+  if (pathname?.endsWith('/pdf') || pathname?.includes('/pdf/')) {
+    return null;
+  }
+
   return (
     <>
       <header

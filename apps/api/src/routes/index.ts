@@ -30,6 +30,12 @@ import { moderateSubmissionSchema } from '../validators';
 import { validate } from '../middleware/validate';
 import { env } from '../config/env';
 import { ApiError } from '../utils/apiError';
+import { generateCurrentAffairsEdition } from '../services/currentAffairsAi.service';
+import {
+  checkAndAutoPublishMonthlyEdition,
+  getNextScheduledReleaseDate,
+  isLastDayOfMonth,
+} from '../services/currentAffairsScheduler.service';
 
 const isObjectId = (v: string) => mongoose.Types.ObjectId.isValid(v) && /^[a-f\d]{24}$/i.test(v);
 
@@ -115,6 +121,68 @@ export function registerRoutes(app: Router) {
   contentRoutes('/api/opportunities', Opportunity, ['type', 'mode', 'status', 'location'], false);
   contentRoutes('/api/current-affairs', CurrentAffairsEdition, ['status', 'year', 'month']);
   contentRoutes('/api/legal-awareness', LegalArticle, ['topic', 'status']);
+
+  /* ── Current Affairs AI Generation & Scheduler Control ────────────────── */
+  app.post(
+    '/api/current-affairs/generate-ai',
+    asyncHandler(async (req: Request, res: Response) => {
+      const { month, year, overwrite, apiKey } = req.body;
+      if (!month || !year) {
+        return res.status(400).json({ success: false, error: 'Month and Year are required.' });
+      }
+
+      const generated = await generateCurrentAffairsEdition(String(month), Number(year), apiKey);
+
+      // Check if already exists in DB
+      const existing = await CurrentAffairsEdition.findOne({ month: String(month), year: Number(year) });
+      let doc;
+      if (existing) {
+        if (overwrite) {
+          doc = await CurrentAffairsEdition.findByIdAndUpdate(
+            existing._id,
+            { ...generated, updatedAt: new Date() },
+            { new: true }
+          );
+        } else {
+          doc = existing;
+        }
+      } else {
+        doc = await CurrentAffairsEdition.create(generated);
+      }
+
+      res.status(200).json({ success: true, data: doc || generated, generated });
+    })
+  );
+
+  app.get(
+    '/api/current-affairs/scheduler/status',
+    asyncHandler(async (_req: Request, res: Response) => {
+      const now = new Date();
+      const nextDate = getNextScheduledReleaseDate(now);
+      const isTodayLastDay = isLastDayOfMonth(now);
+      const count = await CurrentAffairsEdition.countDocuments();
+      const latest = await CurrentAffairsEdition.findOne().sort({ year: -1, createdAt: -1 }).lean();
+
+      res.json({
+        success: true,
+        data: {
+          currentTime: now.toISOString(),
+          isTodayLastDay,
+          nextScheduledRelease: nextDate.toISOString(),
+          totalEditions: count,
+          latestEdition: latest ? { month: latest.month, year: latest.year, title: latest.title, status: latest.status } : null,
+        },
+      });
+    })
+  );
+
+  app.post(
+    '/api/current-affairs/scheduler/trigger',
+    asyncHandler(async (_req: Request, res: Response) => {
+      const created = await checkAndAutoPublishMonthlyEdition(true);
+      res.json({ success: true, triggered: true, newEditionCreated: created });
+    })
+  );
   contentRoutes('/api/campaigns', Campaign, ['status']);
   contentRoutes('/api/campaign-episodes', CampaignEpisode, ['status', 'campaign'], false);
   contentRoutes('/api/categories', Category, ['section'], false);

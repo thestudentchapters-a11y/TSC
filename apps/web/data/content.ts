@@ -620,11 +620,91 @@ export const demoEditions: CurrentAffairsEdition[] = [
     cover: '/images/affairs/affairs-1.jpg', coverAlt: 'Designed cover of TSC Current Affairs, September 2026 edition',
     topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
     articles: [
-      { title: 'National Education Policy implementation: where things stand', category: 'India', summary: 'A plain-language status update on policy implementation milestones that affect students.', readingTime: 5 },
-      { title: 'Global summits and what they mean for young people', category: 'World', summary: 'Key takeaways from this season\'s international gatherings, minus the jargon.', readingTime: 4 },
-      { title: 'Youth employment signals to watch', category: 'Economy', summary: 'Hiring trends, sector movements and what the data suggests for first-job seekers.', readingTime: 4 },
-      { title: 'India\'s space and AI milestones this month', category: 'Science & Technology', summary: 'The launches, models and research wins that made headlines — explained simply.', readingTime: 4 },
-      { title: 'Exam calendars and academic session changes', category: 'Education', summary: 'Announcements from boards and universities that shift timelines for students.', readingTime: 3 },
+      {
+        title: 'National Digital Education Architecture (NDEAR) 2.0 & APAAR Rollout',
+        category: 'India',
+        summary: 'How interoperable digital credentials and unified student credit banks are changing how Indian college degrees and credit transfers work.',
+        keyPoints: [
+          'Academic Bank of Credits (ABC) now integrated across 1,800+ universities nationwide.',
+          'Students can seamlessly transfer course credits between central, state, and autonomous institutions.',
+          'Interoperable digital verification reduces verification turnaround from weeks to seconds.',
+          'Dual-major and multidisciplinary minors formally recognized under UGC Gazette notifications.'
+        ],
+        content: [
+          'The Ministry of Education has accelerated the nationwide deployment of the National Digital Education Architecture (NDEAR) 2.0. This framework establishes an open, interoperable digital public infrastructure designed to connect educational institutions, accreditation bodies, and students into a unified ecosystem.',
+          'At the heart of NDEAR 2.0 is the enhanced Academic Bank of Credits (ABC), linked directly with DigiLocker and APAAR (Automated Permanent Academic Account Registry). Under these updated guidelines, students are no longer locked into rigid institutional boundaries. A student pursuing an engineering degree at a state university can now complete certified minors in economics or design from a premier central institution and have those credits automatically transferred and recognized on their final degree certificate.',
+          'For students preparing for higher education and competitive placements, this reform eliminates bureaucratic delays in credential verification. Multinational recruiters and public sector enterprises can now verify applicant academic records instantly through tamper-evident cryptographic proofs, establishing a new standard of transparency in Indian academia.'
+        ],
+        readingTime: 5,
+      },
+      {
+        title: 'Global Youth Climate & Energy Transition Accords',
+        category: 'World',
+        summary: 'Key takeaways from international green pacts and what clean energy investments mean for emerging engineering careers in India.',
+        keyPoints: [
+          'Multilateral pacts commit $120B in climate finance towards emerging clean tech corridors.',
+          'India expands international solar alliances with cross-border green hydrogen initiatives.',
+          'Surge in specialized green engineering and environmental ESG analyst roles in Asia-Pacific.',
+          'New student research exchange grants funded for renewable energy development.'
+        ],
+        content: [
+          'Recent international climate and energy negotiations concluded with historic commitments prioritizing youth participation and green skill industrialization. Developing nations and international consortiums have established direct funding channels aimed at training the next generation of engineers, urban planners, and policy specialists.',
+          'For Indian graduates and scholars, these accords open unprecedented pathways in clean tech sectors. Major investments are actively pouring into solar manufacturing clusters, grid-scale battery storage facilities, and green hydrogen hubs across southern and western India. Academic departments are rapidly launching dedicated specializations in decarbonization technologies and environmental lifecycle auditing.',
+          'As global supply chains pivot toward ESG compliance, knowledge of renewable energy policies and carbon accounting is becoming a decisive competitive advantage in corporate consulting, infrastructure engineering, and public policy fellowships.'
+        ],
+        readingTime: 4,
+      },
+      {
+        title: 'Semiconductor Manufacturing & Tech Sector Hiring Outlook',
+        category: 'Economy',
+        summary: 'A deep dive into new chip fab establishments in Gujarat and Assam and their ripple effects on STEM internship demands.',
+        keyPoints: [
+          'Commercial semiconductor fabrication plants and packaging facilities break ground in Dholera and Sanand.',
+          'Estimated creation of 85,000+ direct and indirect high-skilled semiconductor engineering jobs.',
+          'Semicon India FutureDesign program awards design grants to student-led chip design ventures.',
+          'Curriculum updates introduced across IITs, NITs, and state engineering colleges for VLSI and microelectronics.'
+        ],
+        content: [
+          'India’s semiconductor mission has reached a critical operational milestone as major commercial fabrication facilities and OSAT (Outsourced Semiconductor Assembly and Test) plants commence construction. Backed by central and state fiscal incentives, the semiconductor manufacturing ecosystem is establishing deep roots in key industrial corridors.',
+          'This industrial expansion has triggered an urgent demand for specialized talent in VLSI (Very Large Scale Integration), materials science, precision chemical engineering, and advanced automation. In response, AICTE and premier technological universities have rolled out revamped undergraduate and postgraduate curricula designed in direct consultation with global semiconductor leaders.',
+          'For engineering and science students, this transition represents a generational shift. Beyond traditional software services, domestic chip design startups and global fabless companies are actively hiring early-career engineers for ASIC verification, physical design, and hardware-software co-design, backed by funded internship stipends.'
+        ],
+        readingTime: 5,
+      },
+      {
+        title: 'Indigenous Quantum Computing Milestones by Indian Labs',
+        category: 'Science & Technology',
+        summary: 'National Quantum Mission progress: premier research universities unveil new quantum simulator testbeds open to student researchers.',
+        keyPoints: [
+          'National Quantum Mission achieves intermediate milestone with domestic 24-qubit quantum simulator testbeds.',
+          'Open cloud access provided to university research labs and student developers.',
+          'Focus areas span quantum cryptography, post-quantum encryption, and molecular simulation.',
+          'Joint fellowships established between ISRO, DRDO, and premier academic research groups.'
+        ],
+        content: [
+          'Under the aegis of the National Quantum Mission (NQM), a consortium of premier Indian research institutes and laboratories has successfully deployed indigenously developed quantum simulation testbeds and quantum key distribution (QKD) links.',
+          'These systems provide researchers and university students with cloud-accessible quantum computing environments, enabling them to test quantum algorithms in molecular dynamics, cryptographic security, and complex financial optimization without relying entirely on foreign commercial cloud platforms.',
+          'The practical significance for computer science, physics, and mathematics students is immense. As post-quantum cryptography becomes mandatory for national cybersecurity frameworks, proficiency in quantum algorithms, Qiskit, and quantum information theory is quickly emerging as one of the most prestigious research frontiers.'
+        ],
+        readingTime: 4,
+      },
+      {
+        title: 'UGC National Apprenticeship and Dual-Degree Guidelines',
+        category: 'Education',
+        summary: 'Higher education institutions expand semester-long industry internships and multidisciplinary major-minor degree choices.',
+        keyPoints: [
+          'UGC mandates credit equivalencies for certified semester-long industry apprenticeships.',
+          'Students can pursue two academic degree programs simultaneously across physical and online modes.',
+          'Skill development courses integrated into mandatory core graduation requirements.',
+          'Higher focus on practical portfolio evaluation alongside conventional written examinations.'
+        ],
+        content: [
+          'The University Grants Commission (UGC) has notified comprehensive regulations allowing undergraduate students to incorporate full-semester embedded apprenticeships into their degree requirements. This move marks a fundamental departure from theoretical classroom routines toward experiential industry immersion.',
+          'Under the dual-degree regulations, students can now enroll in a primary physical degree program while concurrently pursuing a secondary degree or diploma through accredited digital learning platforms. For instance, a student studying law or humanities can concurrently complete a recognized degree in computer science or data science.',
+          'This structural flexibility empowers students to craft tailored, interdisciplinary profiles that bridge academic rigor with immediate market relevance, significantly boosting graduate employability.'
+        ],
+        readingTime: 4,
+      },
     ],
   },
   {
@@ -634,11 +714,86 @@ export const demoEditions: CurrentAffairsEdition[] = [
     cover: '/images/affairs/affairs-2.jpg', coverAlt: 'Designed cover of TSC Current Affairs, August 2026 edition',
     topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
     articles: [
-      { title: 'Legislative changes students should know about', category: 'India', summary: 'What passed, what stalled and what it means for young citizens.', readingTime: 5 },
-      { title: 'The world in August: three stories that matter', category: 'World', summary: 'Beyond the headlines — the context students need for exams and interviews.', readingTime: 4 },
-      { title: 'Inflation, rates and the cost of being a student', category: 'Economy', summary: 'How macroeconomic moves land on hostel budgets and education loans.', readingTime: 4 },
-      { title: 'Research from Indian labs that made global news', category: 'Science & Technology', summary: 'Celebrating work from campus-adjacent laboratories.', readingTime: 4 },
-      { title: 'Skill councils and new certification frameworks', category: 'Education', summary: 'New pathways recognising skills alongside degrees.', readingTime: 3 },
+      {
+        title: 'Digital Personal Data Protection Act: Campus Compliance Guidelines',
+        category: 'India',
+        summary: 'What the updated DPDP framework means for student data privacy, consent managers, and university administrative portals.',
+        keyPoints: [
+          'Data Protection Board issues explicit guidelines for educational data fiduciaries.',
+          'Mandatory parental consent thresholds and student privacy rights codified.',
+          'Clear guidelines for university placement portals and third-party recruitment databases.'
+        ],
+        content: [
+          'The phased enforcement of the Digital Personal Data Protection (DPDP) Act has entered academic institutions, establishing clear obligations for colleges and universities handling student personal information.',
+          'Educational fiduciaries are now mandated to implement transparent consent mechanisms when sharing student resumes and academic records with third-party placement agencies, hackathon organizers, and ed-tech vendors. Students gain explicit rights to review, rectify, and revoke consent regarding their digital academic footprints.',
+          'Understanding data compliance and digital rights is becoming an essential practical literacy for campus leaders and student organizers managing club registrations and campus events.'
+        ],
+        readingTime: 5,
+      },
+      {
+        title: 'International Bilateral Academic Mobility Agreements',
+        category: 'World',
+        summary: 'Mutual qualification recognition treaties signed across key international student destinations.',
+        keyPoints: [
+          'Fast-track post-study work authorization streams negotiated under bilateral pacts.',
+          'Joint degree recognition between Indian premier universities and international institutions.',
+          'Streamlined credential equivalency for STEM and healthcare graduates.'
+        ],
+        content: [
+          'India has concluded several landmark educational partnerships facilitating seamless credit transfer and post-graduation work rights for scholars abroad.',
+          'These agreements formally equate standard Indian undergraduate and master degree credits with host nation licensing bodies, eliminating redundant bridging coursework for graduate researchers and professionals.',
+          'For students planning international master degrees or doctoral research, these treaties significantly reduce immigration friction and enhance global career mobility.'
+        ],
+        readingTime: 4,
+      },
+      {
+        title: 'Inflation Dynamics, Interest Rates & Student Education Financing',
+        category: 'Economy',
+        summary: 'How macroeconomic indicators and central bank lending rates influence collateral-free education loans and living expenses.',
+        keyPoints: [
+          'RBI interest rate stability maintains steady education loan borrowing costs.',
+          'Expansion of public credit guarantee schemes for collateral-free higher education loans.',
+          'State government interest subsidy windows opened for tier-2/3 student applicants.'
+        ],
+        content: [
+          'Macroeconomic monetary policy decisions have maintained stable interest rates for public and private higher education financing, offering relief to families and students financing professional degrees.',
+          'The expansion of the Credit Guarantee Fund Scheme for Education Loans (CGFSEL) now allows qualified students to access higher loan amounts for technical courses without pledging ancestral collateral.',
+          'Financial literacy regarding floating versus fixed interest rates, loan moratorium periods, and tax deductions under Section 80E is vital for every graduating student entering repayment phases.'
+        ],
+        readingTime: 4,
+      },
+      {
+        title: 'Deep Ocean Mission and Indigenous Submersible Trials',
+        category: 'Science & Technology',
+        summary: 'Samudrayaan mission advances with indigenous manned submersible depth trials in the central Indian Ocean.',
+        keyPoints: [
+          'Matsya 6000 submersible completes shallow and intermediate depth trial benchmarks.',
+          'Interdisciplinary research in marine robotics, deep-sea biotechnology, and rare earth minerals.',
+          'New oceanographic research internships opened for student geologists and mechanical engineers.'
+        ],
+        content: [
+          'India’s flagship Deep Ocean Mission reached a major technical milestone with successful ocean trials of the indigenously engineered Matsya 6000 submersible, designed to carry researchers to depths of 6,000 meters.',
+          'The mission unlocks critical scientific research into polymetallic nodules, hydrothermal vents, and deep-sea biodiversity with potential applications in pharmaceuticals and energy storage.',
+          'This engineering achievement opens unique avenues in marine robotics, sonar signal processing, and metallurgical research for Indian university graduates.'
+        ],
+        readingTime: 4,
+      },
+      {
+        title: 'National Research Foundation (Anusandhan) Innovation Seed Grants',
+        category: 'Education',
+        summary: 'Direct university research funding allocated to early-stage student innovation and faculty collaboration cells.',
+        keyPoints: [
+          'Anusandhan NRF allocates seed funding to undergraduate and postgraduate research projects.',
+          'Special emphasis on state universities and tier-2 college laboratories.',
+          'Industry matching grants encourage commercial translation of campus patents.'
+        ],
+        content: [
+          'The newly operationalized Anusandhan National Research Foundation has launched its initial grant disbursement cycle aimed at democratizing scientific and social research funding across Indian colleges.',
+          'Unlike previous funding mechanisms concentrated predominantly in elite institutes, NRF specifically reserves a percentage of seed capital for state university research cells and undergraduate innovation labs.',
+          'Student researchers can now secure direct project grants for hardware prototypes, empirical economic field surveys, and open-source software tools.'
+        ],
+        readingTime: 4,
+      },
     ],
   },
   {
@@ -648,11 +803,86 @@ export const demoEditions: CurrentAffairsEdition[] = [
     cover: '/images/affairs/affairs-3.jpg', coverAlt: 'Designed cover of TSC Current Affairs, July 2026 edition',
     topics: ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
     articles: [
-      { title: 'Admissions season: the big picture changes', category: 'India', summary: 'Process updates across boards and universities this cycle.', readingTime: 5 },
-      { title: 'Geopolitics simplified for interview rooms', category: 'World', summary: 'Five global dynamics, explained in five minutes each.', readingTime: 5 },
-      { title: 'Startup funding and what it means for internships', category: 'Economy', summary: 'Follow the money to understand hiring seasons.', readingTime: 4 },
-      { title: 'Green tech milestones worth knowing', category: 'Science & Technology', summary: 'Climate tech progress with Indian connections.', readingTime: 4 },
-      { title: 'Digital university initiatives expand', category: 'Education', summary: 'Online degrees, credible alternatives and how to evaluate them.', readingTime: 4 },
+      {
+        title: 'Common University Entrance and Admission Cycle Reforms',
+        category: 'India',
+        summary: 'Key process changes across central and state university counseling cycles for undergraduate admissions.',
+        keyPoints: [
+          'Single-window normalized counseling prevents seat wastage across central universities.',
+          'Flexible tie-breaker and subject-mapping criteria instituted for interdisciplinary applicants.',
+          'Real-time vacancy tracking dashboards deployed for all admission phases.'
+        ],
+        content: [
+          'The nationwide centralized admission portal streamlined counseling across central and participating state universities, significantly curtailing multi-seat holding and last-minute vacancies.',
+          'The introduction of dynamic choice-filling algorithms and transparent cutoff releases has made the annual admissions cycle predictable and less stressful for incoming students.',
+          'Colleges are reporting earlier orientation commencement and faster onboarding into academic semester calendars.'
+        ],
+        readingTime: 5,
+      },
+      {
+        title: 'Global Geopolitical Energy Corridors & Maritime Trade',
+        category: 'World',
+        summary: 'Five strategic global trade choke-points and their impact on commodity pricing explained for interview rooms.',
+        keyPoints: [
+          'Strategic maritime corridors secure energy and electronics supply routes.',
+          'India’s international trade settlement in local currencies expands with regional partners.',
+          'Geopolitical awareness emerging as a core interview question for consulting and banking.'
+        ],
+        content: [
+          'Shifts in international maritime security and trading corridors have prompted global corporations to re-evaluate their supply chain logistics and inventory strategies.',
+          'India’s active participation in regional connectivity corridors strengthens its position as a reliable manufacturing and export hub.',
+          'For students facing competitive job interviews, understanding the intersection between global logistics, energy supply chains, and domestic inflation is a critical differentiator.'
+        ],
+        readingTime: 5,
+      },
+      {
+        title: 'Venture Capital Inflows: Deep Tech, Climate & Aerospace',
+        category: 'Economy',
+        summary: 'Investment data highlights where capital is moving and what it signals for student internships and hiring.',
+        keyPoints: [
+          'Early-stage funding surges in hardware, aerospace, and agricultural technology.',
+          'Founders prioritize unit economics and product-market fit over hyper-growth marketing.',
+          'Internship opportunities shift toward technical execution and product engineering roles.'
+        ],
+        content: [
+          'The Indian startup funding landscape has witnessed a pronounced reallocation of private equity and venture capital into deep-tech, space-tech, and renewable energy startups.',
+          'Unlike previous consumer internet cycles, deep-tech ventures require multidisciplinary talent spanning hardware design, thermal engineering, and scientific computation.',
+          'Campus placement cells and student founders are capitalizing on this wave through incubator partnerships and prototyping grants.'
+        ],
+        readingTime: 4,
+      },
+      {
+        title: 'Green Hydrogen and Renewable Grid Integration Breakthroughs',
+        category: 'Science & Technology',
+        summary: 'National Green Hydrogen Mission pilot projects begin operation across industrial hubs.',
+        keyPoints: [
+          'Electrolyzer manufacturing incentive schemes yield first batch of commercial units.',
+          'Heavy industrial sectors initiate green hydrogen blending trials.',
+          'Technical research collaborations launched between IITs and public energy corporations.'
+        ],
+        content: [
+          'India’s National Green Hydrogen Mission has transitioned from policy planning to live pilot testing with commercial electrolyzer deployments in chemical and steel manufacturing hubs.',
+          'These installations demonstrate the feasibility of zero-emission industrial heating and fertilizer production, placing India at the forefront of the global hydrogen economy.',
+          'Engineering and chemistry students specializing in electrochemistry and process optimization are seeing high-value research opportunities emerge.'
+        ],
+        readingTime: 4,
+      },
+      {
+        title: 'National Skill Qualification Framework (NSQF) Integration in Degrees',
+        category: 'Education',
+        summary: 'Micro-credentials and certified vocational tracks formally counted towards university degree credits.',
+        keyPoints: [
+          'Level-graded skill qualifications awarded alongside academic marksheets.',
+          'Direct alignment with National Occupational Standards (NOS).',
+          'Accelerated industry hiring for students graduating with dual academic-vocational credentials.'
+        ],
+        content: [
+          'The complete convergence of the National Skill Qualification Framework with university degree structures ensures students graduate with verified hands-on competency certificates.',
+          'By embedding industry-recognized certifications directly into university degree transcripts, colleges are bridging the gap between formal education and real-world employment needs.',
+          'Students can now leverage verified practical credits to stand out during campus interviews and technical screenings.'
+        ],
+        readingTime: 4,
+      },
     ],
   },
 ];
