@@ -5,6 +5,7 @@ import Membership from '../models/Membership';
 import Notification from '../models/Notification';
 import { env } from '../config/env';
 import { ApiError } from '../utils/apiError';
+import { emailService } from './email.service';
 
 interface Tokens { token: string; refreshToken: string }
 
@@ -37,6 +38,11 @@ export const authService = {
   }): Promise<{ user: ReturnType<typeof toPublicUser>; tokens: Tokens }> {
     const exists = await User.findOne({ email: payload.email.toLowerCase() });
     if (exists) throw ApiError.conflict('An account with this email already exists');
+
+    const verifyToken = crypto.randomBytes(32).toString('hex');
+    const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verifyExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
     const user = await User.create({
       name: payload.name,
       email: payload.email.toLowerCase(),
@@ -48,12 +54,74 @@ export const authService = {
       interests: payload.interests?.split(',').map((s) => s.trim()).filter(Boolean),
       skills: payload.skills?.split(',').map((s) => s.trim()).filter(Boolean),
       role: 'member',
+      isEmailVerified: false,
+      emailVerificationToken: verifyToken,
+      emailVerificationCode: verifyCode,
+      emailVerificationExpires: verifyExpiry,
     });
     await issueMembership(user._id);
     const tokens = signTokens(user);
     user.refreshTokens = [tokens.refreshToken];
     await user.save();
+
+    // Send verification email in background
+    emailService
+      .sendAccountVerification(user.email, user.name, verifyToken, verifyCode)
+      .catch((e) => console.error('[Verification Email Error]:', e));
+
     return { user: toPublicUser(user), tokens };
+  },
+
+  async resendVerification(email: string) {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    if (!cleanEmail) throw ApiError.badRequest('Email address is required.');
+
+    const user = await User.findOne({ email: cleanEmail }).select('+emailVerificationToken +emailVerificationCode +emailVerificationExpires');
+    if (!user) {
+      // Return success to avoid email enumeration
+      return { success: true, message: 'If an account exists, a verification email has been sent.' };
+    }
+
+    if (user.isEmailVerified) {
+      return { success: true, message: 'This account email is already verified.' };
+    }
+
+    const verifyToken = crypto.randomBytes(32).toString('hex');
+    const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.emailVerificationToken = verifyToken;
+    user.emailVerificationCode = verifyCode;
+    user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    await user.save();
+
+    await emailService.sendAccountVerification(user.email, user.name, verifyToken, verifyCode);
+
+    return { success: true, message: 'Verification email sent successfully. Please check your inbox.' };
+  },
+
+  async verifyEmail(token?: string, code?: string) {
+    if (!token && !code) {
+      throw ApiError.badRequest('Verification token or code is required.');
+    }
+
+    const query: Record<string, any> = {
+      emailVerificationExpires: { $gt: new Date() },
+    };
+
+    if (token) query.emailVerificationToken = token;
+    else if (code) query.emailVerificationCode = code;
+
+    const user = await User.findOne(query).select('+emailVerificationToken +emailVerificationCode +emailVerificationExpires');
+    if (!user) {
+      throw ApiError.badRequest('Invalid or expired verification link/code. Please request a new one.');
+    }
+
+    user.isEmailVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationCode = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save();
+
+    return { success: true, message: 'Email address verified successfully!', user: toPublicUser(user) };
   },
 
   async login(email: string, password: string): Promise<{ user: ReturnType<typeof toPublicUser>; tokens: Tokens }> {
@@ -118,6 +186,7 @@ export const authService = {
       const exists = await User.findOne({ email: cleanEmail, _id: { $ne: user._id } });
       if (exists) throw ApiError.conflict('An account with this email already exists');
       user.email = cleanEmail;
+      user.isEmailVerified = false;
     }
 
     if (payload.newPassword) {
@@ -142,9 +211,11 @@ function toPublicUser(user: IUser) {
     name: user.name,
     email: user.email,
     role: user.role,
+    isEmailVerified: !!user.isEmailVerified,
     college: user.college,
     city: user.city,
     state: user.state,
     avatarUrl: user.avatarUrl,
   };
 }
+

@@ -27,6 +27,7 @@ import { requireAuth, requireEditor, requireAdmin, type AuthRequest } from '../m
 import { authRouter } from './auth.routes';
 import { engagementRouter } from './engagement.routes';
 import { hiringRouter } from './hiring.routes';
+import { broadcastRouter } from './broadcast.routes';
 import { moderateSubmissionSchema } from '../validators';
 import { validate } from '../middleware/validate';
 import { env } from '../config/env';
@@ -46,10 +47,11 @@ export function registerRoutes(app: Router) {
     res.json({ success: true, service: 'THE STUDENT CHAPTERS™ API', time: new Date().toISOString() });
   });
 
-  /* ── Auth + engagement + hiring ─────────────────────────────────────── */
+  /* ── Auth + engagement + hiring + broadcast ─────────────────────────── */
   app.use('/', authRouter);
   app.use('/', engagementRouter);
   app.use('/', hiringRouter);
+  app.use('/', broadcastRouter);
 
   /* ── Content collections ────────────────────────────────────────────── */
   function contentRoutes(basePath: string, model: Parameters<typeof createContentService>[0], filterKeys?: string[], slugLookup = true) {

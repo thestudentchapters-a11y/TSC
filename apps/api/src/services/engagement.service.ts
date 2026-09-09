@@ -10,6 +10,7 @@ import { ApiError } from '../utils/apiError';
 import Story from '../models/Story';
 import User from '../models/User';
 import { slugify } from '../utils/slugify';
+import { emailService } from './email.service';
 
 /** Community submissions (story / campus news / articles) + review workflow. */
 export const submissionService = {
@@ -31,6 +32,18 @@ export const submissionService = {
       consent: true,
       status: 'pending',
     });
+
+    if (payload.email && typeof payload.email === 'string') {
+      emailService
+        .sendSubmissionReceipt(
+          payload.email,
+          String(payload.name || 'Contributor'),
+          'Story Article',
+          String(doc.storyTitle)
+        )
+        .catch((e) => console.error('[Email Receipt Error]:', e));
+    }
+
     return doc;
   },
 
@@ -52,6 +65,18 @@ export const submissionService = {
       consent: true,
       status: 'pending',
     });
+
+    if (payload.email && typeof payload.email === 'string') {
+      emailService
+        .sendSubmissionReceipt(
+          payload.email,
+          String(payload.name || 'Campus Reporter'),
+          'Campus News',
+          String(doc.newsTitle)
+        )
+        .catch((e) => console.error('[Email Receipt Error]:', e));
+    }
+
     return doc;
   },
 
@@ -71,6 +96,18 @@ export const submissionService = {
       note: payload.note,
       status: 'pending',
     });
+
+    if (payload.email && typeof payload.email === 'string') {
+      emailService
+        .sendSubmissionReceipt(
+          payload.email,
+          String(payload.fullName || 'Applicant'),
+          `Application for ${doc.opportunityTitle}`,
+          String(doc.organization || 'Opportunity')
+        )
+        .catch((e) => console.error('[Email Receipt Error]:', e));
+    }
+
     return doc;
   },
 
@@ -230,7 +267,8 @@ export const subscriberService = {
       throw ApiError.badRequest('Please enter a valid email address.');
     }
 
-    const existing = await (await import('../models/Subscriber')).default.findOne({ email: normalized });
+    const SubscriberModel = (await import('../models/Subscriber')).default;
+    const existing = await SubscriberModel.findOne({ email: normalized });
     if (existing) {
       if (existing.status === 'active') {
         return {
@@ -246,6 +284,9 @@ export const subscriberService = {
       if (meta?.ip) existing.ipAddress = meta.ip;
       if (meta?.ua) existing.userAgent = meta.ua;
       await existing.save();
+
+      emailService.sendNewsletterWelcome(normalized).catch((e) => console.error('[Newsletter Welcome Error]:', e));
+
       return {
         alreadySubscribed: false,
         reactivated: true,
@@ -254,7 +295,7 @@ export const subscriberService = {
       };
     }
 
-    const doc = await (await import('../models/Subscriber')).default.create({
+    const doc = await SubscriberModel.create({
       email: normalized,
       status: 'active',
       source: meta?.source || 'website_footer',
@@ -263,11 +304,40 @@ export const subscriberService = {
       subscribedAt: new Date(),
     });
 
+    emailService.sendNewsletterWelcome(normalized).catch((e) => console.error('[Newsletter Welcome Error]:', e));
+
     return {
       alreadySubscribed: false,
       message: 'Subscribed — welcome to TSC.',
       subscriber: doc,
     };
   },
+
+  async resendConfirmation(email: string) {
+    const normalized = (email || '').toLowerCase().trim();
+    if (!normalized || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
+      throw ApiError.badRequest('Please enter a valid email address.');
+    }
+
+    const SubscriberModel = (await import('../models/Subscriber')).default;
+    let sub = await SubscriberModel.findOne({ email: normalized });
+    if (!sub) {
+      sub = await SubscriberModel.create({
+        email: normalized,
+        status: 'active',
+        source: 'resend_request',
+        subscribedAt: new Date(),
+      });
+    }
+
+    await emailService.sendNewsletterWelcome(normalized);
+
+    return {
+      success: true,
+      message: 'Confirmation email sent successfully.',
+      email: normalized,
+    };
+  },
 };
+
 

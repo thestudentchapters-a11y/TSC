@@ -47,3 +47,16 @@ export const changeCredentials = asyncHandler(async (req: AuthRequest, res: Resp
   const user = await authService.changeCredentials(String(req.user!._id), req.body);
   res.json({ success: true, message: 'Account credentials updated successfully', data: { user } });
 });
+
+export const resendVerification = asyncHandler(async (req: Request, res: Response) => {
+  const result = await authService.resendVerification(req.body.email);
+  res.json(result);
+});
+
+export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+  const token = (req.query.token as string) || req.body?.token;
+  const code = (req.query.code as string) || req.body?.code;
+  const result = await authService.verifyEmail(token, code);
+  res.json(result);
+});
+

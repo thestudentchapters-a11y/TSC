@@ -188,11 +188,17 @@ export default function LoginPage() {
               </Button>
 
               {/* Bottom Switcher */}
-              <div className="pt-2 text-center border-t border-hairline/40">
+              <div className="pt-2 text-center border-t border-hairline/40 space-y-1.5">
                 <p className="text-xs text-muted">
                   New to TSC?{' '}
                   <Link href="/membership" className="font-semibold text-brand hover:text-brand-dark hover:underline">
                     Become a member
+                  </Link>
+                </p>
+                <p className="text-[11px] text-muted/80">
+                  Need to verify your email?{' '}
+                  <Link href="/verify-email" className="text-brand hover:underline font-medium">
+                    Verify or Resend Link
                   </Link>
                 </p>
               </div>

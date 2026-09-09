@@ -68,6 +68,11 @@ export const subscribeNewsletter = asyncHandler(async (req: Request, res: Respon
   });
 });
 
+export const resendNewsletterConfirmation = asyncHandler(async (req: Request, res: Response) => {
+  const result = await subscriberService.resendConfirmation(req.body.email);
+  res.json(result);
+});
+
 export const registerForEvent = asyncHandler(async (req: AuthRequest, res: Response) => {
   const reg = await eventService.register(req.params.id, req.body, req.user ? String(req.user._id) : undefined);
   res.status(201).json({ success: true, message: 'Registration confirmed.', data: { id: String(reg._id) } });

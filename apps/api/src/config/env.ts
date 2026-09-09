@@ -19,6 +19,8 @@ export const env = {
   },
   geminiApiKey: process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY ?? '',
   groqApiKey: process.env.GROQ_API_KEY ?? '',
+  resendApiKey: process.env.RESEND_API_KEY ?? '',
+  emailFrom: process.env.EMAIL_FROM ?? 'THE STUDENT CHAPTERS <onboarding@resend.dev>',
 };
 
 if (env.nodeEnv === 'production' && (env.jwtSecret.includes('change-me') || env.jwtRefreshSecret.includes('change-me'))) {

@@ -44,6 +44,31 @@ export default function RegisterPage() {
     }
   };
 
+  const [resending, setResending] = useState(false);
+
+  async function handleResend() {
+    if (!form.email) return;
+    setResending(true);
+    try {
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${api}/api/auth/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        push(data.message || 'Verification email resent!', 'success');
+      } else {
+        push(data.error || 'Failed to resend verification.', 'error');
+      }
+    } catch {
+      push('Network error while resending.', 'error');
+    } finally {
+      setResending(false);
+    }
+  }
+
   return (
     <>
       <PageHeader
@@ -54,12 +79,32 @@ export default function RegisterPage() {
       <section className="section-pad">
         <div className="container-tsc max-w-md">
           {done ? (
-            <FormSuccess
-              title="Account created."
-              message="You are in. Head to your dashboard to explore member features — or complete your full membership profile."
-              onReset={() => router.push('/dashboard')}
-              resetLabel="Open Dashboard"
-            />
+            <div className="card-base p-8 text-center space-y-5 animate-in fade-in">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                <span className="text-2xl">✉️</span>
+              </div>
+              <div>
+                <h3 className="font-display text-2xl font-bold text-ink">Account Created!</h3>
+                <p className="text-xs text-muted mt-2 leading-relaxed">
+                  We sent a confirmation &amp; verification email to <strong className="text-ink">{form.email}</strong>.
+                  Please check your inbox or spam folder to verify your address.
+                </p>
+              </div>
+
+              <div className="pt-2 flex flex-col gap-3">
+                <Button size="lg" className="w-full justify-center" onClick={() => router.push('/dashboard')} arrow>
+                  Open Dashboard
+                </Button>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="text-xs text-brand hover:underline font-semibold"
+                >
+                  {resending ? 'Sending…' : 'Didn’t receive email? Resend verification'}
+                </button>
+              </div>
+            </div>
           ) : (
             <form onSubmit={submit} className="card-base space-y-5 p-6 sm:p-8" noValidate>
               <Field label="Full name" htmlFor="r-name" required error={errors.name}>

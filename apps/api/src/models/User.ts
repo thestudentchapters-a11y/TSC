@@ -21,6 +21,10 @@ const UserSchema = new Schema(
     role: { type: String, enum: ['member', 'editor', 'admin'], default: 'member', index: true },
     customPermissions: [{ type: String }],
     isActive: { type: Boolean, default: true },
+    isEmailVerified: { type: Boolean, default: false },
+    emailVerificationToken: { type: String, select: false },
+    emailVerificationCode: { type: String, select: false },
+    emailVerificationExpires: { type: Date, select: false },
     refreshTokens: [{ type: String, select: false }],
   },
   {

@@ -4,7 +4,7 @@
  */
 import {
   Briefcase, CalendarDays, FileText, GraduationCap, Globe2, Images, LayoutDashboard,
-  Mail, Mic, Newspaper, Rocket, School, Settings, Share2, Users,
+  Mail, Megaphone, Mic, Newspaper, Rocket, School, Settings, Share2, Users,
 } from 'lucide-react';
 
 export type FieldType = 'text' | 'textarea' | 'select' | 'checkbox' | 'date' | 'number' | 'image' | 'tags';
@@ -379,6 +379,7 @@ export const adminNavGroups: { label: string; items: { href: string; label: stri
   {
     label: 'People & Inbox',
     items: [
+      { href: '/admin/broadcast', label: 'Broadcast Notification Mail', icon: Megaphone },
       { href: '/admin/hiring', label: 'Hiring Applications', icon: Briefcase },
       { href: '/admin/members', label: 'Members', icon: Users },
       { href: '/admin/subscribers', label: 'Newsletter Subscribers', icon: Mail },

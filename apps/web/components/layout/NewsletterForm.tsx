@@ -52,11 +52,50 @@ export function NewsletterForm() {
     }
   }
 
+  const [resending, setResending] = useState(false);
+
+  async function handleResendConfirmation() {
+    const trimmed = email.trim();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      push('Please enter a valid email address.', 'error');
+      return;
+    }
+    setResending(true);
+    try {
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${api}/api/newsletter/resend`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        push(data.message || 'Confirmation email sent! Check your inbox.', 'success');
+      } else {
+        push(data.error || 'Failed to resend confirmation.', 'error');
+      }
+    } catch {
+      push('Network error while resending email.', 'error');
+    } finally {
+      setResending(false);
+    }
+  }
+
   if (status === 'success') {
     return (
-      <div className="flex items-center gap-2 rounded-md border border-gold/40 bg-gold-50 px-4 py-3 text-sm font-semibold text-gold-deep animate-in fade-in">
-        <CheckCircle2 className="h-4 w-4 text-gold-deep shrink-0" />
-        <span>Subscribed — welcome to TSC.</span>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 rounded-md border border-gold/40 bg-gold-50 px-4 py-3 text-sm font-semibold text-gold-deep animate-in fade-in">
+          <CheckCircle2 className="h-4 w-4 text-gold-deep shrink-0" />
+          <span>Subscribed — confirmation email sent!</span>
+        </div>
+        <button
+          type="button"
+          onClick={handleResendConfirmation}
+          disabled={resending}
+          className="text-[11px] text-cream/70 hover:text-gold transition-colors underline"
+        >
+          {resending ? 'Resending email…' : 'Didn’t receive it? Resend confirmation email'}
+        </button>
       </div>
     );
   }
@@ -104,10 +143,20 @@ export function NewsletterForm() {
       </form>
 
       {status === 'already_subscribed' && (
-        <p className="flex items-center gap-1.5 text-xs font-semibold text-amber-300 animate-in fade-in">
-          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-          Already Subscribed
-        </p>
+        <div className="flex items-center justify-between gap-2 text-xs font-semibold text-amber-300 animate-in fade-in">
+          <span className="flex items-center gap-1.5">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+            Already Subscribed
+          </span>
+          <button
+            type="button"
+            onClick={handleResendConfirmation}
+            disabled={resending}
+            className="text-[11px] text-cream/70 hover:text-gold transition-colors underline font-normal"
+          >
+            {resending ? 'Sending…' : 'Resend welcome email'}
+          </button>
+        </div>
       )}
     </div>
   );
