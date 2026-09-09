@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { contactService, eventService, savedItemService, submissionService } from '../services/engagement.service';
+import { contactService, eventService, savedItemService, submissionService, subscriberService } from '../services/engagement.service';
 import { asyncHandler } from '../utils/asyncHandler';
 import type { AuthRequest } from '../middleware/auth';
 
@@ -43,6 +43,31 @@ export const contact = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json({ success: true, message: 'Message sent — the TSC team will reply soon.', data: result });
 });
 
+export const subscribeNewsletter = asyncHandler(async (req: Request, res: Response) => {
+  if (req.body.honey || req.body.website) {
+    return res.status(200).json({ success: true, message: 'Subscribed — welcome to TSC.' });
+  }
+  const result = await subscriberService.subscribe(req.body.email, {
+    source: req.body.source || 'website_footer',
+    ip: req.ip,
+    ua: req.headers['user-agent'] as string,
+  });
+
+  if (result.alreadySubscribed) {
+    return res.status(409).json({
+      success: false,
+      alreadySubscribed: true,
+      message: 'Already Subscribed',
+    });
+  }
+
+  res.status(201).json({
+    success: true,
+    message: result.message,
+    data: result.subscriber,
+  });
+});
+
 export const registerForEvent = asyncHandler(async (req: AuthRequest, res: Response) => {
   const reg = await eventService.register(req.params.id, req.body, req.user ? String(req.user._id) : undefined);
   res.status(201).json({ success: true, message: 'Registration confirmed.', data: { id: String(reg._id) } });
@@ -58,3 +83,4 @@ export const listSaved = asyncHandler(async (req: AuthRequest, res: Response) =>
   const items = await savedItemService.list(String(req.user!._id));
   res.json({ success: true, data: items });
 });
+

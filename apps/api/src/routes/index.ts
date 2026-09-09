@@ -18,6 +18,7 @@ import User from '../models/User';
 import SiteSettings from '../models/SiteSettings';
 import { StorySubmission, CampusSubmission } from '../models/Submission';
 import HiringApplication from '../models/HiringApplication';
+import Subscriber from '../models/Subscriber';
 
 import { createContentService } from '../services/content.service';
 import { submissionService } from '../services/engagement.service';
@@ -188,6 +189,7 @@ export function registerRoutes(app: Router) {
   contentRoutes('/api/categories', Category, ['section'], false);
   contentRoutes('/api/tags', Tag, undefined, false);
   contentRoutes('/api/media', Media, ['type'], false);
+  contentRoutes('/api/subscribers', Subscriber, ['status', 'source'], false);
 
   /* ── Cloudinary Media Upload (admin/editor) ─────────────────────────── */
   app.post(

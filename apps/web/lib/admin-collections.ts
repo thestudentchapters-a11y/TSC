@@ -335,6 +335,22 @@ export const collections: Record<string, CollectionDef> = {
     ],
     filters: { key: 'status', label: 'Status', options: ['new', 'read', 'replied'] },
   },
+  subscribers: {
+    key: 'subscribers', title: 'Newsletter Subscribers', singular: 'Subscriber', icon: Mail, seedKey: 'subscribers',
+    description: 'List of all newsletter subscribers.',
+    columns: [
+      { name: 'email', label: 'Email' },
+      { name: 'status', label: 'Status', type: 'badge' },
+      { name: 'source', label: 'Source' },
+      { name: 'createdAt', label: 'Subscribed', type: 'date' },
+    ],
+    fields: [
+      { name: 'email', label: 'Email', type: 'text', required: true },
+      { name: 'status', label: 'Status', type: 'select', options: ['active', 'unsubscribed'], required: true, width: 'half' },
+      { name: 'source', label: 'Source', type: 'text', width: 'half' },
+    ],
+    filters: { key: 'status', label: 'Status', options: ['active', 'unsubscribed'] },
+  },
 };
 
 export const adminNavGroups: { label: string; items: { href: string; label: string; icon: typeof Newspaper }[] }[] = [
@@ -365,6 +381,7 @@ export const adminNavGroups: { label: string; items: { href: string; label: stri
     items: [
       { href: '/admin/hiring', label: 'Hiring Applications', icon: Briefcase },
       { href: '/admin/members', label: 'Members', icon: Users },
+      { href: '/admin/subscribers', label: 'Newsletter Subscribers', icon: Mail },
       { href: '/admin/story-submissions', label: 'Story Submissions', icon: Share2 },
       { href: '/admin/campus-submissions', label: 'Campus Submissions', icon: School },
       { href: '/admin/contact-messages', label: 'Contact Messages', icon: Mail },

@@ -221,3 +221,53 @@ export const savedItemService = {
     return SavedItem.find({ user: userId }).sort({ createdAt: -1 });
   },
 };
+
+/** Newsletter subscriptions & database deduplication. */
+export const subscriberService = {
+  async subscribe(email: string, meta?: { source?: string; ip?: string; ua?: string }) {
+    const normalized = (email || '').toLowerCase().trim();
+    if (!normalized || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
+      throw ApiError.badRequest('Please enter a valid email address.');
+    }
+
+    const existing = await (await import('../models/Subscriber')).default.findOne({ email: normalized });
+    if (existing) {
+      if (existing.status === 'active') {
+        return {
+          alreadySubscribed: true,
+          message: 'Already Subscribed',
+          subscriber: existing,
+        };
+      }
+      // Re-activate if was previously unsubscribed
+      existing.status = 'active';
+      existing.subscribedAt = new Date();
+      if (meta?.source) existing.source = meta.source;
+      if (meta?.ip) existing.ipAddress = meta.ip;
+      if (meta?.ua) existing.userAgent = meta.ua;
+      await existing.save();
+      return {
+        alreadySubscribed: false,
+        reactivated: true,
+        message: 'Subscribed — welcome back to TSC.',
+        subscriber: existing,
+      };
+    }
+
+    const doc = await (await import('../models/Subscriber')).default.create({
+      email: normalized,
+      status: 'active',
+      source: meta?.source || 'website_footer',
+      ipAddress: meta?.ip,
+      userAgent: meta?.ua,
+      subscribedAt: new Date(),
+    });
+
+    return {
+      alreadySubscribed: false,
+      message: 'Subscribed — welcome to TSC.',
+      subscriber: doc,
+    };
+  },
+};
+

@@ -6,7 +6,7 @@ import { validate } from '../middleware/validate';
 import { formLimiter } from '../middleware/rateLimit';
 import { optionalAuth } from '../middleware/auth';
 import {
-  contact, getMySubmissions, listSaved, registerForEvent, submitCampusNews, submitStory, submitCareerApply, toggleSaved,
+  contact, getMySubmissions, listSaved, registerForEvent, submitCampusNews, submitStory, submitCareerApply, toggleSaved, subscribeNewsletter,
 } from '../controllers/engagement.controller';
 import { requireAuth } from '../middleware/auth';
 
@@ -17,6 +17,8 @@ engagementRouter.post('/api/submissions/story', formLimiter, optionalAuth, valid
 engagementRouter.post('/api/submissions/campus', formLimiter, optionalAuth, validate(campusSubmissionSchema), submitCampusNews);
 engagementRouter.post('/api/submissions/career-apply', formLimiter, optionalAuth, submitCareerApply);
 engagementRouter.post('/api/contact', formLimiter, validate(contactSchema), contact);
+engagementRouter.post('/api/newsletter/subscribe', formLimiter, subscribeNewsletter);
+engagementRouter.post('/api/subscribe', formLimiter, subscribeNewsletter);
 engagementRouter.post('/api/events/:id/register', formLimiter, optionalAuth, validate(eventRegistrationSchema), registerForEvent);
 
 /* Submissions tracking (member auth) */
