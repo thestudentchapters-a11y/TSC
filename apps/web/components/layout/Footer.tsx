@@ -114,9 +114,9 @@ export function Footer() {
             © {year} THE STUDENT CHAPTERS™. All rights reserved.
           </p>
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span className="rounded-full border border-gold/50 bg-gold/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold">
+            {/* <span className="rounded-full border border-gold/50 bg-gold/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold">
               Demo build
-            </span>
+            </span> */}
             <Link href="/about" className="transition-colors hover:text-gold">About</Link>
             <Link href="/contact" className="transition-colors hover:text-gold">Contact</Link>
             <span aria-hidden className="text-cream/40">•</span>
