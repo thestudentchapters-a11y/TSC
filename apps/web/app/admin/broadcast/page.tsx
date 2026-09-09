@@ -70,7 +70,7 @@ export default function BroadcastAdminPage() {
   const [testEmail, setTestEmail] = useState('');
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
-  const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+  const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     fetchStatsAndLogs();

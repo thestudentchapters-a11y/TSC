@@ -30,7 +30,7 @@ function VerifyEmailContent() {
     setLoading(true);
     setStatus('verifying');
     try {
-      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const res = await fetch(`${api}/api/auth/verify-email?token=${encodeURIComponent(t)}`);
       const data = await res.json();
       if (res.ok && data.success) {
@@ -57,7 +57,7 @@ function VerifyEmailContent() {
     }
     setLoading(true);
     try {
-      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const res = await fetch(`${api}/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,7 +87,7 @@ function VerifyEmailContent() {
     }
     setResending(true);
     try {
-      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const res = await fetch(`${api}/api/auth/resend-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

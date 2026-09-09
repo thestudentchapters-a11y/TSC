@@ -92,7 +92,7 @@ export default function AdminSettingsPage() {
 
     setCredBusy(true);
     try {
-      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const token = getToken();
 
       const res = await fetch(`${api}/api/auth/change-credentials`, {

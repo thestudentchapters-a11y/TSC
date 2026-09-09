@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string): Promise<{ ok: boolean; role?: Role; error?: string }> => {
-      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       try {
         const res = await fetch(`${api}/api/auth/login`, {
           method: 'POST',
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = useCallback(
     async (payload: RegisterPayload): Promise<{ ok: boolean; error?: string }> => {
-      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       try {
         const res = await fetch(`${api}/api/auth/register`, {
           method: 'POST',
