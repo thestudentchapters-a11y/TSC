@@ -1247,9 +1247,15 @@ export function CurrentAffairsAdmin() {
                         </div>
                         {draftButtonLabel && draftButtonUrl && (
                           <div className="text-center pt-2">
-                            <span className="inline-block bg-brand text-white font-bold text-[10px] uppercase tracking-wider px-4 py-1.5 rounded">
+                            <a
+                              href={draftButtonUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block bg-brand hover:bg-brand-dark text-white font-bold text-[10px] uppercase tracking-wider px-4 py-1.5 rounded transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                              title={`Open ${draftButtonUrl}`}
+                            >
                               {draftButtonLabel} &rarr;
-                            </span>
+                            </a>
                           </div>
                         )}
                       </div>

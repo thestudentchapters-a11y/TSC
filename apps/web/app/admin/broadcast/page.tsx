@@ -817,9 +817,15 @@ export default function BroadcastAdminPage() {
 
                     {buttonLabel && buttonUrl && (
                       <div className="text-center pt-3 pb-1">
-                        <span className="inline-block bg-brand hover:bg-brand-dark text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded shadow-sm">
+                        <a
+                          href={buttonUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block bg-brand hover:bg-brand-dark text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                          title={`Open ${buttonUrl}`}
+                        >
                           {buttonLabel} &rarr;
-                        </span>
+                        </a>
                       </div>
                     )}
                   </div>
