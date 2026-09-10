@@ -1,5 +1,6 @@
 import CurrentAffairsEdition from '../models/CurrentAffairsEdition';
 import { generateCurrentAffairsEdition } from './currentAffairsAi.service';
+import { notificationBroadcaster } from './notificationBroadcaster.service';
 import { logger } from '../utils/logger';
 
 const MONTH_NAMES = [
@@ -65,6 +66,19 @@ export async function checkAndAutoPublishMonthlyEdition(force = false): Promise<
     });
 
     logger.info(`[Scheduler] Successfully auto-published ${doc.title} (slug: ${doc.slug}) on the last day of ${currentMonth}!`);
+
+    // Auto-send email notifications to subscribers / members
+    void notificationBroadcaster.broadcastOnPublish({
+      contentType: 'current-affairs',
+      title: doc.title,
+      summary: doc.intro,
+      month: doc.month,
+      year: doc.year,
+      topics: doc.topics,
+      slug: doc.slug,
+      force,
+    });
+
     return true;
   } catch (err) {
     logger.error(`[Scheduler] Failed to auto-generate monthly edition for ${currentMonth} ${currentYear}:`, err);

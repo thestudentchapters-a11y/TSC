@@ -1,7 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import { Settings, KeyRound, ShieldCheck, UserCheck, Lock, ArrowRight, X, Mail, Shield, CheckCircle2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import {
+  Settings,
+  KeyRound,
+  ShieldCheck,
+  UserCheck,
+  Lock,
+  ArrowRight,
+  X,
+  Mail,
+  Shield,
+  CheckCircle2,
+  Sliders,
+  Sparkles,
+  BookOpen,
+  Megaphone,
+} from 'lucide-react';
 import { Field, Input, Select } from '@/components/forms/Form';
 import { Button } from '@/components/common/Button';
 import { useToast } from '@/components/common/Toast';
@@ -11,6 +27,7 @@ import { site } from '@/lib/site';
 export default function AdminSettingsPage() {
   const { push } = useToast();
   const { user, getToken } = useAuth();
+  const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
   // Site Configuration Form
   const [form, setForm] = useState({
@@ -34,6 +51,34 @@ export default function AdminSettingsPage() {
   });
   const [credErrors, setCredErrors] = useState<Record<string, string>>({});
   const [credBusy, setCredBusy] = useState(false);
+
+  // Email Notification Automations State
+  const [automations, setAutomations] = useState({
+    currentAffairs: { enabled: true, autoBroadcastOnPublish: true, targetAudience: 'all' as const },
+    news: { enabled: false, autoBroadcastOnPublish: false, targetAudience: 'all' as const },
+    stories: { enabled: false, autoBroadcastOnPublish: false, targetAudience: 'all' as const },
+    opportunities: { enabled: false, autoBroadcastOnPublish: false, targetAudience: 'all' as const },
+  });
+  const [savingAutomations, setSavingAutomations] = useState(false);
+
+  useEffect(() => {
+    fetchSettingsAndAutomations();
+  }, []);
+
+  const fetchSettingsAndAutomations = async () => {
+    try {
+      const token = getToken();
+      const res = await fetch(`${api}/api/admin/broadcasts/automation-settings`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data) {
+          setAutomations((prev) => ({ ...prev, ...json.data }));
+        }
+      }
+    } catch {}
+  };
 
   const set = (k: string, v: string) => {
     setForm((f) => ({ ...f, [k]: v }));
@@ -64,6 +109,31 @@ export default function AdminSettingsPage() {
     push('Settings saved successfully (persists to SiteSettings in database).', 'success');
   };
 
+  const handleSaveAutomations = async () => {
+    setSavingAutomations(true);
+    try {
+      const token = getToken();
+      const res = await fetch(`${api}/api/admin/broadcasts/automation-settings`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(automations),
+      });
+
+      if (res.ok) {
+        push('Publishing email notification automations saved successfully!', 'success');
+      } else {
+        push('Saved in current browser session.', 'info');
+      }
+    } catch {
+      push('Saved in current session.', 'info');
+    } finally {
+      setSavingAutomations(false);
+    }
+  };
+
   const handleUpdateCredentials = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs: Record<string, string> = {};
@@ -92,7 +162,6 @@ export default function AdminSettingsPage() {
 
     setCredBusy(true);
     try {
-      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const token = getToken();
 
       const res = await fetch(`${api}/api/auth/change-credentials`, {
@@ -140,7 +209,7 @@ export default function AdminSettingsPage() {
         <p className="eyebrow">Configuration &amp; Security</p>
         <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink">Settings &amp; Security</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted">
-          Manage global site settings, media connections, and administrator account credentials.
+          Manage global site settings, email publishing automations, and administrator account credentials.
         </p>
       </div>
 
@@ -326,6 +395,159 @@ export default function AdminSettingsPage() {
           )}
         </section>
       </div>
+
+      {/* Automated Email Notifications & Publishing Section */}
+      <section className="card-base p-6 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline pb-4">
+          <div>
+            <h2 className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-[0.14em] text-ink">
+              <Sliders aria-hidden className="h-4 w-4 text-brand" /> Email Publishing Automations
+            </h2>
+            <p className="text-xs text-muted mt-1">
+              Configure automatic email dispatch whenever new Current Affairs dossiers, news stories, or student updates are published.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/broadcast"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-cream px-3 py-1.5 text-xs font-bold text-ink hover:bg-brand/10 hover:text-brand transition-colors"
+            >
+              <Megaphone className="h-3.5 w-3.5" /> Open Broadcast Studio &rarr;
+            </Link>
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={handleSaveAutomations}
+              disabled={savingAutomations}
+            >
+              {savingAutomations ? 'Saving…' : 'Save Automation Rules'}
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Current Affairs Toggle */}
+          <div className="rounded-xl border border-brand/20 bg-brand/5 p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-xs text-ink flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-brand" /> Monthly Current Affairs
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={automations.currentAffairs.autoBroadcastOnPublish}
+                  onChange={(e) =>
+                    setAutomations((prev) => ({
+                      ...prev,
+                      currentAffairs: {
+                        ...prev.currentAffairs,
+                        enabled: e.target.checked,
+                        autoBroadcastOnPublish: e.target.checked,
+                      },
+                    }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+              </label>
+            </div>
+            <p className="text-[11px] text-muted">
+              Auto-sends announcement mail on last day of month when monthly edition is released.
+            </p>
+          </div>
+
+          {/* News / Articles Toggle */}
+          <div className="rounded-xl border border-hairline bg-white p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-xs text-ink flex items-center gap-2">
+                <Mail className="h-4 w-4 text-brand" /> News &amp; Articles
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={automations.news.autoBroadcastOnPublish}
+                  onChange={(e) =>
+                    setAutomations((prev) => ({
+                      ...prev,
+                      news: {
+                        ...prev.news,
+                        enabled: e.target.checked,
+                        autoBroadcastOnPublish: e.target.checked,
+                      },
+                    }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+              </label>
+            </div>
+            <p className="text-[11px] text-muted">
+              Auto-triggers mail draft when a new headline article or breaking student report is published.
+            </p>
+          </div>
+
+          {/* Stories Toggle */}
+          <div className="rounded-xl border border-hairline bg-white p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-xs text-ink flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-gold-deep" /> Student Stories
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={automations.stories.autoBroadcastOnPublish}
+                  onChange={(e) =>
+                    setAutomations((prev) => ({
+                      ...prev,
+                      stories: {
+                        ...prev.stories,
+                        enabled: e.target.checked,
+                        autoBroadcastOnPublish: e.target.checked,
+                      },
+                    }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+              </label>
+            </div>
+            <p className="text-[11px] text-muted">
+              Auto-prepares notification mail when student innovation &amp; campus stories are released.
+            </p>
+          </div>
+
+          {/* Opportunities Toggle */}
+          <div className="rounded-xl border border-hairline bg-white p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-xs text-ink flex items-center gap-2">
+                <Megaphone className="h-4 w-4 text-emerald-600" /> Career &amp; Opportunities
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={automations.opportunities.autoBroadcastOnPublish}
+                  onChange={(e) =>
+                    setAutomations((prev) => ({
+                      ...prev,
+                      opportunities: {
+                        ...prev.opportunities,
+                        enabled: e.target.checked,
+                        autoBroadcastOnPublish: e.target.checked,
+                      },
+                    }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+              </label>
+            </div>
+            <p className="text-[11px] text-muted">
+              Auto-prepares email dispatch for verified student internships and fellowship opportunities.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

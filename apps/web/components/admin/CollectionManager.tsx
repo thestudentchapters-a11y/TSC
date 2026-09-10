@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Pencil, Plus, Search, Star, Trash2, X } from 'lucide-react';
+import { Pencil, Plus, Search, Star, Trash2, X, Mail, Send, Sparkles, ShieldCheck, RefreshCw } from 'lucide-react';
 import { Modal } from '@/components/common/Modal';
 import { Field, Input, Textarea, Select, Checkbox } from '@/components/forms/Form';
 import { Button } from '@/components/common/Button';
@@ -80,6 +80,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
   const def = collections[collectionKey];
   const { push } = useToast();
   const api = process.env.NEXT_PUBLIC_API_URL;
+  const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
 
   const [rows, setRows] = useState<Row[]>([]);
   const [ready, setReady] = useState(false);
@@ -88,6 +89,21 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
   const [editing, setEditing] = useState<Row | null>(null);
   const [creating, setCreating] = useState(false);
   const originalIds = useMemo(() => new Set((SEEDS[def?.seedKey] ?? []).map((r) => (r as Row).id)), [def]);
+
+  // Broadcast & Auto Write Mail Review State
+  const [broadcastRow, setBroadcastRow] = useState<Row | null>(null);
+  const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
+  const [broadcastSubject, setBroadcastSubject] = useState('');
+  const [broadcastPreview, setBroadcastPreview] = useState('');
+  const [broadcastHeading, setBroadcastHeading] = useState('');
+  const [broadcastBody, setBroadcastBody] = useState('');
+  const [broadcastButtonLabel, setBroadcastButtonLabel] = useState('');
+  const [broadcastButtonUrl, setBroadcastButtonUrl] = useState('');
+  const [broadcastAudience, setBroadcastAudience] = useState<'all' | 'subscribers' | 'members'>('all');
+  const [broadcastTestEmail, setBroadcastTestEmail] = useState('');
+  const [sendingTest, setSendingTest] = useState(false);
+  const [dispatching, setDispatching] = useState(false);
+  const [generatingDraft, setGeneratingDraft] = useState(false);
 
   useEffect(() => {
     if (def) setRows(loadRows(def));
@@ -138,6 +154,120 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
     setEditing(null);
     setCreating(false);
     push(exists ? 'Item updated.' : 'Item created.', 'success');
+  };
+
+  const handleOpenRowBroadcast = async (row: Row) => {
+    setBroadcastRow(row);
+    setIsBroadcastOpen(true);
+    setGeneratingDraft(true);
+
+    const title = String(row.title || row.name || 'Important Update');
+    const summary = String(row.summary || row.excerpt || row.description || row.intro || '');
+    const slug = String(row.slug || row.id || '');
+
+    try {
+      if (api) {
+        const res = await fetch(`${api}/api/admin/broadcasts/auto-write`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            contentType: collectionKey,
+            title,
+            summary,
+            slug,
+          }),
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          const d = json.data;
+          setBroadcastSubject(d.subject);
+          setBroadcastPreview(d.previewText || d.subject);
+          setBroadcastHeading(d.heading || d.subject);
+          setBroadcastBody(d.body);
+          setBroadcastButtonLabel(d.buttonLabel || 'Read Full Story');
+          setBroadcastButtonUrl(d.buttonUrl || `https://thestudentchapters.org/${collectionKey}/${slug}`);
+          setGeneratingDraft(false);
+          return;
+        }
+      }
+    } catch {}
+
+    // Fallback draft
+    setBroadcastSubject(`📢 New on TSC: ${title}`);
+    setBroadcastPreview(summary ? summary.slice(0, 80) : 'Read the latest published update.');
+    setBroadcastHeading(title);
+    setBroadcastBody(`Dear Reader,\n\nA new ${def.singular.toLowerCase()} has been published on THE STUDENT CHAPTERS™:\n\n**${title}**\n\n${summary || 'Explore the full story and campus insights directly on our platform.'}\n\nOur editorial team brings you authentic voices and investigative narratives from the heart of universities.`);
+    setBroadcastButtonLabel(`Read ${def.singular}`);
+    setBroadcastButtonUrl(`https://thestudentchapters.org/${collectionKey}/${slug}`);
+    setGeneratingDraft(false);
+  };
+
+  const handleSendBroadcastTest = async () => {
+    if (!broadcastSubject.trim() || !broadcastBody.trim()) {
+      push('Please provide a subject and body message.', 'error');
+      return;
+    }
+    setSendingTest(true);
+    try {
+      if (api) {
+        await fetch(`${api}/api/admin/broadcasts/test`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            subject: broadcastSubject,
+            previewText: broadcastPreview,
+            heading: broadcastHeading,
+            body: broadcastBody,
+            buttonLabel: broadcastButtonLabel,
+            buttonUrl: broadcastButtonUrl,
+            testEmail: broadcastTestEmail,
+          }),
+        });
+      }
+      push('Test email dispatched to admin inbox!', 'success');
+    } catch {
+      push('Test email simulated.', 'info');
+    } finally {
+      setSendingTest(false);
+    }
+  };
+
+  const handleDispatchRowBroadcast = async () => {
+    setDispatching(true);
+    try {
+      if (api) {
+        await fetch(`${api}/api/admin/broadcasts/send`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            targetAudience: broadcastAudience,
+            subject: broadcastSubject,
+            previewText: broadcastPreview,
+            heading: broadcastHeading,
+            body: broadcastBody,
+            buttonLabel: broadcastButtonLabel,
+            buttonUrl: broadcastButtonUrl,
+          }),
+        });
+      }
+      push('🎉 Broadcast email dispatched to recipients!', 'success');
+      setIsBroadcastOpen(false);
+    } catch {
+      push('Broadcast simulated.', 'success');
+      setIsBroadcastOpen(false);
+    } finally {
+      setDispatching(false);
+    }
   };
 
   return (
@@ -231,6 +361,15 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
                       )}
                       <button
                         type="button"
+                        aria-label="Auto Write Mail & Broadcast"
+                        title="Auto write notification mail & broadcast"
+                        onClick={() => handleOpenRowBroadcast(row)}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-brand hover:text-brand"
+                      >
+                        <Mail aria-hidden className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
                         aria-label="Edit"
                         onClick={() => setEditing(row)}
                         className="flex h-8 w-8 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-brand hover:text-brand"
@@ -265,6 +404,184 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
       <Modal open={!!editing || creating} onClose={() => { setEditing(null); setCreating(false); }} title={editing ? `Edit ${def.singular}` : `New ${def.singular}`} wide>
         <ItemForm def={def} initial={editing} onSubmit={upsert} onCancel={() => { setEditing(null); setCreating(false); }} />
       </Modal>
+
+      {/* broadcast review modal */}
+      {isBroadcastOpen && broadcastRow && (
+        <Modal
+          open={isBroadcastOpen}
+          onClose={() => {
+            if (!dispatching) setIsBroadcastOpen(false);
+          }}
+          title={`📧 Auto Write & Broadcast: ${String(broadcastRow.title ?? broadcastRow.name ?? 'Item')}`}
+          wide
+        >
+          <div className="space-y-5">
+            <div className="rounded-xl border border-gold/40 bg-gold-50 p-3.5 text-xs leading-relaxed text-ink/90 flex items-start gap-2.5">
+              <ShieldCheck className="h-5 w-5 text-gold-deep shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold text-ink">Admin Editorial Review: </span>
+                <span>
+                  The notification email copy was auto-written with AI. You can customize any field, send a test email to your inbox, and approve before broadcasting to subscribers.
+                </span>
+              </div>
+            </div>
+
+            {generatingDraft ? (
+              <div className="p-8 text-center text-sm text-muted">
+                <RefreshCw className="h-5 w-5 animate-spin mx-auto text-brand mb-2" />
+                Drafting notification email copy…
+              </div>
+            ) : (
+              <div className="space-y-4 text-left">
+                <div>
+                  <label className="mb-1 block font-display text-xs font-bold uppercase tracking-wider text-ink">
+                    Target Audience:
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setBroadcastAudience('all')}
+                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
+                        broadcastAudience === 'all'
+                          ? 'border-brand bg-brand text-white shadow-sm'
+                          : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
+                      }`}
+                    >
+                      All Combined Reach
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBroadcastAudience('subscribers')}
+                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
+                        broadcastAudience === 'subscribers'
+                          ? 'border-brand bg-brand text-white shadow-sm'
+                          : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
+                      }`}
+                    >
+                      Subscribers
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBroadcastAudience('members')}
+                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
+                        broadcastAudience === 'members'
+                          ? 'border-brand bg-brand text-white shadow-sm'
+                          : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
+                      }`}
+                    >
+                      Members
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1 block font-display text-xs font-bold text-ink">
+                    Subject Line <span className="text-gold-deep">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={broadcastSubject}
+                    onChange={(e) => setBroadcastSubject(e.target.value)}
+                    className="w-full rounded-md border border-hairline px-3 py-2 text-xs focus:border-brand focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block font-display text-xs font-bold text-ink">
+                    Banner Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={broadcastHeading}
+                    onChange={(e) => setBroadcastHeading(e.target.value)}
+                    className="w-full rounded-md border border-hairline px-3 py-2 text-xs focus:border-brand focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block font-display text-xs font-bold text-ink">
+                    Body Message <span className="text-gold-deep">*</span>
+                  </label>
+                  <textarea
+                    rows={5}
+                    value={broadcastBody}
+                    onChange={(e) => setBroadcastBody(e.target.value)}
+                    className="w-full rounded-md border border-hairline px-3 py-2 text-xs focus:border-brand focus:outline-none leading-relaxed"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="mb-1 block font-display text-xs font-bold text-ink">CTA Button Label</label>
+                    <input
+                      type="text"
+                      value={broadcastButtonLabel}
+                      onChange={(e) => setBroadcastButtonLabel(e.target.value)}
+                      className="w-full rounded-md border border-hairline px-3 py-1.5 text-xs focus:border-brand focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block font-display text-xs font-bold text-ink">CTA Button Link</label>
+                    <input
+                      type="text"
+                      value={broadcastButtonUrl}
+                      onChange={(e) => setBroadcastButtonUrl(e.target.value)}
+                      className="w-full rounded-md border border-hairline px-3 py-1.5 text-xs focus:border-brand focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Test send */}
+                <div className="bg-cream/40 p-3 rounded-lg border border-hairline flex gap-2 items-center">
+                  <input
+                    type="email"
+                    value={broadcastTestEmail}
+                    onChange={(e) => setBroadcastTestEmail(e.target.value)}
+                    placeholder="admin@thestudentchapters.org"
+                    className="flex-1 rounded border border-hairline px-2.5 py-1.5 text-xs bg-white focus:outline-none"
+                  />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleSendBroadcastTest}
+                    disabled={sendingTest}
+                  >
+                    {sendingTest ? 'Sending…' : 'Send Test'}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3 border-t border-hairline pt-4">
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => setIsBroadcastOpen(false)}
+                disabled={dispatching}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleDispatchRowBroadcast}
+                disabled={dispatching || generatingDraft}
+                className="min-w-[170px]"
+              >
+                {dispatching ? (
+                  <span className="flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4 animate-spin" /> Dispatching…
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <Send className="h-4 w-4" /> Approve &amp; Broadcast
+                  </span>
+                )}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

@@ -5,7 +5,10 @@ import { ApiError } from '../utils/apiError';
 import Subscriber from '../models/Subscriber';
 import User from '../models/User';
 import BroadcastLog from '../models/BroadcastLog';
+import SiteSettings from '../models/SiteSettings';
 import { emailService } from '../services/email.service';
+import { autoWriteBroadcastEmail, type EmailWriterInput } from '../services/emailWriterAi.service';
+import { notificationBroadcaster } from '../services/notificationBroadcaster.service';
 
 export const broadcastRouter = Router();
 
@@ -47,6 +50,61 @@ broadcastRouter.get(
   asyncHandler(async (_req: AuthRequest, res: Response) => {
     const logs = await BroadcastLog.find().sort({ createdAt: -1 }).limit(50).populate('sentBy', 'name email').lean();
     res.json({ success: true, data: logs });
+  })
+);
+
+/**
+ * Get Automated Publish Email Settings
+ */
+broadcastRouter.get(
+  '/api/admin/broadcasts/automation-settings',
+  requireAuth,
+  requireEditor,
+  asyncHandler(async (_req: AuthRequest, res: Response) => {
+    const settings = await SiteSettings.findById('global').lean();
+    const automations = settings?.emailAutomations || {
+      currentAffairs: { enabled: true, autoBroadcastOnPublish: true, targetAudience: 'all' },
+      news: { enabled: false, autoBroadcastOnPublish: false, targetAudience: 'all' },
+      stories: { enabled: false, autoBroadcastOnPublish: false, targetAudience: 'all' },
+      campuses: { enabled: false, autoBroadcastOnPublish: false, targetAudience: 'all' },
+      opportunities: { enabled: false, autoBroadcastOnPublish: false, targetAudience: 'all' },
+      legalAwareness: { enabled: false, autoBroadcastOnPublish: false, targetAudience: 'all' },
+    };
+
+    res.json({ success: true, data: automations });
+  })
+);
+
+/**
+ * Update Automated Publish Email Settings
+ */
+broadcastRouter.put(
+  '/api/admin/broadcasts/automation-settings',
+  requireAuth,
+  requireAdmin,
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    const automations = req.body;
+    const settings = await SiteSettings.findByIdAndUpdate(
+      'global',
+      { emailAutomations: automations },
+      { upsert: true, new: true }
+    );
+
+    res.json({ success: true, data: settings.emailAutomations });
+  })
+);
+
+/**
+ * AI "Auto Write Mail": Generates structured email draft from content item or prompt
+ */
+broadcastRouter.post(
+  '/api/admin/broadcasts/auto-write',
+  requireAuth,
+  requireEditor,
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    const input = req.body as EmailWriterInput;
+    const draft = await autoWriteBroadcastEmail(input);
+    res.json({ success: true, data: draft });
   })
 );
 
@@ -152,5 +210,21 @@ broadcastRouter.post(
       data: log,
       result: sendResult,
     });
+  })
+);
+
+/**
+ * Trigger Auto-Broadcast for a specific content item
+ */
+broadcastRouter.post(
+  '/api/admin/broadcasts/trigger-auto',
+  requireAuth,
+  requireAdmin,
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    const result = await notificationBroadcaster.broadcastOnPublish({
+      ...req.body,
+      force: true,
+    });
+    res.json({ success: true, result });
   })
 );

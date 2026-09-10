@@ -25,6 +25,38 @@ export interface ISiteSettings {
       communityBg?: string;
     };
   };
+  emailAutomations?: {
+    currentAffairs?: {
+      enabled: boolean;
+      autoBroadcastOnPublish: boolean;
+      targetAudience: 'all' | 'subscribers' | 'members';
+    };
+    news?: {
+      enabled: boolean;
+      autoBroadcastOnPublish: boolean;
+      targetAudience: 'all' | 'subscribers' | 'members';
+    };
+    stories?: {
+      enabled: boolean;
+      autoBroadcastOnPublish: boolean;
+      targetAudience: 'all' | 'subscribers' | 'members';
+    };
+    campuses?: {
+      enabled: boolean;
+      autoBroadcastOnPublish: boolean;
+      targetAudience: 'all' | 'subscribers' | 'members';
+    };
+    opportunities?: {
+      enabled: boolean;
+      autoBroadcastOnPublish: boolean;
+      targetAudience: 'all' | 'subscribers' | 'members';
+    };
+    legalAwareness?: {
+      enabled: boolean;
+      autoBroadcastOnPublish: boolean;
+      targetAudience: 'all' | 'subscribers' | 'members';
+    };
+  };
   updatedAt: Date;
 }
 
@@ -58,6 +90,38 @@ const SiteSettingsSchema = new Schema(
         writeStory: { type: String, default: '/images/participation/write-story.jpg' },
         campusNews: { type: String, default: '/images/participation/campus-news.jpg' },
         communityBg: { type: String, default: '/images/community/community-1.jpg' },
+      },
+    },
+    emailAutomations: {
+      currentAffairs: {
+        enabled: { type: Boolean, default: true },
+        autoBroadcastOnPublish: { type: Boolean, default: true },
+        targetAudience: { type: String, enum: ['all', 'subscribers', 'members'], default: 'all' },
+      },
+      news: {
+        enabled: { type: Boolean, default: false },
+        autoBroadcastOnPublish: { type: Boolean, default: false },
+        targetAudience: { type: String, enum: ['all', 'subscribers', 'members'], default: 'all' },
+      },
+      stories: {
+        enabled: { type: Boolean, default: false },
+        autoBroadcastOnPublish: { type: Boolean, default: false },
+        targetAudience: { type: String, enum: ['all', 'subscribers', 'members'], default: 'all' },
+      },
+      campuses: {
+        enabled: { type: Boolean, default: false },
+        autoBroadcastOnPublish: { type: Boolean, default: false },
+        targetAudience: { type: String, enum: ['all', 'subscribers', 'members'], default: 'all' },
+      },
+      opportunities: {
+        enabled: { type: Boolean, default: false },
+        autoBroadcastOnPublish: { type: Boolean, default: false },
+        targetAudience: { type: String, enum: ['all', 'subscribers', 'members'], default: 'all' },
+      },
+      legalAwareness: {
+        enabled: { type: Boolean, default: false },
+        autoBroadcastOnPublish: { type: Boolean, default: false },
+        targetAudience: { type: String, enum: ['all', 'subscribers', 'members'], default: 'all' },
       },
     },
   },

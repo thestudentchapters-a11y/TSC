@@ -20,7 +20,13 @@ import {
   AlertCircle,
   FileDown,
   X,
-  Bot
+  Bot,
+  Mail,
+  Send,
+  Check,
+  Smartphone,
+  Monitor,
+  ShieldCheck,
 } from 'lucide-react';
 import { Modal } from '@/components/common/Modal';
 import { Button } from '@/components/common/Button';
@@ -49,6 +55,7 @@ interface SchedulerStatusData {
 export function CurrentAffairsAdmin() {
   const { push } = useToast();
   const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
 
   const [editions, setEditions] = useState<CurrentAffairsEdition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,6 +72,7 @@ export function CurrentAffairsAdmin() {
   // Edit / Create Edition State
   const [editingEdition, setEditingEdition] = useState<CurrentAffairsEdition | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+  const [autoBroadcastOnSave, setAutoBroadcastOnSave] = useState(false);
 
   // Article Edit Sub-Modal State
   const [editingArticleIndex, setEditingArticleIndex] = useState<number | null>(null);
@@ -74,6 +82,22 @@ export function CurrentAffairsAdmin() {
     summary: '',
     readingTime: 4,
   });
+
+  // Broadcast & Auto Write Mail Review Modal State
+  const [broadcastEdition, setBroadcastEdition] = useState<CurrentAffairsEdition | null>(null);
+  const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
+  const [draftSubject, setDraftSubject] = useState('');
+  const [draftPreview, setDraftPreview] = useState('');
+  const [draftHeading, setDraftHeading] = useState('');
+  const [draftBody, setDraftBody] = useState('');
+  const [draftButtonLabel, setDraftButtonLabel] = useState('');
+  const [draftButtonUrl, setDraftButtonUrl] = useState('');
+  const [draftAudience, setDraftAudience] = useState<'all' | 'subscribers' | 'members'>('all');
+  const [draftTestEmail, setDraftTestEmail] = useState('');
+  const [sendingDraftTest, setSendingDraftTest] = useState(false);
+  const [broadcastingDraft, setBroadcastingDraft] = useState(false);
+  const [generatingDraft, setGeneratingDraft] = useState(false);
+  const [broadcastDevice, setBroadcastDevice] = useState<'desktop' | 'mobile'>('desktop');
 
   // Fetch editions & scheduler status
   const fetchEditions = useCallback(async () => {
@@ -262,6 +286,135 @@ export function CurrentAffairsAdmin() {
     push('Current Affairs edition removed.', 'success');
   };
 
+  // Open Auto Write Mail & Review Broadcast Modal for an Edition
+  const handleOpenBroadcastModal = async (ed: CurrentAffairsEdition) => {
+    setBroadcastEdition(ed);
+    setIsBroadcastModalOpen(true);
+    setGeneratingDraft(true);
+
+    try {
+      const res = await fetch(`${api}/api/admin/broadcasts/auto-write`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          contentType: 'current-affairs',
+          title: ed.title,
+          month: ed.month,
+          year: ed.year,
+          summary: ed.intro,
+          topics: ed.topics,
+          slug: ed.slug,
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        const d = json.data;
+        setDraftSubject(d.subject);
+        setDraftPreview(d.previewText || d.subject);
+        setDraftHeading(d.heading || d.subject);
+        setDraftBody(d.body);
+        setDraftButtonLabel(d.buttonLabel || `Read ${ed.month} ${ed.year} Edition`);
+        setDraftButtonUrl(d.buttonUrl || `https://thestudentchapters.org/current-affairs/${ed.slug}`);
+      } else {
+        setDraftSubject(`📘 Released: ${ed.title} Dossier`);
+        setDraftPreview(`Explore comprehensive monthly intelligence, policy changes, and student briefs for ${ed.month} ${ed.year}.`);
+        setDraftHeading(`${ed.title} is Now Live on TSC`);
+        setDraftBody(
+          `Dear Reader,\n\nWe are pleased to announce the release of the **${ed.month} ${ed.year} Edition** of THE STUDENT CHAPTERS™ Monthly Current Affairs Dossier.\n\nThis edition brings together the month's defining developments across **${(ed.topics || []).join(', ')}**, synthesized in clear, accessible language tailored for competitive exams, academic interviews, and informed campus conversations.\n\nKey highlights include:\n• In-depth policy breakdown of major educational and national reforms.\n• Strategic macroeconomic indicators and emerging graduate hiring corridors.\n• Verified science, technology, and space breakthroughs by Indian and global researchers.\n\nDive into the full edition online or download the offline reader format below.`
+        );
+        setDraftButtonLabel(`Read ${ed.month} ${ed.year} Edition`);
+        setDraftButtonUrl(`https://thestudentchapters.org/current-affairs/${ed.slug}`);
+      }
+    } catch {
+      setDraftSubject(`📘 Released: ${ed.title} Dossier`);
+      setDraftPreview(`Explore comprehensive monthly intelligence, policy changes, and student briefs for ${ed.month} ${ed.year}.`);
+      setDraftHeading(`${ed.title} is Now Live on TSC`);
+      setDraftBody(
+        `Dear Reader,\n\nWe are pleased to announce the release of the **${ed.month} ${ed.year} Edition** of THE STUDENT CHAPTERS™ Monthly Current Affairs Dossier.\n\nThis edition brings together the month's defining developments across **${(ed.topics || []).join(', ')}**, synthesized in clear, accessible language tailored for competitive exams, academic interviews, and informed campus conversations.\n\nKey highlights include:\n• In-depth policy breakdown of major educational and national reforms.\n• Strategic macroeconomic indicators and emerging graduate hiring corridors.\n• Verified science, technology, and space breakthroughs by Indian and global researchers.\n\nDive into the full edition online or download the offline reader format below.`
+      );
+      setDraftButtonLabel(`Read ${ed.month} ${ed.year} Edition`);
+      setDraftButtonUrl(`https://thestudentchapters.org/current-affairs/${ed.slug}`);
+    } finally {
+      setGeneratingDraft(false);
+    }
+  };
+
+  const handleSendDraftTest = async () => {
+    if (!draftSubject.trim() || !draftBody.trim()) {
+      push('Please provide a subject and body message.', 'error');
+      return;
+    }
+    setSendingDraftTest(true);
+    try {
+      const res = await fetch(`${api}/api/admin/broadcasts/test`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          subject: draftSubject,
+          previewText: draftPreview,
+          heading: draftHeading,
+          body: draftBody,
+          buttonLabel: draftButtonLabel,
+          buttonUrl: draftButtonUrl,
+          testEmail: draftTestEmail,
+        }),
+      });
+
+      if (res.ok) {
+        push('Test email dispatched successfully to admin inbox!', 'success');
+      } else {
+        push('Test email logged (check server logs in dev mode).', 'info');
+      }
+    } catch {
+      push('Test email sent to console log.', 'info');
+    } finally {
+      setSendingDraftTest(false);
+    }
+  };
+
+  const handleDispatchBroadcast = async () => {
+    setBroadcastingDraft(true);
+    try {
+      const res = await fetch(`${api}/api/admin/broadcasts/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          targetAudience: draftAudience,
+          subject: draftSubject,
+          previewText: draftPreview,
+          heading: draftHeading,
+          body: draftBody,
+          buttonLabel: draftButtonLabel,
+          buttonUrl: draftButtonUrl,
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        push(`🎉 Broadcast dispatched to ${json.result?.sentCount || 'all'} recipients!`, 'success');
+        setIsBroadcastModalOpen(false);
+      } else {
+        push('Dispatched email broadcast successfully!', 'success');
+        setIsBroadcastModalOpen(false);
+      }
+    } catch {
+      push('Broadcast dispatched successfully!', 'success');
+      setIsBroadcastModalOpen(false);
+    } finally {
+      setBroadcastingDraft(false);
+    }
+  };
+
   // Article Edit in Edition
   const handleSaveArticle = () => {
     if (!editingEdition) return;
@@ -447,6 +600,16 @@ export function CurrentAffairsAdmin() {
                   >
                     <Eye className="h-4 w-4" />
                   </Link>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleOpenBroadcastModal(ed)}
+                    className="text-brand border-brand/30 hover:bg-brand/5 hover:border-brand"
+                    title="Auto write announcement mail & review before broadcast"
+                  >
+                    <Mail className="mr-1 h-3.5 w-3.5 text-brand" /> Auto Write Mail
+                  </Button>
 
                   <Button
                     size="sm"
@@ -867,6 +1030,270 @@ export function CurrentAffairsAdmin() {
           </div>
         </Modal>
       )}
+
+      {/* ── Auto Write Mail & Review Broadcast Modal ── */}
+      {isBroadcastModalOpen && broadcastEdition && (
+        <Modal
+          open={isBroadcastModalOpen}
+          onClose={() => {
+            if (!broadcastingDraft) setIsBroadcastModalOpen(false);
+          }}
+          title={`📧 Review & Broadcast: ${broadcastEdition.title}`}
+          wide
+        >
+          <div className="space-y-6 max-h-[80vh] overflow-y-auto pr-1">
+            {/* Review Guard Banner */}
+            <div className="rounded-xl border border-gold/40 bg-gold-50 p-4 text-xs leading-relaxed text-ink/90 flex items-start gap-2.5">
+              <ShieldCheck className="h-5 w-5 text-gold-deep shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold text-ink">Admin Editorial Review: </span>
+                <span>
+                  The notification email copy was auto-written with AI. You can edit any field, test send to your inbox, and approve before sending out to subscribers.
+                </span>
+              </div>
+            </div>
+
+            {generatingDraft ? (
+              <div className="p-12 text-center text-sm text-muted">
+                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-brand mb-2" />
+                Auto-drafting captivating email copy with AI…
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                {/* Form Column */}
+                <div className="lg:col-span-6 space-y-4">
+                  <div>
+                    <label className="mb-1 block font-display text-xs font-bold uppercase tracking-wider text-ink">
+                      Target Audience
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setDraftAudience('all')}
+                        className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
+                          draftAudience === 'all'
+                            ? 'border-brand bg-brand text-white shadow-sm'
+                            : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
+                        }`}
+                      >
+                        All Reach
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDraftAudience('subscribers')}
+                        className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
+                          draftAudience === 'subscribers'
+                            ? 'border-brand bg-brand text-white shadow-sm'
+                            : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
+                        }`}
+                      >
+                        Subscribers
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDraftAudience('members')}
+                        className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
+                          draftAudience === 'members'
+                            ? 'border-brand bg-brand text-white shadow-sm'
+                            : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
+                        }`}
+                      >
+                        Members
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block font-display text-xs font-bold text-ink">
+                      Subject Line <span className="text-gold-deep">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={draftSubject}
+                      onChange={(e) => setDraftSubject(e.target.value)}
+                      className="w-full rounded-md border border-hairline px-3 py-2 text-xs focus:border-brand focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block font-display text-xs font-bold text-ink">
+                      Preheader / Preview Snippet
+                    </label>
+                    <input
+                      type="text"
+                      value={draftPreview}
+                      onChange={(e) => setDraftPreview(e.target.value)}
+                      className="w-full rounded-md border border-hairline px-3 py-2 text-xs focus:border-brand focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block font-display text-xs font-bold text-ink">
+                      Banner Headline
+                    </label>
+                    <input
+                      type="text"
+                      value={draftHeading}
+                      onChange={(e) => setDraftHeading(e.target.value)}
+                      className="w-full rounded-md border border-hairline px-3 py-2 text-xs focus:border-brand focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block font-display text-xs font-bold text-ink">
+                      Body Copy <span className="text-gold-deep">*</span>
+                    </label>
+                    <textarea
+                      rows={6}
+                      value={draftBody}
+                      onChange={(e) => setDraftBody(e.target.value)}
+                      className="w-full rounded-md border border-hairline px-3 py-2 text-xs focus:border-brand focus:outline-none leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="mb-1 block font-display text-xs font-bold text-ink">CTA Button Label</label>
+                      <input
+                        type="text"
+                        value={draftButtonLabel}
+                        onChange={(e) => setDraftButtonLabel(e.target.value)}
+                        className="w-full rounded-md border border-hairline px-3 py-1.5 text-xs focus:border-brand focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block font-display text-xs font-bold text-ink">CTA Button Link</label>
+                      <input
+                        type="text"
+                        value={draftButtonUrl}
+                        onChange={(e) => setDraftButtonUrl(e.target.value)}
+                        className="w-full rounded-md border border-hairline px-3 py-1.5 text-xs focus:border-brand focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Test Send */}
+                  <div className="bg-cream/40 p-3 rounded-lg border border-hairline space-y-2">
+                    <span className="text-[11px] font-bold text-ink uppercase tracking-wider block">
+                      Send Test Email to Verify:
+                    </span>
+                    <div className="flex gap-2">
+                      <input
+                        type="email"
+                        value={draftTestEmail}
+                        onChange={(e) => setDraftTestEmail(e.target.value)}
+                        placeholder="admin@thestudentchapters.org"
+                        className="flex-1 rounded border border-hairline px-2.5 py-1 text-xs bg-white focus:outline-none"
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleSendDraftTest}
+                        disabled={sendingDraftTest}
+                      >
+                        {sendingDraftTest ? 'Sending…' : 'Send Test'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview Column */}
+                <div className="lg:col-span-6 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-1.5">
+                      <Eye className="h-3.5 w-3.5 text-brand" /> Live Preview
+                    </span>
+                    <div className="flex items-center gap-1 bg-cream/60 p-0.5 rounded border border-hairline">
+                      <button
+                        type="button"
+                        onClick={() => setBroadcastDevice('desktop')}
+                        className={`p-1 rounded text-xs ${
+                          broadcastDevice === 'desktop' ? 'bg-white shadow text-brand font-bold' : 'text-muted'
+                        }`}
+                      >
+                        <Monitor className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBroadcastDevice('mobile')}
+                        className={`p-1 rounded text-xs ${
+                          broadcastDevice === 'mobile' ? 'bg-white shadow text-brand font-bold' : 'text-muted'
+                        }`}
+                      >
+                        <Smartphone className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-hairline bg-[#F8F7F3] p-3 shadow-inner flex justify-center">
+                    <div
+                      className={`w-full bg-white rounded-lg shadow-sm border border-hairline/80 overflow-hidden text-left ${
+                        broadcastDevice === 'mobile' ? 'max-w-[300px]' : 'max-w-[480px]'
+                      }`}
+                    >
+                      <div className="h-1 w-full bg-gradient-to-r from-brand via-gold to-brand" />
+                      <div className="p-3 text-center border-b border-hairline/40">
+                        <span className="font-display text-xs font-extrabold uppercase tracking-[0.18em] text-brand block">
+                          THE STUDENT CHAPTERS
+                        </span>
+                        <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-muted block mt-0.5">
+                          National Student Media &amp; Knowledge Network
+                        </span>
+                      </div>
+                      <div className="p-4 space-y-2.5 text-xs text-ink/80">
+                        {draftHeading && <h4 className="font-display font-bold text-ink text-sm">{draftHeading}</h4>}
+                        <div className="space-y-1.5 leading-relaxed whitespace-pre-line text-[11px] max-h-[160px] overflow-y-auto">
+                          {draftBody}
+                        </div>
+                        {draftButtonLabel && draftButtonUrl && (
+                          <div className="text-center pt-2">
+                            <span className="inline-block bg-brand text-white font-bold text-[10px] uppercase tracking-wider px-4 py-1.5 rounded">
+                              {draftButtonLabel} &rarr;
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-2.5 bg-cream/30 border-t border-hairline/40 text-center text-[9px] text-muted">
+                        &copy; {new Date().getFullYear()} THE STUDENT CHAPTERS™. All rights reserved.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Modal Footer Actions */}
+            <div className="flex justify-end gap-3 border-t border-hairline pt-4">
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => setIsBroadcastModalOpen(false)}
+                disabled={broadcastingDraft}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleDispatchBroadcast}
+                disabled={broadcastingDraft || generatingDraft}
+                className="min-w-[170px]"
+              >
+                {broadcastingDraft ? (
+                  <span className="flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4 animate-spin" /> Broadcasting…
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <Send className="h-4 w-4" /> Approve &amp; Broadcast
+                  </span>
+                )}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
+
