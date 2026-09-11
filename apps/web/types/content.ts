@@ -41,6 +41,7 @@ export interface Article {
   category: NewsCategory;
   tags: string[];
   author: string;
+  campus?: string;
   date: string; // ISO
   readingTime: number; // minutes
   image: string;
@@ -103,6 +104,7 @@ export interface PodcastEpisode {
   imageAlt: string;
   audioUrl: string | null;
   videoUrl: string | null;
+  youtubeUrl?: string | null;
   platforms: { youtube: string | null; spotify: string | null; apple: string | null };
   transcript: string[];
   featured: boolean;

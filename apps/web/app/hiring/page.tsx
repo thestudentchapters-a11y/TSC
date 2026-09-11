@@ -132,6 +132,7 @@ function HiringContent() {
     department: 'Editorial & Content Writing',
     experienceLevel: '3rd Year Undergraduate',
     collegeOrCompany: '',
+    konnectxId: '',
     linkedinUrl: '',
     portfolioUrl: '',
     resumeUrl: '',
@@ -285,6 +286,7 @@ function HiringContent() {
       experienceLevel:
         activeType === 'Internship' ? EXPERIENCE_OPTIONS_INTERNSHIP[2] : EXPERIENCE_OPTIONS_JOB[0],
       collegeOrCompany: '',
+      konnectxId: '',
       linkedinUrl: '',
       portfolioUrl: '',
       resumeUrl: '',
@@ -716,27 +718,27 @@ function HiringContent() {
                         </p>
                       )}
                     </div>
+                  </div>
+                </div>
 
+                {/* 4. Portfolio & Profiles */}
+                <div className="space-y-4">
+                  <h3 className="font-display text-sm font-bold uppercase tracking-wider text-brand">
+                    4. Social Profiles &amp; Work Samples
+                  </h3>
+                  <div className="grid gap-4 sm:grid-cols-3">
                     <div>
                       <label className="meta-text block !text-[11px] font-bold uppercase">
-                        Portfolio / GitHub / Work Samples
+                        KonnectX ID / Profile (Optional)
                       </label>
                       <input
-                        type="url"
-                        name="portfolioUrl"
-                        value={formData.portfolioUrl}
+                        type="text"
+                        name="konnectxId"
+                        value={formData.konnectxId}
                         onChange={handleChange}
-                        placeholder="https://yourportfolio.com"
-                        className={`mt-1.5 w-full rounded-[4px] border px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 focus:outline-none ${errors.portfolioUrl
-                          ? 'border-red-400 bg-red-50/20 focus:border-red-500 focus:ring-1 focus:ring-red-400'
-                          : 'border-hairline bg-white focus:border-brand'
-                          }`}
+                        placeholder="@username or konnectx.app/..."
+                        className="mt-1.5 w-full rounded-[4px] border border-hairline bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 focus:border-brand focus:outline-none"
                       />
-                      {errors.portfolioUrl && (
-                        <p role="alert" className="mt-1 text-xs font-medium text-red-600">
-                          {errors.portfolioUrl}
-                        </p>
-                      )}
                     </div>
 
                     <div>
@@ -757,6 +759,28 @@ function HiringContent() {
                       {errors.linkedinUrl && (
                         <p role="alert" className="mt-1 text-xs font-medium text-red-600">
                           {errors.linkedinUrl}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="meta-text block !text-[11px] font-bold uppercase">
+                        Portfolio / GitHub / Work Samples
+                      </label>
+                      <input
+                        type="url"
+                        name="portfolioUrl"
+                        value={formData.portfolioUrl}
+                        onChange={handleChange}
+                        placeholder="https://yourportfolio.com"
+                        className={`mt-1.5 w-full rounded-[4px] border px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 focus:outline-none ${errors.portfolioUrl
+                          ? 'border-red-400 bg-red-50/20 focus:border-red-500 focus:ring-1 focus:ring-red-400'
+                          : 'border-hairline bg-white focus:border-brand'
+                          }`}
+                      />
+                      {errors.portfolioUrl && (
+                        <p role="alert" className="mt-1 text-xs font-medium text-red-600">
+                          {errors.portfolioUrl}
                         </p>
                       )}
                     </div>

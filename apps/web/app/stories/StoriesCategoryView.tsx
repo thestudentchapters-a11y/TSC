@@ -1,9 +1,7 @@
 import { Suspense } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
-import { StoryCard } from '@/components/cards/StoryCard';
+import { StoriesFeed } from '@/components/stories/StoriesFeed';
 import { SearchBar } from '@/components/common/SearchBar';
-import { EmptyState } from '@/components/common/States';
-import { StaggerGrid, StaggerItem } from '@/components/common/Reveal';
 import { getStories } from '@/lib/data';
 import type { StoryCategory } from '@/types/content';
 
@@ -38,10 +36,6 @@ export default async function StoriesCategoryView({
 }) {
   const meta = META[category];
   const all = (await getStories()).filter((s) => s.status === 'published' && s.category === category);
-  const term = (q ?? '').trim().toLowerCase();
-  const items = term
-    ? all.filter((s) => [s.title, s.dek, s.author, s.campus].some((f) => f?.toLowerCase().includes(term)))
-    : all;
 
   return (
     <>
@@ -52,20 +46,11 @@ export default async function StoriesCategoryView({
       </PageHeader>
       <section className="section-pad">
         <div className="container-tsc">
-          {items.length === 0 ? (
-            <EmptyState
-              title="No stories found"
-              description="Try a different search — or share your own story with TSC."
-            />
-          ) : (
-            <StaggerGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map((s, i) => (
-                <StaggerItem key={s.id}>
-                  <StoryCard story={s} priority={i < 3} />
-                </StaggerItem>
-              ))}
-            </StaggerGrid>
-          )}
+          <StoriesFeed
+            initialStories={all}
+            category={category}
+            query={q ?? ''}
+          />
         </div>
       </section>
     </>

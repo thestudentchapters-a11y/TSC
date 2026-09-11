@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Mic, Rocket, Target, Lightbulb } from 'lucide-react';
 import { PageHeader } from '@/components/common/PageHeader';
 import { PodcastCard, podcastCategoryIcon } from '@/components/cards/PodcastCard';
-import { PodcastPlayer } from '@/components/podcast/PodcastPlayer';
+import { PodcastMediaSection } from '@/components/podcast/PodcastMediaSection';
 import { FilterBar } from '@/components/common/FilterBar';
 import { EmptyState } from '@/components/common/States';
 import { StaggerGrid, StaggerItem, Reveal } from '@/components/common/Reveal';
@@ -99,7 +99,12 @@ export default async function PodcastPage({
                   </p>
                 </Reveal>
                 <Reveal delay={0.14}>
-                  <PodcastPlayer audioUrl={featured.audioUrl} title={featured.title} />
+                  <PodcastMediaSection
+                    youtubeUrl={featured.youtubeUrl}
+                    audioUrl={featured.audioUrl}
+                    title={featured.title}
+                    thumbnail={featured.image}
+                  />
                 </Reveal>
               </div>
             </div>

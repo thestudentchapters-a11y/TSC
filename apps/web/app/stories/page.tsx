@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { PageHeader } from '@/components/common/PageHeader';
-import { StoryCard } from '@/components/cards/StoryCard';
+import { StoriesFeed } from '@/components/stories/StoriesFeed';
 import { FilterBar } from '@/components/common/FilterBar';
 import { SearchBar } from '@/components/common/SearchBar';
-import { EmptyState } from '@/components/common/States';
-import { StaggerGrid, StaggerItem } from '@/components/common/Reveal';
 import { getStories } from '@/lib/data';
 
 export const metadata: Metadata = {
@@ -23,21 +21,6 @@ export default async function StoriesPage({
   searchParams: { category?: string; q?: string; page?: string };
 }) {
   const all = (await getStories()).filter((s) => s.status === 'published');
-
-  const category = searchParams.category;
-  const q = (searchParams.q ?? '').trim().toLowerCase();
-
-  let filtered = category ? all.filter((s) => s.category === category) : all;
-  if (q) {
-    filtered = filtered.filter((s) =>
-      [s.title, s.dek, s.author, s.campus].some((f) => f?.toLowerCase().includes(q))
-    );
-  }
-
-  const perPage = 6;
-  const page = Math.max(1, Number(searchParams.page ?? '1') || 1);
-  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  const items = filtered.slice((page - 1) * perPage, page * perPage);
 
   return (
     <>
@@ -69,25 +52,11 @@ export default async function StoriesPage({
 
       <section className="section-pad">
         <div className="container-tsc">
-          {items.length === 0 ? (
-            <EmptyState
-              title={q ? `No stories match “${searchParams.q}”` : 'No stories in this category yet'}
-              description="Try a different search or category — or be the first to share yours."
-              action={
-                <Suspense fallback={null}>
-                  <FilterBar basePath="/stories" filters={[{ key: 'category', label: 'Category', options: [] }]} className="hidden" />
-                </Suspense>
-              }
-            />
-          ) : (
-            <StaggerGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map((s, i) => (
-                <StaggerItem key={s.id}>
-                  <StoryCard story={s} priority={i < 3} />
-                </StaggerItem>
-              ))}
-            </StaggerGrid>
-          )}
+          <StoriesFeed
+            initialStories={all}
+            category={searchParams.category}
+            query={searchParams.q ?? ''}
+          />
         </div>
       </section>
     </>

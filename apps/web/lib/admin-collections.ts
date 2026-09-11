@@ -4,7 +4,7 @@
  */
 import {
   Briefcase, CalendarDays, FileText, GraduationCap, Globe2, Images, LayoutDashboard,
-  Mail, Megaphone, Mic, Newspaper, Rocket, School, Settings, Share2, Users,
+  Mail, Megaphone, Mic, Newspaper, Rocket, School, Settings, Share2, Users, ShieldCheck,
 } from 'lucide-react';
 
 export type FieldType = 'text' | 'textarea' | 'select' | 'checkbox' | 'date' | 'number' | 'image' | 'tags';
@@ -54,6 +54,7 @@ const coreFields: FieldDef[] = [
   { name: 'title', label: 'Title', type: 'text', required: true },
   { name: 'slug', label: 'Slug', type: 'text', hint: 'Auto-generated from title if left blank', width: 'half' },
   { name: 'author', label: 'Author', type: 'text', width: 'half' },
+  { name: 'campus', label: 'Associated Campus', type: 'text', width: 'half' },
   { name: 'excerpt', label: 'Excerpt / Dek', type: 'textarea' },
   { name: 'content', label: 'Content', type: 'textarea', hint: 'Separate paragraphs with a blank line' },
   { name: 'image', label: 'Featured image URL', type: 'image', width: 'half' },
@@ -72,6 +73,7 @@ export const collections: Record<string, CollectionDef> = {
     columns: [
       { name: 'title', label: 'Title' },
       { name: 'category', label: 'Category', type: 'badge' },
+      { name: 'campus', label: 'Campus' },
       { name: 'date', label: 'Date', type: 'date' },
       { name: 'status', label: 'Status', type: 'status' },
       { name: 'featured', label: 'Featured', type: 'bool' },
@@ -85,6 +87,7 @@ export const collections: Record<string, CollectionDef> = {
     columns: [
       { name: 'title', label: 'Title' },
       { name: 'category', label: 'Category', type: 'badge' },
+      { name: 'campus', label: 'Campus' },
       { name: 'date', label: 'Date', type: 'date' },
       { name: 'status', label: 'Status', type: 'status' },
       { name: 'featured', label: 'Featured', type: 'bool' },
@@ -139,6 +142,7 @@ export const collections: Record<string, CollectionDef> = {
       { name: 'date', label: 'Date', type: 'date', width: 'half' },
       { name: 'durationLabel', label: 'Duration (e.g. 32:10)', type: 'text', width: 'half' },
       { name: 'audioUrl', label: 'Audio URL', type: 'text', width: 'half' },
+      { name: 'youtubeUrl', label: 'YouTube Video URL', type: 'text', width: 'half', hint: 'e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...' },
       { name: 'image', label: 'Thumbnail URL', type: 'image', width: 'half' },
       { name: 'description', label: 'Description', type: 'textarea' },
       { name: 'featured', label: 'Featured', type: 'checkbox', width: 'half' },
@@ -256,8 +260,8 @@ export const collections: Record<string, CollectionDef> = {
     ],
   },
   members: {
-    key: 'members', title: 'Members', singular: 'Member', icon: Users, seedKey: 'members',
-    description: 'Community members and their roles.',
+    key: 'members', title: 'Community Members', singular: 'Member', icon: Users, seedKey: 'members',
+    description: 'Registered community and student members.',
     columns: [
       { name: 'name', label: 'Member' },
       { name: 'email', label: 'Email' },
@@ -270,6 +274,8 @@ export const collections: Record<string, CollectionDef> = {
       { name: 'email', label: 'Email', type: 'text', required: true, width: 'half' },
       { name: 'college', label: 'College', type: 'text', width: 'half' },
       { name: 'city', label: 'City', type: 'text', width: 'half' },
+      { name: 'konnectxId', label: 'KonnectX ID', type: 'text', width: 'half', hint: '@handle or username' },
+      { name: 'linkedin', label: 'LinkedIn URL', type: 'text', width: 'half' },
       { name: 'role', label: 'Role', type: 'select', options: ['member', 'editor', 'admin'], width: 'half' },
       { name: 'joinedOn', label: 'Joined on', type: 'date', width: 'half' },
       { name: 'status', label: 'Status', type: 'select', options: ['active', 'pending'], width: 'half' },
@@ -379,9 +385,10 @@ export const adminNavGroups: { label: string; items: { href: string; label: stri
   {
     label: 'People & Inbox',
     items: [
+      { href: '/admin/team', label: 'Team & Editors', icon: ShieldCheck },
+      { href: '/admin/members', label: 'Community Members', icon: Users },
       { href: '/admin/broadcast', label: 'Broadcast Notification Mail', icon: Megaphone },
       { href: '/admin/hiring', label: 'Hiring Applications', icon: Briefcase },
-      { href: '/admin/members', label: 'Members', icon: Users },
       { href: '/admin/subscribers', label: 'Newsletter Subscribers', icon: Mail },
       { href: '/admin/story-submissions', label: 'Story Submissions', icon: Share2 },
       { href: '/admin/campus-submissions', label: 'Campus Submissions', icon: School },

@@ -21,7 +21,7 @@ export const demoArticles: Article[] = [
     id: 'n1', slug: 'digital-library-project-students', featured: true, status: 'published', title: 'New Digital Library Project Brings Thousands of Resources to Students',
     excerpt: 'A student-led digital library initiative is making thousands of books, journals and course materials freely accessible — starting with campuses that needed it the most.',
     category: 'Education', tags: ['Digital Library', 'Access to Education', 'Student Initiative'],
-    author: 'TSC Editorial Team', date: '2026-08-30', readingTime: 4,
+    author: 'TSC Editorial Team', campus: 'Nalanda Institute of Technology', date: '2026-08-30', readingTime: 4,
     image: '/images/news/news-1.jpg',
     imageAlt: 'Students studying at computer terminals in a modern university digital library',
     content: [
@@ -34,7 +34,7 @@ export const demoArticles: Article[] = [
     id: 'n2', slug: 'young-innovators-national-science-fair', featured: false, status: 'published', title: 'Young Innovators Win Recognition at National Science Fair',
     excerpt: 'Student teams from across the country presented low-cost solutions to everyday problems — from water conservation to accessible learning tools.',
     category: 'Student News', tags: ['Science Fair', 'Innovation', 'Achievements'],
-    author: 'Special Correspondent — Aarav K.', date: '2026-08-27', readingTime: 3,
+    author: 'Special Correspondent — Aarav K.', campus: 'Vidya Vihar Central University', date: '2026-08-27', readingTime: 3,
     image: '/images/stories/story-3.jpg',
     imageAlt: 'Students collaborating over a tablet while working on a science project',
     content: [
@@ -47,7 +47,7 @@ export const demoArticles: Article[] = [
     id: 'n3', slug: 'students-lead-cleanliness-drive', featured: false, status: 'published', title: 'Students Lead Community Cleanliness Drive Across City Wards',
     excerpt: 'Over one weekend, student volunteers across city wards came together for a cleanliness and awareness drive — proving that campus energy can reach far beyond campus gates.',
     category: 'Youth & Society', tags: ['Community Service', 'Volunteering', 'Environment'],
-    author: 'TSC Editorial Team', date: '2026-08-24', readingTime: 3,
+    author: 'TSC Editorial Team', campus: 'Coastal University of Arts & Sciences', date: '2026-08-24', readingTime: 3,
     image: '/images/news/news-2.jpg',
     imageAlt: 'Student volunteers in gloves collecting litter during a community cleanliness drive',
     content: [
@@ -60,7 +60,7 @@ export const demoArticles: Article[] = [
     id: 'n4', slug: 'student-team-builds-ai-study-companion', featured: false, status: 'published', title: 'Student Team Builds AI Study Companion for Exam Preparation',
     excerpt: 'A four-member student team has built an AI-powered study companion that turns lengthy notes into interactive quizzes and revision plans.',
     category: 'Technology & Innovation', tags: ['AI', 'EdTech', 'Student Projects'],
-    author: 'Special Correspondent — Priya S.', date: '2026-08-20', readingTime: 4,
+    author: 'Special Correspondent — Priya S.', campus: 'Sunrise Engineering College', date: '2026-08-20', readingTime: 4,
     image: '/images/news/news-3.jpg',
     imageAlt: 'Student developers working together on laptops in the evening',
     content: [
@@ -73,7 +73,7 @@ export const demoArticles: Article[] = [
     id: 'n5', slug: 'universities-expand-support-services', featured: false, status: 'published', title: 'Universities Expand Mental Health & Academic Support for Students',
     excerpt: 'From peer-support circles to extended counselling hours, institutions are quietly expanding the support systems available to students on campus.',
     category: 'Education', tags: ['Mental Health', 'Wellbeing', 'Campus Life'],
-    author: 'TSC Editorial Team', date: '2026-08-15', readingTime: 4,
+    author: 'TSC Editorial Team', campus: 'Sagar Public University', date: '2026-08-15', readingTime: 4,
     image: '/images/news/news-5.jpg',
     imageAlt: 'A student in a calm conversation with a campus counsellor',
     content: [
@@ -86,7 +86,7 @@ export const demoArticles: Article[] = [
     id: 'n6', slug: 'hackathon-season-record-participation', featured: false, status: 'published', title: 'Hackathon Season Kicks Off With Record Campus Participation',
     excerpt: 'Weekend hackathons are drawing bigger crowds than fest concerts — and students are here for the build, not just the prizes.',
     category: 'Technology & Innovation', tags: ['Hackathon', 'Coding', 'Events'],
-    author: 'Special Correspondent — Aarav K.', date: '2026-08-10', readingTime: 3,
+    author: 'Special Correspondent — Aarav K.', campus: 'Himalayan Polytechnic & Research Institute', date: '2026-08-10', readingTime: 3,
     image: '/images/news/news-4.jpg',
     imageAlt: 'Student teams working at tables during a hackathon',
     content: [
@@ -99,7 +99,7 @@ export const demoArticles: Article[] = [
     id: 'n7', slug: 'student-councils-transparency-reforms', featured: false, status: 'published', title: 'Student Councils Push for More Transparent Evaluation Reforms',
     excerpt: 'A recurring theme across campuses: students want clearer evaluation criteria, published answer keys and timely feedback.',
     category: 'Youth & Society', tags: ['Student Rights', 'Governance', 'Reform'],
-    author: 'TSC Editorial Team', date: '2026-08-05', readingTime: 3,
+    author: 'TSC Editorial Team', campus: 'Vidya Vihar Central University', date: '2026-08-05', readingTime: 3,
     image: '/images/campus/campus-6.jpg',
     imageAlt: 'Students and faculty in discussion inside a classroom',
     content: [
@@ -112,7 +112,7 @@ export const demoArticles: Article[] = [
     id: 'n8', slug: 'campus-fests-go-green', featured: false, status: 'published', title: 'Campus Fests Go Green: Reusable Sets, Digital Tickets and Cleaner Celebrations',
     excerpt: 'Fest season is getting a sustainability makeover as student committees rethink how India\'s biggest campus celebrations are run.',
     category: 'Student News', tags: ['Sustainability', 'Fests', 'Campus Life'],
-    author: 'Special Correspondent — Priya S.', date: '2026-07-28', readingTime: 3,
+    author: 'Special Correspondent — Priya S.', campus: 'Coastal University of Arts & Sciences', date: '2026-07-28', readingTime: 3,
     image: '/images/events/event-3.jpg',
     imageAlt: 'Students celebrating at a college cultural festival',
     content: [
@@ -305,8 +305,9 @@ export const demoEpisodes: PodcastEpisode[] = [
     guest: 'Ishaan Verma', guestRole: 'Founder, [Demo Startup] • Final-year student',
     category: 'Founder Stories', durationLabel: '38:12', date: '2026-08-25',
     image: '/images/hero/hero-podcast.jpg', imageAlt: 'Two microphones set up for a podcast recording',
-    audioUrl: '/audio/tsc-placeholder-audio.wav', videoUrl: null,
-    platforms: { youtube: null, spotify: null, apple: null },
+    audioUrl: '/audio/tsc-placeholder-audio.wav', videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    platforms: { youtube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', spotify: null, apple: null },
     transcript: [
       '[00:00] Host: Welcome to TSC Podcast — conversations that matter. [Demo transcript — full transcript publishes with the real episode.]',
       '[00:42] Guest: The idea was the easy part. Everything after the idea was the education.',
@@ -321,6 +322,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     category: 'Student Voices', durationLabel: '31:40', date: '2026-08-11',
     image: '/images/podcast/podcast-1.jpg', imageAlt: 'A modern podcast recording setup with microphone and laptop',
     audioUrl: null, videoUrl: null,
+    youtubeUrl: null,
     platforms: { youtube: null, spotify: null, apple: null },
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
@@ -330,8 +332,9 @@ export const demoEpisodes: PodcastEpisode[] = [
     guest: 'Aman Khanna', guestRole: 'Software engineer & mentor',
     category: 'Career Conversations', durationLabel: '44:05', date: '2026-07-28',
     image: '/images/podcast/podcast-2.jpg', imageAlt: 'A microphone on a wooden desk in a recording studio',
-    audioUrl: null, videoUrl: null,
-    platforms: { youtube: null, spotify: null, apple: null },
+    audioUrl: null, videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    platforms: { youtube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', spotify: null, apple: null },
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
   {
@@ -341,6 +344,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     category: 'Ideas & Perspectives', durationLabel: '29:58', date: '2026-07-14',
     image: '/images/podcast/podcast-3.jpg', imageAlt: 'Recording equipment for a podcast session',
     audioUrl: null, videoUrl: null,
+    youtubeUrl: null,
     platforms: { youtube: null, spotify: null, apple: null },
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
@@ -351,6 +355,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     category: 'Ideas & Perspectives', durationLabel: '36:22', date: '2026-06-30',
     image: '/images/podcast/podcast-4.jpg', imageAlt: 'A podcast studio desk with microphones and headphones',
     audioUrl: null, videoUrl: null,
+    youtubeUrl: null,
     platforms: { youtube: null, spotify: null, apple: null },
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
@@ -361,6 +366,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     category: 'Student Voices', durationLabel: '33:47', date: '2026-06-16',
     image: '/images/podcast/podcast-5.jpg', imageAlt: 'A young creator recording a podcast in a home studio',
     audioUrl: null, videoUrl: null,
+    youtubeUrl: null,
     platforms: { youtube: null, spotify: null, apple: null },
     transcript: ['[Demo transcript placeholder — publishes with the real episode.]'],
   },
@@ -470,7 +476,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-09-20', postedOn: '2026-08-20',
     description: 'A demo early-career programme rotating trainees across supply-chain, cataloguing and vendor operations, with mentorship and a structured 12-month pathway.',
     skills: ['Communication', 'Excel / Sheets', 'Problem Solving', 'Ownership'],
-    applicationUrl: null,
+    applicationUrl: 'https://careers.google.com/jobs/results/',
   },
   {
     id: 'o2', slug: 'junior-content-writer-demo-media', type: 'Job', mode: 'Hybrid', featured: false, active: true, title: 'Junior Content Writer', organization: 'Demo Media House',
@@ -478,7 +484,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-09-30', postedOn: '2026-08-24',
     description: 'Write explainers, campus features and social copy for a youth publication (demo listing). Strong editing instincts matter more than experience.',
     skills: ['Writing', 'Editing', 'Research', 'SEO Basics'],
-    applicationUrl: null,
+    applicationUrl: 'https://www.linkedin.com/jobs/',
   },
   {
     id: 'o3', slug: 'community-manager-early-career-demo-edtech', type: 'Job', mode: 'Remote', featured: false, active: true, title: 'Community Manager (Early Career)', organization: 'Demo EdTech',
@@ -486,7 +492,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-10-05', postedOn: '2026-08-28',
     description: 'Run student communities, campus ambassador loops and engagement campaigns for a learning platform (demo listing).',
     skills: ['Community Building', 'Social Media', 'Events', 'Empathy'],
-    applicationUrl: null,
+    applicationUrl: 'https://internshala.com/jobs',
   },
   {
     id: 'o4', slug: 'product-design-intern-nimbus-labs', type: 'Internship', mode: 'Remote', featured: true, active: true, title: 'Product Design Intern', organization: 'Nimbus Labs [Demo Org]',
@@ -494,7 +500,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-09-15', postedOn: '2026-08-15',
     description: 'A demo 3-month design internship: ship real UI for a student-facing product with weekly design reviews and a portfolio-worthy capstone.',
     skills: ['Figma', 'UI Design', 'User Research', 'Prototyping'],
-    applicationUrl: null,
+    applicationUrl: 'https://dribbble.com/jobs',
   },
   {
     id: 'o5', slug: 'media-journalism-internship-demo-newsroom', type: 'Internship', mode: 'On-site', featured: false, active: true, title: 'Media & Journalism Intern', organization: 'Demo Newsroom',
@@ -502,7 +508,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-09-25', postedOn: '2026-08-22',
     description: 'A demo newsroom internship covering education and youth affairs: pitching, reporting, fact-checking and publishing with senior editors.',
     skills: ['Reporting', 'Writing', 'Fact-checking', 'Curiosity'],
-    applicationUrl: null,
+    applicationUrl: 'https://internshala.com/internships',
   },
   {
     id: 'o6', slug: 'research-intern-climate-policy-demo-institute', type: 'Internship', mode: 'Remote', featured: false, active: true, title: 'Research Intern (Climate Policy)', organization: 'Demo Policy Institute',
@@ -510,7 +516,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-10-10', postedOn: '2026-08-18',
     description: 'Support a demo research project on climate policy and youth participation — literature reviews, data cleaning and a co-authored policy brief.',
     skills: ['Research', 'Data Analysis', 'Academic Writing'],
-    applicationUrl: null,
+    applicationUrl: 'https://unstop.com/internships',
   },
   {
     id: 'o7', slug: 'youth-leadership-fellowship-2026', type: 'Fellowship', mode: 'Hybrid', featured: true, active: true, title: 'Youth Leadership Fellowship 2026', organization: 'Demo Foundation',
@@ -518,7 +524,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-09-30', postedOn: '2026-08-10',
     description: 'A demo six-month fellowship combining training, mentorship and a funded community project for young changemakers.',
     skills: ['Leadership', 'Project Design', 'Community Work'],
-    applicationUrl: null,
+    applicationUrl: 'https://unstop.com/fellowships',
   },
   {
     id: 'o8', slug: 'social-innovation-fellowship-demo-lab', type: 'Fellowship', mode: 'On-site', featured: false, active: true, title: 'Social Innovation Fellowship', organization: 'Demo Innovation Lab',
@@ -526,7 +532,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-10-15', postedOn: '2026-08-26',
     description: 'A demo fellowship for student teams building solutions to community problems — stipend, workspace and mentor support included.',
     skills: ['Ideation', 'Prototyping', 'Field Research', 'Teamwork'],
-    applicationUrl: null,
+    applicationUrl: 'https://unstop.com/fellowships',
   },
   {
     id: 'o9', slug: 'undergraduate-research-fellowship-demo-university', type: 'Fellowship', mode: 'On-site', featured: false, active: true, title: 'Undergraduate Research Fellowship', organization: 'Demo University',
@@ -534,7 +540,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-10-20', postedOn: '2026-08-12',
     description: 'A demo summer research fellowship pairing undergraduates with faculty labs across sciences, social sciences and humanities.',
     skills: ['Research', 'Academic Writing', 'Discipline-specific'],
-    applicationUrl: null,
+    applicationUrl: 'https://unstop.com/fellowships',
   },
   {
     id: 'o10', slug: 'merit-cum-means-scholarship-demo-trust', type: 'Scholarship', mode: 'Remote', featured: false, active: true, title: 'Merit-cum-Means Scholarship', organization: 'Demo Education Trust',
@@ -542,7 +548,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-09-28', postedOn: '2026-08-14',
     description: 'A demo scholarship supporting tuition and living costs for meritorious students with financial need.',
     skills: ['Academic Merit'],
-    applicationUrl: null,
+    applicationUrl: 'https://scholarships.gov.in/',
   },
   {
     id: 'o11', slug: 'women-in-stem-scholarship-demo-foundation', type: 'Scholarship', mode: 'Remote', featured: false, active: true, title: 'Women in STEM Scholarship', organization: 'Demo Foundation',
@@ -550,7 +556,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-10-08', postedOn: '2026-08-20',
     description: 'A demo scholarship recognising women pursuing STEM degrees, with mentorship alongside financial support.',
     skills: ['Academic Merit', 'Leadership Potential'],
-    applicationUrl: null,
+    applicationUrl: 'https://scholarships.gov.in/',
   },
   {
     id: 'o12', slug: 'community-changemaker-scholarship', type: 'Scholarship', mode: 'Remote', featured: false, active: true, title: 'Community Changemaker Scholarship', organization: 'Demo Youth Collective',
@@ -558,7 +564,7 @@ export const demoOpportunities: Opportunity[] = [
     deadline: '2026-10-30', postedOn: '2026-08-29',
     description: 'A demo scholarship for students who have led measurable community or campus initiatives — impact over marks.',
     skills: ['Community Impact', 'Initiative'],
-    applicationUrl: null,
+    applicationUrl: 'https://unstop.com/scholarships',
   },
 ];
 

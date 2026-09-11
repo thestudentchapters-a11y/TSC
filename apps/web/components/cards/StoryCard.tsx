@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { School } from 'lucide-react';
 import { CategoryPill, DemoChip } from '@/components/common/CategoryPill';
 import type { Story, StoryCategory } from '@/types/content';
 import { formatDate } from '@/lib/utils';
@@ -44,6 +45,11 @@ export function StoryCard({ story, priority = false }: { story: Story; priority?
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
           <CategoryPill variant={pillVariant[cat] || 'brand'}>{categoryLabel[cat] || cat}</CategoryPill>
+          {story.campus && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-50/70 px-2 py-0.5 text-[10px] font-bold text-brand">
+              <School className="h-2.5 w-2.5" /> {story.campus}
+            </span>
+          )}
           {story.demo && <DemoChip />}
         </div>
         <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem]">

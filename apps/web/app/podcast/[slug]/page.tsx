@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { ChevronRight, Clock, Calendar, Mic2 } from 'lucide-react';
 import { PageHeader, DemoNotice } from '@/components/common/PageHeader';
 import { CategoryPill } from '@/components/common/CategoryPill';
-import { PodcastPlayer } from '@/components/podcast/PodcastPlayer';
+import { PodcastMediaSection } from '@/components/podcast/PodcastMediaSection';
 import { PodcastCard } from '@/components/cards/PodcastCard';
 import { ShareButtons, SaveButton } from '@/components/common/ShareButtons';
 import { Reveal } from '@/components/common/Reveal';
@@ -85,9 +85,16 @@ export default async function EpisodePage({ params }: Props) {
               </p>
 
               <div>
-                <h2 className="font-display text-lg font-bold">Listen</h2>
+                <h2 className="font-display text-lg font-bold">
+                  {episode.youtubeUrl ? 'Watch & Listen' : 'Listen'}
+                </h2>
                 <div className="mt-4">
-                  <PodcastPlayer audioUrl={episode.audioUrl} title={episode.title} />
+                  <PodcastMediaSection
+                    youtubeUrl={episode.youtubeUrl}
+                    audioUrl={episode.audioUrl}
+                    title={episode.title}
+                    thumbnail={episode.image}
+                  />
                 </div>
               </div>
 

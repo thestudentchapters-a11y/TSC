@@ -8,7 +8,8 @@ import { CampusCard } from '@/components/cards/CampusCard';
 import { CategoryPill } from '@/components/common/CategoryPill';
 import { Reveal } from '@/components/common/Reveal';
 import { TextCTA } from '@/components/common/Button';
-import { getCampusBySlug, getCampuses, getStories, getEvents } from '@/lib/data';
+import { CampusNewsAndStoriesHub } from '@/components/campus/CampusNewsAndStoriesHub';
+import { getCampusBySlug, getCampuses, getStories, getEvents, getArticles } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
 export const revalidate = 300;
@@ -30,8 +31,24 @@ export default async function CampusProfilePage({ params }: Props) {
   const campus = await getCampusBySlug(params.slug);
   if (!campus) notFound();
 
-  const [stories, events, campuses] = await Promise.all([getStories(), getEvents(), getCampuses()]);
-  const campusStories = stories.filter((s) => s.campus?.includes(campus.name.split(' ')[0])).slice(0, 3);
+  const [articles, stories, events, campuses] = await Promise.all([
+    getArticles(),
+    getStories(),
+    getEvents(),
+    getCampuses(),
+  ]);
+
+  const campusPrefix = campus.name.split(' ')[0].toLowerCase();
+  const campusArticles = articles.filter(
+    (a) =>
+      a.campus?.toLowerCase() === campus.name.toLowerCase() ||
+      a.campus?.toLowerCase().includes(campusPrefix)
+  );
+  const campusStories = stories.filter(
+    (s) =>
+      s.campus?.toLowerCase() === campus.name.toLowerCase() ||
+      s.campus?.toLowerCase().includes(campusPrefix)
+  );
   const campusEvents = events.filter((e) => e.state === campus.state).slice(0, 3);
   const otherCampuses = campuses.filter((c) => c.id !== campus.id).slice(0, 3);
 
@@ -77,28 +94,12 @@ export default async function CampusProfilePage({ params }: Props) {
                 </div>
               </div>
 
-              {/* News & stories from campus */}
-              <div>
-                <h2 className="flex items-center gap-2 font-display text-xl font-bold">
-                  <Newspaper aria-hidden className="h-5 w-5 text-brand" /> News &amp; stories
-                </h2>
-                <div className="mt-5 space-y-3">
-                  {(campusStories.length ? campusStories : stories.slice(0, 3)).map((s) => (
-                    <Link
-                      key={s.id}
-                      href={`/stories/${s.slug}`}
-                      className="card-base card-hover group flex items-center justify-between gap-4 p-4"
-                    >
-                      <div>
-                        <p className="meta-text !text-[10px]">{formatDate(s.date)} • {s.category}</p>
-                        <p className="mt-1 font-display text-[15px] font-bold transition-colors group-hover:text-brand">{s.title}</p>
-                        <p className="mt-1 line-clamp-1 text-[13px] text-muted">{s.dek}</p>
-                      </div>
-                      <ChevronRight aria-hidden className="h-5 w-5 shrink-0 text-muted transition-transform group-hover:translate-x-1 group-hover:text-brand" />
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              {/* Campus News & Stories Hub */}
+              <CampusNewsAndStoriesHub
+                campus={campus}
+                initialArticles={campusArticles}
+                initialStories={campusStories}
+              />
 
               {/* Events */}
               <div>

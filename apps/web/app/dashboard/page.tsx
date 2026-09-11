@@ -51,6 +51,7 @@ export default function DashboardPage() {
   const [loadingSubmissions, setLoadingSubmissions] = useState(true);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileName, setProfileName] = useState('');
+  const [profileKonnectxId, setProfileKonnectxId] = useState('');
   const [profileCollege, setProfileCollege] = useState('');
   const [profileCity, setProfileCity] = useState('');
 
@@ -59,6 +60,7 @@ export default function DashboardPage() {
       setProfileName(user.name);
       setProfileCollege(user.college || '');
       setProfileCity(user.city || '');
+      setProfileKonnectxId((user as any).konnectxId || '');
     }
   }, [user]);
 
@@ -415,6 +417,9 @@ export default function DashboardPage() {
         <div className="space-y-4">
           <Field label="Full Name" htmlFor="prof-name">
             <Input id="prof-name" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
+          </Field>
+          <Field label="KonnectX ID" htmlFor="prof-kx" hint="Your KonnectX username or handle (@handle)">
+            <Input id="prof-kx" value={profileKonnectxId} onChange={(e) => setProfileKonnectxId(e.target.value)} placeholder="@yourhandle" />
           </Field>
           <Field label="College / University" htmlFor="prof-college">
             <Input id="prof-college" value={profileCollege} onChange={(e) => setProfileCollege(e.target.value)} />

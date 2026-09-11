@@ -39,6 +39,7 @@ function normalizeArticle(raw: any): Article {
       (typeof raw.author === 'object' && raw.author?.name ? raw.author.name : null) ||
       (typeof raw.author === 'string' && !isObjectId(raw.author) ? raw.author : null) ||
       'TSC Editorial',
+    campus: typeof raw.campus === 'object' && raw.campus?.name ? raw.campus.name : raw.campus || '',
     date: raw.date || raw.publishAt || raw.createdAt || new Date().toISOString(),
     readingTime: raw.readingTime || 3,
     image: raw.image || raw.featuredImage || '/images/news/news-1.jpg',
@@ -102,6 +103,7 @@ function normalizeCampus(raw: any): Campus {
 
 function normalizeEpisode(raw: any): PodcastEpisode {
   if (!raw) return demoEpisodes[0];
+  const youtubeUrl = raw.youtubeUrl || raw.videoUrl || raw.platforms?.youtube || null;
   return {
     id: raw.id || raw._id?.toString() || raw.slug,
     slug: raw.slug || '',
@@ -116,8 +118,13 @@ function normalizeEpisode(raw: any): PodcastEpisode {
     image: raw.image || raw.thumbnail || '/images/podcast/podcast-host.jpg',
     imageAlt: raw.imageAlt || raw.title || 'Podcast episode',
     audioUrl: raw.audioUrl || null,
-    videoUrl: raw.videoUrl || null,
-    platforms: raw.platforms || { youtube: null, spotify: null, apple: null },
+    videoUrl: raw.videoUrl || youtubeUrl,
+    youtubeUrl: youtubeUrl,
+    platforms: {
+      youtube: raw.platforms?.youtube || youtubeUrl,
+      spotify: raw.platforms?.spotify || null,
+      apple: raw.platforms?.apple || null,
+    },
     transcript: Array.isArray(raw.transcript)
       ? raw.transcript
       : typeof raw.transcript === 'string'

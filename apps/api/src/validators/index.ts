@@ -14,6 +14,8 @@ export const registerSchema = z.object({
   graduationYear: z.coerce.number().int().min(2000).max(2035).optional(),
   city: z.string().trim().optional(),
   state: z.string().trim().optional(),
+  konnectxId: z.string().trim().optional(),
+  linkedin: z.string().trim().optional(),
   interests: z.string().optional(),
   skills: z.string().optional(),
 });
@@ -48,6 +50,27 @@ export const campusSubmissionSchema = z.object({
   eventDate: z.string().optional(),
   links: z.string().trim().optional(),
   consent: z.literal(true, { message: 'Consent is required' }),
+});
+
+export const memberItemSchema = z.object({
+  name: z.string().trim().min(3),
+  email,
+  role: z.enum(['member', 'editor', 'admin']).default('member'),
+  college: z.string().trim().optional(),
+  city: z.string().trim().optional(),
+  state: z.string().trim().optional(),
+  status: z.enum(['active', 'pending', 'suspended']).default('active'),
+});
+
+export const teamMemberSchema = z.object({
+  name: z.string().trim().min(2),
+  role: z.string().trim().min(2),
+  bio: z.string().trim().optional(),
+  avatarUrl: z.string().trim().optional(),
+  konnectxId: z.string().trim().optional(),
+  linkedin: z.string().trim().optional(),
+  featured: z.boolean().optional(),
+  active: z.boolean().optional(),
 });
 
 export const contactSchema = z.object({
@@ -131,6 +154,7 @@ export const updateMeSchema = z.object({
   state: z.string().trim().optional(),
   interests: z.array(z.string()).optional(),
   skills: z.array(z.string()).optional(),
+  konnectxId: z.string().trim().optional(),
   linkedin: z.string().trim().optional(),
   instagram: z.string().trim().optional(),
   avatarUrl: z.string().trim().optional(),
@@ -150,10 +174,10 @@ export const hiringApplicationSchema = z.object({
   department: z.string().trim().min(2, 'Please select a track/department'),
   experienceLevel: z.string().trim().min(2, 'Please specify your experience level or year of study'),
   collegeOrCompany: z.string().trim().min(2, 'Please specify your college or current organization'),
+  konnectxId: z.string().trim().optional(),
   linkedinUrl: z.string().trim().url().optional().or(z.literal('')),
   portfolioUrl: z.string().trim().url().optional().or(z.literal('')),
   resumeUrl: z.string().trim().min(3, 'Please provide a resume link or document URL'),
   coverLetter: z.string().trim().min(30, 'Please share at least 30 characters about why you want to join TSC'),
   availability: z.string().trim().min(2, 'Please specify your availability/joining timeline'),
 });
-

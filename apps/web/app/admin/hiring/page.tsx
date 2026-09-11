@@ -41,6 +41,7 @@ export interface HiringAppItem {
   department: string;
   experienceLevel: string;
   collegeOrCompany: string;
+  konnectxId?: string;
   linkedinUrl?: string;
   portfolioUrl?: string;
   resumeUrl: string;
@@ -62,6 +63,7 @@ const DEMO_APPLICATIONS: HiringAppItem[] = [
     department: 'Editorial & Content Writing',
     experienceLevel: '3rd Year Undergraduate',
     collegeOrCompany: 'Patna Women’s College',
+    konnectxId: '@ananya_roy',
     linkedinUrl: 'https://linkedin.com/in/ananya-roy',
     portfolioUrl: 'https://medium.com/@ananyaroy',
     resumeUrl: 'https://drive.google.com/sample-resume-ananya.pdf',
@@ -533,15 +535,10 @@ export default function AdminHiringPage() {
                     <FileText className="h-3 w-3" /> View Resume <ExternalLink className="h-3 w-3" />
                   </a>
 
-                  {selectedApp.portfolioUrl && (
-                    <a
-                      href={selectedApp.portfolioUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-cream px-3 py-1 font-display text-[11px] font-bold text-ink hover:border-brand"
-                    >
-                      <Globe className="h-3 w-3 text-brand" /> Portfolio / GitHub <ExternalLink className="h-3 w-3" />
-                    </a>
+                  {selectedApp.konnectxId && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand-50 px-3 py-1 font-display text-[11px] font-bold text-brand">
+                      <Globe className="h-3 w-3 text-brand" /> KonnectX: {selectedApp.konnectxId}
+                    </span>
                   )}
 
                   {selectedApp.linkedinUrl && (
@@ -552,6 +549,17 @@ export default function AdminHiringPage() {
                       className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-cream px-3 py-1 font-display text-[11px] font-bold text-ink hover:border-brand"
                     >
                       <Linkedin className="h-3 w-3 text-blue-600" /> LinkedIn <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+
+                  {selectedApp.portfolioUrl && (
+                    <a
+                      href={selectedApp.portfolioUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-cream px-3 py-1 font-display text-[11px] font-bold text-ink hover:border-brand"
+                    >
+                      <Globe className="h-3 w-3 text-brand" /> Portfolio / GitHub <ExternalLink className="h-3 w-3" />
                     </a>
                   )}
                 </div>

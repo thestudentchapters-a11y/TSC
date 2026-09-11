@@ -14,6 +14,7 @@ export interface IPodcastEpisode {
   durationLabel: string;
   audioUrl?: string;
   videoUrl?: string;
+  youtubeUrl?: string;
   platforms: { youtube?: string; spotify?: string; apple?: string };
   transcript: string;
   thumbnail: string;
@@ -42,6 +43,7 @@ const PodcastEpisodeSchema = new Schema(
     durationLabel: { type: String },
     audioUrl: { type: String },
     videoUrl: { type: String },
+    youtubeUrl: { type: String },
     platforms: { youtube: String, spotify: String, apple: String },
     transcript: { type: String },
     thumbnail: { type: String },

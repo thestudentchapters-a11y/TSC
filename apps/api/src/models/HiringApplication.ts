@@ -12,6 +12,7 @@ export interface IHiringApplication extends Document {
   department: string;
   experienceLevel: string;
   collegeOrCompany: string;
+  konnectxId?: string;
   linkedinUrl?: string;
   portfolioUrl?: string;
   resumeUrl: string;
@@ -34,6 +35,7 @@ const hiringApplicationSchema = new Schema<IHiringApplication>(
     department: { type: String, required: true, trim: true, index: true },
     experienceLevel: { type: String, required: true, trim: true },
     collegeOrCompany: { type: String, required: true, trim: true },
+    konnectxId: { type: String, trim: true },
     linkedinUrl: { type: String, trim: true },
     portfolioUrl: { type: String, trim: true },
     resumeUrl: { type: String, required: true, trim: true },

@@ -139,8 +139,8 @@ export default function ShareYourStoryPage() {
                 <Field label="Video URL (optional)" htmlFor="s-video" error={errors.videoUrl}>
                   <Input id="s-video" value={form.videoUrl} onChange={(e) => set('videoUrl', e.target.value)} placeholder="https://youtube.com/..." />
                 </Field>
-                <Field label="Social links (optional)" htmlFor="s-social">
-                  <Input id="s-social" value={form.social} onChange={(e) => set('social', e.target.value)} placeholder="LinkedIn / Instagram / X" />
+                <Field label="KonnectX ID / Social links (optional)" htmlFor="s-social" hint="KonnectX ID preferred">
+                  <Input id="s-social" value={form.social} onChange={(e) => set('social', e.target.value)} placeholder="KonnectX ID (@handle) / LinkedIn / X" />
                 </Field>
               </div>
 

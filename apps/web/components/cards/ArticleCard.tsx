@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, User } from 'lucide-react';
+import { Clock, User, School } from 'lucide-react';
 import { CategoryPill, DemoChip } from '@/components/common/CategoryPill';
 import type { Article } from '@/types/content';
 import { cn, formatDate } from '@/lib/utils';
@@ -59,6 +59,11 @@ export function ArticleCard({
           <div className="space-y-2.5">
             <div className="flex flex-wrap items-center gap-2">
               <CategoryPill>{categoryName}</CategoryPill>
+              {article.campus && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-50/70 px-2 py-0.5 text-[10px] font-bold text-brand">
+                  <School className="h-2.5 w-2.5" /> {article.campus}
+                </span>
+              )}
               {article.demo && <DemoChip />}
             </div>
             <h3 className="font-display text-[17px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3rem]">
@@ -93,6 +98,11 @@ export function ArticleCard({
         <div className="flex flex-col justify-center gap-4 p-6 sm:p-8">
           <div className="flex flex-wrap items-center gap-2">
             <CategoryPill>{categoryName}</CategoryPill>
+            {article.campus && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-50/70 px-2 py-0.5 text-[10px] font-bold text-brand">
+                <School className="h-2.5 w-2.5" /> {article.campus}
+              </span>
+            )}
             {article.demo && <DemoChip />}
           </div>
           <h3 className="font-display text-2xl font-bold leading-tight transition-colors group-hover:text-brand sm:text-[1.7rem]">
@@ -122,6 +132,11 @@ export function ArticleCard({
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
           <CategoryPill>{categoryName}</CategoryPill>
+          {article.campus && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-50/70 px-2 py-0.5 text-[10px] font-bold text-brand">
+              <School className="h-2.5 w-2.5" /> {article.campus}
+            </span>
+          )}
           {article.demo && <DemoChip />}
         </div>
         <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem]">

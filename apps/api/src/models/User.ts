@@ -15,6 +15,7 @@ const UserSchema = new Schema(
     state: { type: String, trim: true },
     interests: [{ type: String }],
     skills: [{ type: String }],
+    konnectxId: { type: String, trim: true },
     linkedin: { type: String, trim: true },
     instagram: { type: String, trim: true },
     avatarUrl: { type: String, trim: true },

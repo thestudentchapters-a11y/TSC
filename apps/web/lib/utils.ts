@@ -69,3 +69,25 @@ export function initialsOf(name: string): string {
     .map((w) => w[0]!.toUpperCase())
     .join('');
 }
+
+/**
+ * Extracts YouTube video ID from various YouTube URL formats
+ * (watch?v=, youtu.be/, embed/, shorts/, live/).
+ */
+export function getYoutubeVideoId(url?: string | null): string | null {
+  if (!url || typeof url !== 'string') return null;
+  const trimmed = url.trim();
+  const regExp = /(?:youtube(?:-nocookie)?\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?|shorts|live)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i;
+  const match = trimmed.match(regExp);
+  return match ? match[1] : null;
+}
+
+/**
+ * Converts a YouTube URL into a privacy-enhanced, clean iframe embed URL.
+ */
+export function getYoutubeEmbedUrl(url?: string | null): string | null {
+  const videoId = getYoutubeVideoId(url);
+  if (!videoId) return null;
+  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&enablejsapi=1`;
+}
+

@@ -133,7 +133,7 @@ export default function ShareCampusNewsPage() {
                   <Input id="c-date" type="date" value={form.eventDate} onChange={(e) => set('eventDate', e.target.value)} />
                 </Field>
                 <Field label="Supporting links (optional)" htmlFor="c-links" error={errors.links}>
-                  <Input id="c-links" value={form.links} onChange={(e) => set('links', e.target.value)} placeholder="Instagram post, registration link…" />
+                  <Input id="c-links" value={form.links} onChange={(e) => set('links', e.target.value)} placeholder="KonnectX post, event registration link, article…" />
                 </Field>
               </div>
 

@@ -50,7 +50,7 @@ export default function AdminDashboardPage() {
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Hiring applications" value="12" sub="Jobs & Internships" icon={Briefcase} href="/admin/hiring" />
-        <StatCard label="Total members" value={demoMembers.length} sub={`${newMembers} new this month`} icon={Users} href="/admin/members" />
+        <StatCard label="Community members" value={demoMembers.filter((m) => m.role === 'member').length} sub={`${newMembers} active`} icon={Users} href="/admin/members" />
         <StatCard label="Pending submissions" value={pending} sub="Awaiting review" icon={Share2} href="/admin/story-submissions" />
         <StatCard label="Published articles" value={demoArticles.filter((a) => a.status === 'published').length} sub="News section" icon={Newspaper} href="/admin/news" />
         <StatCard label="Upcoming events" value={upcoming} icon={CalendarDays} href="/admin/events" />

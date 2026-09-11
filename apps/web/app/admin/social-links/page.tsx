@@ -23,13 +23,13 @@ export default function AdminSocialLinksPage() {
     if (errors[k]) setErrors((prev) => ({ ...prev, [k]: '' }));
   };
 
-  const rows: { key: keyof typeof links; label: string; icon: typeof Instagram; hint: string }[] = [
-    { key: 'instagram', label: 'Instagram', icon: Instagram, hint: 'Official handle: instagram.com/studentchapters' },
-    { key: 'youtube', label: 'YouTube', icon: Youtube, hint: 'Official channel: youtube.com/channel/UC8IGnEOSxDVqd1AviLa-5qA' },
+  const rows: { key: keyof typeof links; label: string; icon: typeof Globe; hint: string }[] = [
+    { key: 'konnectx', label: 'KonnectX Platform / ID', icon: Globe, hint: 'Official platform: konnectx.app' },
     { key: 'linkedin', label: 'LinkedIn', icon: Linkedin, hint: 'Company page: in.linkedin.com/company/the-student-chapters' },
-    { key: 'facebook', label: 'Facebook', icon: Facebook, hint: 'Official page: facebook.com/people/The-Student-Chapters/61562542822959/' },
+    { key: 'youtube', label: 'YouTube', icon: Youtube, hint: 'Official channel: youtube.com/channel/UC8IGnEOSxDVqd1AviLa-5qA' },
     { key: 'whatsapp', label: 'WhatsApp Community', icon: MessageCircle, hint: 'Invite link for the TSC community channel' },
-    { key: 'konnectx', label: 'KonnectX', icon: Globe, hint: 'Official platform: konnectx.app' },
+    { key: 'facebook', label: 'Facebook', icon: Facebook, hint: 'Official page: facebook.com/people/The-Student-Chapters/61562542822959/' },
+    { key: 'instagram', label: 'Instagram', icon: Instagram, hint: 'Official handle: instagram.com/studentchapters' },
   ];
 
   const handleSave = () => {

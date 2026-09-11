@@ -27,7 +27,7 @@ export default function MembershipPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     name: '', email: '', phone: '', dob: '', college: '', course: '', graduationYear: '',
-    city: '', state: '', linkedin: '', instagram: '', password: '',
+    city: '', state: '', konnectxId: '', linkedin: '', password: '',
     interests: [] as string[], skills: '', consent: false,
   });
   const set = (k: string, v: string | boolean | string[]) => setForm((f) => ({ ...f, [k]: v }));
@@ -59,7 +59,8 @@ export default function MembershipPage() {
     const payload: RegisterPayload = {
       name: form.name, email: form.email, password: form.password, phone: form.phone,
       college: form.college, course: form.course, graduationYear: form.graduationYear,
-      city: form.city, state: form.state, interests: form.interests.join(', '), skills: form.skills,
+      city: form.city, state: form.state, konnectxId: form.konnectxId, linkedin: form.linkedin,
+      interests: form.interests.join(', '), skills: form.skills,
     };
     const res = await register(payload);
     setBusy(false);
@@ -156,11 +157,11 @@ export default function MembershipPage() {
                   <Field label="Password" htmlFor="m-pass" required error={errors.password} hint="Minimum 8 characters. Stored hashed (bcrypt) on the API.">
                     <Input id="m-pass" type="password" value={form.password} onChange={(e) => set('password', e.target.value)} placeholder="Create a password" autoComplete="new-password" />
                   </Field>
+                  <Field label="KonnectX ID (optional)" htmlFor="m-kx" hint="Your KonnectX handle or ID (placed first in TSC network)">
+                    <Input id="m-kx" value={form.konnectxId} onChange={(e) => set('konnectxId', e.target.value)} placeholder="@yourhandle or konnectx.app/..." />
+                  </Field>
                   <Field label="LinkedIn (optional)" htmlFor="m-li" error={errors.linkedin}>
                     <Input id="m-li" value={form.linkedin} onChange={(e) => set('linkedin', e.target.value)} placeholder="https://linkedin.com/in/…" />
-                  </Field>
-                  <Field label="Instagram (optional)" htmlFor="m-ig">
-                    <Input id="m-ig" value={form.instagram} onChange={(e) => set('instagram', e.target.value)} placeholder="@yourhandle" />
                   </Field>
                 </div>
 

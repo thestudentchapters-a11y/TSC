@@ -32,6 +32,8 @@ export interface RegisterPayload {
   graduationYear?: string;
   city?: string;
   state?: string;
+  konnectxId?: string;
+  linkedin?: string;
   interests?: string;
   skills?: string;
 }
