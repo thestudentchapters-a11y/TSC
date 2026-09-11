@@ -8,7 +8,7 @@ import { PodcastCard } from '@/components/cards/PodcastCard';
 import { TextCTA } from '@/components/common/Button';
 import { PodcastPlayer } from '@/components/podcast/PodcastPlayer';
 import type { PodcastEpisode } from '@/types/content';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getPodcastThumbnail } from '@/lib/utils';
 
 export function PodcastSection({ episodes }: { episodes: PodcastEpisode[] }) {
   const featured = episodes.find((e) => e.featured) ?? episodes[0];
@@ -37,7 +37,7 @@ export function PodcastSection({ episodes }: { episodes: PodcastEpisode[] }) {
             >
               <Link href={`/podcast/${featured.slug}`} className="group relative block overflow-hidden rounded-md">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={featured.image} alt={featured.imageAlt} className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <img src={getPodcastThumbnail(featured)} alt={featured.imageAlt} className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 <span className="absolute inset-0 bg-ink/30 transition-colors group-hover:bg-ink/10" aria-hidden />
                 <span
                   aria-hidden

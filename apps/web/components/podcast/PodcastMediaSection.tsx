@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Headphones, Play, Tv, Video, Youtube, ExternalLink } from 'lucide-react';
 import { PodcastPlayer } from '@/components/podcast/PodcastPlayer';
 import { getYoutubeEmbedUrl, cn } from '@/lib/utils';
@@ -34,6 +34,13 @@ export function PodcastMediaSection({
   const initialMode = defaultMode ?? (hasVideo ? 'video' : 'audio');
   const [activeMode, setActiveMode] = useState<'video' | 'audio'>(initialMode);
   const [isVideoLoading, setIsVideoLoading] = useState(true);
+
+  useEffect(() => {
+    if (hasVideo) {
+      const timer = setTimeout(() => setIsVideoLoading(false), 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [hasVideo, embedUrl]);
 
   if (!hasVideo && !hasAudio) {
     return <PodcastPlayer audioUrl={null} title={title} compact={compact} />;

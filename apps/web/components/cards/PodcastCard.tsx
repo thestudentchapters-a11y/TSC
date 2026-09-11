@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Clock, Lightbulb, Mic, Play, Rocket, Target, Youtube } from 'lucide-react';
 import { CategoryPill, DemoChip } from '@/components/common/CategoryPill';
 import type { PodcastCategory, PodcastEpisode } from '@/types/content';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getPodcastThumbnail } from '@/lib/utils';
 
 export const podcastCategoryIcon: Record<PodcastCategory, typeof Mic> = {
   'Student Voices': Mic,
@@ -15,7 +15,7 @@ export const podcastCategoryIcon: Record<PodcastCategory, typeof Mic> = {
 export function PodcastCard({ episode, priority = false }: { episode: PodcastEpisode; priority?: boolean }) {
   const categoryName = episode.category || 'Student Voices';
   const Icon = podcastCategoryIcon[categoryName] || Mic;
-  const imageSrc = episode.image || (episode as any).thumbnail || '/images/podcast/podcast-host.jpg';
+  const imageSrc = getPodcastThumbnail(episode, '/images/podcast/podcast-host.jpg');
   const imageAlt = episode.imageAlt || episode.title || 'Podcast episode';
   const dateStr = formatDate(episode.date || (episode as any).publishedAt || (episode as any).createdAt);
   const hasVideo = !!(episode.youtubeUrl || episode.videoUrl || episode.platforms?.youtube);

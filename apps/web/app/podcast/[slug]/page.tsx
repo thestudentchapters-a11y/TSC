@@ -10,7 +10,7 @@ import { PodcastCard } from '@/components/cards/PodcastCard';
 import { ShareButtons, SaveButton } from '@/components/common/ShareButtons';
 import { Reveal } from '@/components/common/Reveal';
 import { getEpisodeBySlug, getEpisodes } from '@/lib/data';
-import { formatDate, formatDuration } from '@/lib/utils';
+import { formatDate, formatDuration, getPodcastThumbnail } from '@/lib/utils';
 import { site } from '@/lib/site';
 
 export const revalidate = 300;
@@ -20,11 +20,12 @@ type Props = { params: { slug: string } };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ep = await getEpisodeBySlug(params.slug);
   if (!ep) return { title: 'Episode not found' };
+  const thumb = getPodcastThumbnail(ep);
   return {
     title: `E${String(ep.episodeNumber).padStart(2, '0')} — ${ep.title}`,
     description: ep.description,
     alternates: { canonical: `/podcast/${ep.slug}` },
-    openGraph: { title: ep.title, description: ep.description, images: [{ url: ep.image, alt: ep.imageAlt }] },
+    openGraph: { title: ep.title, description: ep.description, images: [{ url: thumb, alt: ep.imageAlt || ep.title }] },
   };
 }
 
@@ -34,6 +35,8 @@ export default async function EpisodePage({ params }: Props) {
 
   const all = await getEpisodes();
   const more = all.filter((e) => e.id !== episode.id).slice(0, 3);
+  const episodeThumbnail = getPodcastThumbnail(episode);
+  const hasVideo = !!(episode.youtubeUrl || episode.videoUrl || episode.platforms?.youtube);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -69,11 +72,25 @@ export default async function EpisodePage({ params }: Props) {
 
       <section className="section-pad">
         <div className="container-tsc max-w-5xl">
-          <DemoNotice className="mb-8" />
+          {episode.demo && <DemoNotice className="mb-8" />}
+          
+          {/* Main Media Player / Video Header */}
           <Reveal>
-            <div className="relative aspect-[16/8] overflow-hidden rounded-md">
-              <Image src={episode.image} alt={episode.imageAlt} fill priority sizes="100vw" className="object-cover" />
-            </div>
+            {hasVideo ? (
+              <div className="overflow-hidden rounded-xl">
+                <PodcastMediaSection
+                  youtubeUrl={episode.youtubeUrl || episode.videoUrl || episode.platforms?.youtube}
+                  audioUrl={episode.audioUrl}
+                  title={episode.title}
+                  thumbnail={episodeThumbnail}
+                  defaultMode="video"
+                />
+              </div>
+            ) : (
+              <div className="relative aspect-[16/8] overflow-hidden rounded-md border border-hairline">
+                <Image src={episodeThumbnail} alt={episode.imageAlt || episode.title} fill priority sizes="100vw" className="object-cover" />
+              </div>
+            )}
           </Reveal>
 
           <div className="mt-8 grid gap-12 lg:grid-cols-12">
@@ -84,19 +101,19 @@ export default async function EpisodePage({ params }: Props) {
                 {episode.guest}, {episode.guestRole}
               </p>
 
-              <div>
-                <h2 className="font-display text-lg font-bold">
-                  {episode.youtubeUrl ? 'Watch & Listen' : 'Listen'}
-                </h2>
-                <div className="mt-4">
-                  <PodcastMediaSection
-                    youtubeUrl={episode.youtubeUrl}
-                    audioUrl={episode.audioUrl}
-                    title={episode.title}
-                    thumbnail={episode.image}
-                  />
+              {!hasVideo && (
+                <div>
+                  <h2 className="font-display text-lg font-bold">Listen to Episode</h2>
+                  <div className="mt-4">
+                    <PodcastMediaSection
+                      youtubeUrl={null}
+                      audioUrl={episode.audioUrl}
+                      title={episode.title}
+                      thumbnail={episodeThumbnail}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <h2 className="font-display text-lg font-bold">Transcript</h2>

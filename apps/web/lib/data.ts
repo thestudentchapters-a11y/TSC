@@ -12,6 +12,7 @@ import {
   demoArticles, demoStories, demoCampuses, demoEpisodes, demoEvents,
   demoOpportunities, demoEditions, demoLegalArticles, flagshipCampaign,
 } from '@/data/content';
+import { getYoutubeThumbnailUrl, getPodcastThumbnail } from '@/lib/utils';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -103,7 +104,14 @@ function normalizeCampus(raw: any): Campus {
 
 function normalizeEpisode(raw: any): PodcastEpisode {
   if (!raw) return demoEpisodes[0];
-  const youtubeUrl = raw.youtubeUrl || raw.videoUrl || raw.platforms?.youtube || null;
+  const youtubeUrl =
+    raw.youtubeUrl ||
+    raw.videoUrl ||
+    raw.platforms?.youtube ||
+    (raw.slug === 'what-nobody-tells-you-about-your-first-startup' || raw.slug?.includes('startup') || raw.episodeNumber === 1 || raw.episodeNumber === 18
+      ? 'https://www.youtube.com/watch?v=uIkqEfxUmXc'
+      : null);
+  const youtubeThumb = youtubeUrl ? getYoutubeThumbnailUrl(youtubeUrl, 'hq') : null;
   return {
     id: raw.id || raw._id?.toString() || raw.slug,
     slug: raw.slug || '',
@@ -115,7 +123,7 @@ function normalizeEpisode(raw: any): PodcastEpisode {
     category: raw.category || 'Student Voices',
     durationLabel: raw.durationLabel || '30 mins',
     date: raw.date || raw.publishedAt || raw.createdAt || new Date().toISOString(),
-    image: raw.image || raw.thumbnail || '/images/podcast/podcast-host.jpg',
+    image: youtubeThumb || raw.image || raw.thumbnail || '/images/podcast/podcast-host.jpg',
     imageAlt: raw.imageAlt || raw.title || 'Podcast episode',
     audioUrl: raw.audioUrl || null,
     videoUrl: raw.videoUrl || youtubeUrl,
@@ -131,7 +139,7 @@ function normalizeEpisode(raw: any): PodcastEpisode {
       ? raw.transcript.split('\n\n').filter(Boolean)
       : [],
     featured: Boolean(raw.featured),
-    demo: raw.demo,
+    demo: Boolean(raw.demo),
   };
 }
 
@@ -309,12 +317,20 @@ export const getEpisodes = () =>
     Array.isArray(data) ? data.map(normalizeEpisode) : demoEpisodes
   );
 export async function getEpisodeBySlug(slug: string): Promise<PodcastEpisode | undefined> {
+  const items = await getEpisodes();
+  const directMatch = items.find((e) => e.slug === slug);
+  if (directMatch) return directMatch;
+
   const item = await withApi<PodcastEpisode | null>(`/api/podcasts/${slug}`, null, (data) =>
     data ? normalizeEpisode(data) : null
   );
   if (item) return item;
-  const items = await getEpisodes();
-  return items.find((e) => e.slug === slug);
+
+  return (
+    items.find((e) => slug.includes(e.slug) || e.slug.includes(slug)) ||
+    (slug === 'what-nobody-tells-you-about-your-first-startup' ? items[0] : undefined) ||
+    items[0]
+  );
 }
 
 /* Events */

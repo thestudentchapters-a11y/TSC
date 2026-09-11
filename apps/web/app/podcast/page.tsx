@@ -9,7 +9,7 @@ import { FilterBar } from '@/components/common/FilterBar';
 import { EmptyState } from '@/components/common/States';
 import { StaggerGrid, StaggerItem, Reveal } from '@/components/common/Reveal';
 import { getEpisodes } from '@/lib/data';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getPodcastThumbnail } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'TSC Podcast — Conversations That Matter',
@@ -86,7 +86,7 @@ export default async function PodcastPage({
               <Reveal className="lg:col-span-5">
                 <Link href={`/podcast/${featured.slug}`} className="group relative block overflow-hidden rounded-md">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={featured.image} alt={featured.imageAlt} className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <img src={getPodcastThumbnail(featured)} alt={featured.imageAlt} className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 </Link>
               </Reveal>
               <div className="flex flex-col justify-center gap-4 lg:col-span-7">
@@ -103,7 +103,7 @@ export default async function PodcastPage({
                     youtubeUrl={featured.youtubeUrl}
                     audioUrl={featured.audioUrl}
                     title={featured.title}
-                    thumbnail={featured.image}
+                    thumbnail={getPodcastThumbnail(featured)}
                   />
                 </Reveal>
               </div>

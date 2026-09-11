@@ -91,3 +91,44 @@ export function getYoutubeEmbedUrl(url?: string | null): string | null {
   return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&enablejsapi=1`;
 }
 
+/**
+ * Returns the highest quality YouTube thumbnail URL for a given YouTube URL or video ID.
+ * Defaults to hqdefault.jpg which is guaranteed to exist for all YouTube videos.
+ */
+export function getYoutubeThumbnailUrl(
+  url?: string | null,
+  quality: 'hq' | 'maxres' | 'mq' | 'sd' = 'hq'
+): string | null {
+  const videoId = getYoutubeVideoId(url);
+  if (!videoId) return null;
+  if (quality === 'maxres') {
+    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  }
+  if (quality === 'mq') {
+    return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+  }
+  if (quality === 'sd') {
+    return `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
+  }
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
+/**
+ * Returns the effective thumbnail for a podcast episode:
+ * If a valid youtubeUrl or videoUrl is present, it returns the YouTube video thumbnail.
+ * Otherwise, it falls back to the manual image URL or default placeholder.
+ */
+export function getPodcastThumbnail(
+  episode?: { image?: string; thumbnail?: string; youtubeUrl?: string | null; videoUrl?: string | null; platforms?: { youtube?: string | null } } | null,
+  fallback = '/images/podcast/podcast-1.jpg'
+): string {
+  if (!episode) return fallback;
+  const ytUrl = episode.youtubeUrl || episode.videoUrl || episode.platforms?.youtube;
+  if (ytUrl) {
+    const ytThumb = getYoutubeThumbnailUrl(ytUrl, 'hq');
+    if (ytThumb) return ytThumb;
+  }
+  return episode.image || episode.thumbnail || fallback;
+}
+
+
