@@ -81,34 +81,67 @@ export default async function PodcastPage({
           </div>
 
           {/* featured episode */}
-          {featured && !searchParams.category && (
-            <div className="mt-12 grid gap-8 rounded-md border border-hairline bg-white p-6 sm:p-8 lg:grid-cols-12">
-              <Reveal className="lg:col-span-5">
-                <Link href={`/podcast/${featured.slug}`} className="group relative block overflow-hidden rounded-md">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={getPodcastThumbnail(featured)} alt={featured.imageAlt} className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                </Link>
-              </Reveal>
-              <div className="flex flex-col justify-center gap-4 lg:col-span-7">
-                <Reveal delay={0.08}>
-                  <p className="eyebrow !text-gold-deep">Featured • Episode {String(featured.episodeNumber).padStart(2, '0')}</p>
-                  <h2 className="mt-2 font-display text-2xl font-bold">{featured.title}</h2>
-                  <p className="mt-2 text-sm leading-7 text-muted">{featured.description}</p>
-                  <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-muted">
-                    with {featured.guest} — {featured.guestRole} • {featured.durationLabel} • {formatDate(featured.date)}
-                  </p>
+          {featured && !searchParams.category && (() => {
+            const hasVideo = !!(featured.youtubeUrl || featured.videoUrl || featured.platforms?.youtube);
+            const featuredThumbnail = getPodcastThumbnail(featured);
+
+            return (
+              <div className="mt-12 grid gap-8 rounded-md border border-hairline bg-white p-6 sm:p-8 lg:grid-cols-12">
+                <Reveal className="lg:col-span-6">
+                  {hasVideo ? (
+                    <div className="overflow-hidden rounded-lg">
+                      <PodcastMediaSection
+                        youtubeUrl={featured.youtubeUrl || featured.videoUrl || featured.platforms?.youtube}
+                        audioUrl={featured.audioUrl}
+                        title={featured.title}
+                        thumbnail={featuredThumbnail}
+                        defaultMode="video"
+                      />
+                    </div>
+                  ) : (
+                    <Link href={`/podcast/${featured.slug}`} className="group relative block overflow-hidden rounded-md">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={featuredThumbnail} alt={featured.imageAlt} className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </Link>
+                  )}
                 </Reveal>
-                <Reveal delay={0.14}>
-                  <PodcastMediaSection
-                    youtubeUrl={featured.youtubeUrl}
-                    audioUrl={featured.audioUrl}
-                    title={featured.title}
-                    thumbnail={getPodcastThumbnail(featured)}
-                  />
-                </Reveal>
+                <div className="flex flex-col justify-center gap-4 lg:col-span-6">
+                  <Reveal delay={0.08}>
+                    <p className="eyebrow !text-gold-deep">Featured • Episode {String(featured.episodeNumber).padStart(2, '0')}</p>
+                    <h2 className="mt-2 font-display text-2xl font-bold">
+                      <Link href={`/podcast/${featured.slug}`} className="hover:text-brand transition-colors">
+                        {featured.title}
+                      </Link>
+                    </h2>
+                    <p className="mt-2 text-sm leading-7 text-muted">{featured.description}</p>
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-muted">
+                      with {featured.guest} — {featured.guestRole} • {featured.durationLabel} • {formatDate(featured.date)}
+                    </p>
+                  </Reveal>
+                  {!hasVideo && (
+                    <Reveal delay={0.14}>
+                      <div className="mt-2">
+                        <PodcastMediaSection
+                          youtubeUrl={null}
+                          audioUrl={featured.audioUrl}
+                          title={featured.title}
+                          thumbnail={featuredThumbnail}
+                        />
+                      </div>
+                    </Reveal>
+                  )}
+                  <div className="pt-2">
+                    <Link
+                      href={`/podcast/${featured.slug}`}
+                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand hover:text-brand-dark transition-colors"
+                    >
+                      View Full Episode Page & Transcript →
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* episodes */}
           <h2 className="mt-14 font-display text-sm font-bold uppercase tracking-[0.2em] text-brand">
