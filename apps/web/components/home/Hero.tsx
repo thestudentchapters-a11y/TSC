@@ -151,7 +151,7 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
         {/* Copy */}
         <div className="flex flex-col justify-center lg:col-span-5">
           <motion.p
-            className="eyebrow"
+            className="eyebrow tracking-wider"
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE }}
