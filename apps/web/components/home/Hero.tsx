@@ -221,8 +221,7 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
 
           {/* floating chips */}
           <motion.div
-            aria-hidden
-            className="absolute -left-2 top-6 hidden items-center gap-2 rounded-full border border-hairline bg-white px-4 py-2 shadow-lift lg:flex"
+            className="absolute -left-2 top-6 z-10 hidden lg:flex"
             initial={{ opacity: 0, x: -16 }}
             animate={reduce ? { opacity: 1, x: 0 } : { opacity: 1, x: [0, 6, 0], y: [0, -8, 0] }}
             transition={
@@ -231,12 +230,18 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
                 : { opacity: { delay: 1.2, duration: 0.5 }, x: { repeat: Infinity, duration: 6, ease: 'easeInOut' }, y: { repeat: Infinity, duration: 6, ease: 'easeInOut' } }
             }
           >
-            <Mic className="h-3.5 w-3.5 text-brand" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink">Student Voices</span>
+            <Link
+              href="/stories/student"
+              className="group flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-2 shadow-lift transition-all duration-200 hover:scale-105 hover:border-brand/40 hover:shadow-md active:scale-95"
+            >
+              <Mic className="h-3.5 w-3.5 text-brand transition-transform duration-200 group-hover:scale-110" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition-colors duration-200 group-hover:text-brand">
+                Student Voices
+              </span>
+            </Link>
           </motion.div>
           <motion.div
-            aria-hidden
-            className="absolute -right-2 bottom-8 hidden items-center gap-2 rounded-full bg-gold px-4 py-2 shadow-lift lg:flex"
+            className="absolute -right-2 bottom-8 z-10 hidden lg:flex"
             initial={{ opacity: 0, x: 16 }}
             animate={reduce ? { opacity: 1, x: 0 } : { opacity: 1, x: [0, -6, 0], y: [0, 8, 0] }}
             transition={
@@ -245,8 +250,15 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
                 : { opacity: { delay: 1.35, duration: 0.5 }, x: { repeat: Infinity, duration: 7, ease: 'easeInOut' }, y: { repeat: Infinity, duration: 7, ease: 'easeInOut' } }
             }
           >
-            <span className="h-1.5 w-1.5 rounded-[2px] bg-ink" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink">Opportunities</span>
+            <Link
+              href="/career"
+              className="group flex items-center gap-2 rounded-full bg-gold px-4 py-2 shadow-lift transition-all duration-200 hover:scale-105 hover:bg-gold-deep hover:shadow-md active:scale-95"
+            >
+              <span className="h-1.5 w-1.5 rounded-[2px] bg-ink transition-transform duration-200 group-hover:scale-110" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink">
+                Opportunities
+              </span>
+            </Link>
           </motion.div>
         </div>
       </div>
