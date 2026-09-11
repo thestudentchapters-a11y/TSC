@@ -4,8 +4,11 @@ export function cn(...classes: Array<string | false | null | undefined>): string
   return classes.filter(Boolean).join(' ');
 }
 
-export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-IN', {
+export function formatDate(iso?: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-IN', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -13,11 +16,12 @@ export function formatDate(iso: string): string {
 }
 
 /** "18 SEP" style badge for event cards. */
-export function dateBadge(iso: string): { day: string; month: string } {
-  const d = new Date(iso);
+export function dateBadge(iso?: string): { day: string; month: string } {
+  const d = iso ? new Date(iso) : new Date();
+  const valid = !isNaN(d.getTime()) ? d : new Date();
   return {
-    day: String(d.getDate()).padStart(2, '0'),
-    month: d.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
+    day: String(valid.getDate()).padStart(2, '0'),
+    month: valid.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
   };
 }
 

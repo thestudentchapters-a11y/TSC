@@ -13,7 +13,12 @@ export const podcastCategoryIcon: Record<PodcastCategory, typeof Mic> = {
 };
 
 export function PodcastCard({ episode, priority = false }: { episode: PodcastEpisode; priority?: boolean }) {
-  const Icon = podcastCategoryIcon[episode.category];
+  const categoryName = episode.category || 'Student Voices';
+  const Icon = podcastCategoryIcon[categoryName] || Mic;
+  const imageSrc = episode.image || (episode as any).thumbnail || '/images/podcast/podcast-host.jpg';
+  const imageAlt = episode.imageAlt || episode.title || 'Podcast episode';
+  const dateStr = formatDate(episode.date || (episode as any).publishedAt || (episode as any).createdAt);
+
   return (
     <Link
       href={`/podcast/${episode.slug}`}
@@ -21,8 +26,8 @@ export function PodcastCard({ episode, priority = false }: { episode: PodcastEpi
     >
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden">
         <Image
-          src={episode.image}
-          alt={episode.imageAlt}
+          src={imageSrc}
+          alt={imageAlt}
           fill
           priority={priority}
           sizes="300px"
@@ -43,7 +48,7 @@ export function PodcastCard({ episode, priority = false }: { episode: PodcastEpi
         <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
           <CategoryPill>
             <Icon aria-hidden className="mr-1 h-3 w-3" />
-            {episode.category}
+            {categoryName}
           </CategoryPill>
           {episode.demo && <DemoChip />}
         </div>
@@ -54,8 +59,12 @@ export function PodcastCard({ episode, priority = false }: { episode: PodcastEpi
         <p className="mt-auto flex items-center gap-2 border-t border-hairline pt-2.5 text-[11px] font-medium uppercase tracking-wider text-muted">
           <Clock aria-hidden className="h-3 w-3 text-gold-deep" />
           {episode.durationLabel}
-          <span aria-hidden>•</span>
-          <span className="truncate">{formatDate(episode.date)}</span>
+          {dateStr && (
+            <>
+              <span aria-hidden>•</span>
+              <span className="truncate">{dateStr}</span>
+            </>
+          )}
         </p>
       </div>
     </Link>

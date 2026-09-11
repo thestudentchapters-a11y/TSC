@@ -8,15 +8,17 @@ import { cn, dateBadge } from '@/lib/utils';
 
 /** Event card — bold date badge, venue, category tag, image, Register CTA. */
 export function EventCard({ event, priority = false }: { event: TscEvent; priority?: boolean }) {
-  const badge = dateBadge(event.date);
+  const badge = dateBadge(event.date || (event as any).createdAt);
   const past = event.status === 'past' || event.status === 'cancelled';
+  const imageSrc = event.image || '/images/events/event-summit.jpg';
+  const imageAlt = event.imageAlt || event.title || 'Event image';
 
   return (
     <article className="card-base card-hover group flex h-full flex-col overflow-hidden">
       <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
         <Image
-          src={event.image}
-          alt={event.imageAlt}
+          src={imageSrc}
+          alt={imageAlt}
           fill
           priority={priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
