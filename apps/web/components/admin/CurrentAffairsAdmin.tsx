@@ -34,6 +34,7 @@ import { useToast } from '@/components/common/Toast';
 import { demoEditions } from '@/data/content';
 import { type CurrentAffairsEdition, type AffairArticle, type AffairTopic } from '@/types/content';
 import { slugify } from '@/lib/utils';
+import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
 
 const MONTH_OPTIONS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -153,15 +154,15 @@ export function CurrentAffairsAdmin() {
       // Offline fallback calculation for scheduler preview
       const now = new Date();
       const nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-      setSchedulerStatus({
+      setSchedulerStatus((prev) => ({
         currentTime: now.toISOString(),
         isTodayLastDay: false,
         nextScheduledRelease: nextDate.toISOString(),
-        totalEditions: editions.length,
-        latestEdition: editions[0] ? { month: editions[0].month, year: editions[0].year, title: editions[0].title, status: 'published' } : null,
-      });
+        totalEditions: prev?.totalEditions ?? 0,
+        latestEdition: prev?.latestEdition ?? null,
+      }));
     }
-  }, [api, editions]);
+  }, [api]);
 
   useEffect(() => {
     void fetchEditions();
@@ -825,12 +826,11 @@ export function CurrentAffairsAdmin() {
             </div>
 
             <div>
-              <label className="mb-1 block font-display text-xs font-bold text-ink">Cover Image URL</label>
-              <input
-                type="text"
+              <ImageUploadInput
+                label="Cover Image"
                 value={editingEdition.cover}
-                onChange={(e) => setEditingEdition({ ...editingEdition, cover: e.target.value })}
-                className="w-full rounded-md border border-hairline px-3 py-2 text-sm focus:border-brand focus:outline-none"
+                onChange={(url) => setEditingEdition({ ...editingEdition, cover: url })}
+                helpText="Choose an image from your computer/device or enter an external image URL."
               />
             </div>
 

@@ -9,6 +9,7 @@ import { Button } from '@/components/common/Button';
 import { useToast } from '@/components/common/Toast';
 import { collections, type CollectionDef, type FieldDef } from '@/lib/admin-collections';
 import { cn, formatDate, slugify } from '@/lib/utils';
+import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
 
 /* Demo datasets used as the base layer (replaced by API when connected). */
 import {
@@ -665,13 +666,11 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
         return <Input id={id} type="number" value={String(v ?? '')} onChange={(e) => setField(f.name, Number(e.target.value))} />;
       case 'image':
         return (
-          <div className="space-y-2">
-            <Input id={id} value={String(v ?? '')} onChange={(e) => setField(f.name, e.target.value)} placeholder="/images/… or https://…" />
-            {v ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={String(v)} alt="Preview" className="h-20 w-32 rounded border border-hairline object-cover" />
-            ) : null}
-          </div>
+          <ImageUploadInput
+            label={f.label}
+            value={String(v ?? '')}
+            onChange={(url) => setField(f.name, url)}
+          />
         );
       case 'tags':
         return <Input id={id} value={Array.isArray(v) ? (v as string[]).join(', ') : String(v ?? '')} onChange={(e) => setField(f.name, e.target.value.split(',').map((s) => s.trim()).filter(Boolean))} placeholder="comma, separated, tags" />;
