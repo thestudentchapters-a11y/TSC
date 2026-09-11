@@ -167,17 +167,18 @@ function normalizeOpportunity(raw: any): Opportunity {
     type: raw.type || 'Job',
     mode: raw.mode || 'Remote',
     location: raw.location || 'India',
-    stipendOrSalary: raw.stipendOrSalary || 'Competitive',
+    eligibility: raw.eligibility || 'Students & graduates',
     deadline: raw.deadline || raw.createdAt || new Date().toISOString(),
-    description: Array.isArray(raw.description)
+    description: typeof raw.description === 'string'
       ? raw.description
-      : typeof raw.description === 'string'
-      ? raw.description.split('\n\n').filter(Boolean)
-      : [],
-    requirements: Array.isArray(raw.requirements) ? raw.requirements : [],
-    applyUrl: raw.applyUrl || raw.applicationUrl || '#',
-    status: raw.status || 'published',
+      : Array.isArray(raw.description)
+      ? raw.description.join('\n\n')
+      : '',
+    skills: Array.isArray(raw.skills) ? raw.skills : [],
+    applicationUrl: raw.applicationUrl || raw.applyUrl || null,
     featured: Boolean(raw.featured),
+    active: raw.active ?? (raw.status !== 'archived'),
+    postedOn: raw.postedOn || raw.createdAt || new Date().toISOString(),
     demo: raw.demo,
   };
 }
@@ -195,21 +196,20 @@ function normalizeEdition(raw: any): CurrentAffairsEdition {
     coverAlt: raw.coverAlt || raw.title || 'Edition cover',
     topics: Array.isArray(raw.topics) ? raw.topics : ['India', 'Education'],
     articles: Array.isArray(raw.articles)
-      ? raw.articles.map((art: any, idx: number) => ({
-          id: art.id || art._id?.toString() || `art-${idx}`,
+      ? raw.articles.map((art: any) => ({
           title: art.title || '',
-          category: art.category || 'General',
+          category: art.category || 'India',
           summary: art.summary || '',
           content: Array.isArray(art.content)
             ? art.content
             : typeof art.content === 'string'
             ? art.content.split('\n\n').filter(Boolean)
-            : [],
-          keyPoints: Array.isArray(art.keyPoints) ? art.keyPoints : [],
+            : undefined,
+          keyPoints: Array.isArray(art.keyPoints) ? art.keyPoints : undefined,
           readingTime: art.readingTime || 3,
         }))
       : [],
-    pdfUrl: raw.pdfUrl,
+    pdfUrl: raw.pdfUrl || null,
     demo: raw.demo,
   };
 }
@@ -229,14 +229,7 @@ function normalizeLegal(raw: any): LegalArticle {
       : [],
     keyPoints: Array.isArray(raw.keyPoints) ? raw.keyPoints : [],
     readingTime: raw.readingTime || 4,
-    author:
-      (typeof raw.author === 'object' && raw.author?.name ? raw.author.name : null) ||
-      (typeof raw.author === 'string' && !isObjectId(raw.author) ? raw.author : null) ||
-      'TSC Legal Desk',
-    authorRole: raw.authorRole || 'Legal Editorial',
     date: raw.date || raw.createdAt || new Date().toISOString(),
-    status: raw.status || 'published',
-    disclaimerAccepted: raw.disclaimerAccepted ?? true,
     demo: raw.demo,
   };
 }
