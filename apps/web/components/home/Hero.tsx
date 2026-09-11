@@ -200,14 +200,14 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.78 }}
           >
+            <span className="inline-flex items-center rounded-full border border-gold/40 bg-gold-50/80 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-gold-deep shadow-sm">
+              Students are Watching, Observing &amp; Learning
+            </span>
             <p className="flex items-center gap-2.5 font-serif text-lg italic text-gold-deep">
               <Sparkles aria-hidden className="h-4 w-4 text-gold" />
               Discover. Learn. Connect. Create.
             </p>
             <span aria-hidden className="hidden text-gold-deep/40 sm:inline">•</span>
-            <span className="inline-flex items-center rounded-full border border-gold/40 bg-gold-50/80 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-gold-deep shadow-sm">
-              Students are Watching, Observing &amp; Learning
-            </span>
           </motion.div>
         </div>
 
