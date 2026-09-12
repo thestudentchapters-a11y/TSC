@@ -21,7 +21,7 @@ export interface ICampaignEpisode {
 
 const CampaignEpisodeSchema = new Schema(
   {
-    campaign: { type: Schema.Types.ObjectId, ref: 'Campaign', required: true, index: true },
+    campaign: { type: Schema.Types.ObjectId, ref: 'Campaign', required: false, index: true },
     episodeNumber: { type: Number, required: true },
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },

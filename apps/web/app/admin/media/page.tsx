@@ -1,25 +1,58 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { Images, UploadCloud, Copy, Check, Sparkles, Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Images, UploadCloud, Copy, Check, Sparkles, Loader2, Trash2 } from 'lucide-react';
 import { useToast } from '@/components/common/Toast';
 import { Button } from '@/components/common/Button';
+
+const DEFAULT_IMAGES = [
+  '/images/hero/hero-campus-walk.jpg', '/images/hero/hero-classroom.jpg', '/images/hero/hero-founder.jpg',
+  '/images/hero/hero-fest.jpg', '/images/hero/hero-collab.jpg', '/images/hero/hero-volunteer.jpg',
+  '/images/hero/hero-podcast.jpg', '/images/hero/hero-workshop.jpg', '/images/news/news-1.jpg',
+  '/images/news/news-2.jpg', '/images/news/news-3.jpg', '/images/news/news-4.jpg',
+  '/images/stories/story-1.jpg', '/images/stories/story-2.jpg', '/images/stories/story-5.jpg',
+  '/images/campus/campus-1.jpg', '/images/campus/campus-4.jpg', '/images/events/event-1.jpg',
+  '/images/campaign/campaign-1.jpg', '/images/campaign/campaign-2.jpg', '/images/affairs/affairs-1.jpg',
+];
 
 export default function AdminMediaPage() {
   const { push } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const [images, setImages] = useState<string[]>(DEFAULT_IMAGES);
 
-  const [images, setImages] = useState<string[]>([
-    '/images/hero/hero-campus-walk.jpg', '/images/hero/hero-classroom.jpg', '/images/hero/hero-founder.jpg',
-    '/images/hero/hero-fest.jpg', '/images/hero/hero-collab.jpg', '/images/hero/hero-volunteer.jpg',
-    '/images/hero/hero-podcast.jpg', '/images/hero/hero-workshop.jpg', '/images/news/news-1.jpg',
-    '/images/news/news-2.jpg', '/images/news/news-3.jpg', '/images/news/news-4.jpg',
-    '/images/stories/story-1.jpg', '/images/stories/story-2.jpg', '/images/stories/story-5.jpg',
-    '/images/campus/campus-1.jpg', '/images/campus/campus-4.jpg', '/images/events/event-1.jpg',
-    '/images/campaign/campaign-1.jpg', '/images/campaign/campaign-2.jpg', '/images/affairs/affairs-1.jpg',
-  ]);
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('tsc.admin.media');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setImages(parsed);
+        }
+      }
+    } catch {}
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (apiUrl) {
+      fetch(`${apiUrl}/api/media`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            const apiUrls = json.data.map((m: any) => m.url).filter(Boolean);
+            setImages((prev) => Array.from(new Set([...apiUrls, ...prev])));
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const saveImages = (newList: string[]) => {
+    setImages(newList);
+    try {
+      localStorage.setItem('tsc.admin.media', JSON.stringify(newList));
+    } catch {}
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,15 +87,14 @@ export default function AdminMediaPage() {
 
           const data = await res.json();
           if (res.ok && data.url) {
-            setImages((prev) => [data.url, ...prev]);
+            saveImages([data.url, ...images]);
             push('Image uploaded to Cloudinary successfully!', 'success');
           } else {
-            // Fallback for previewing locally if API isn't live
-            setImages((prev) => [base64Data, ...prev]);
+            saveImages([base64Data, ...images]);
             push(data.error || 'Uploaded to preview media library.', 'info');
           }
         } catch {
-          setImages((prev) => [base64Data, ...prev]);
+          saveImages([base64Data, ...images]);
           push('Image added to media preview.', 'info');
         } finally {
           setUploading(false);
@@ -81,6 +113,15 @@ export default function AdminMediaPage() {
     setCopiedUrl(url);
     push('Image URL copied to clipboard!', 'success');
     setTimeout(() => setCopiedUrl(null), 2500);
+  };
+
+  const handleDelete = (src: string) => {
+    const filename = src.split('/').pop() || 'this asset';
+    if (!window.confirm(`Delete "${filename}" from media library?`)) return;
+
+    const nextList = images.filter((img) => img !== src);
+    saveImages(nextList);
+    push('Media asset deleted from library.', 'info');
   };
 
   return (
@@ -132,7 +173,7 @@ export default function AdminMediaPage() {
               alt={`Asset: ${src.split('/').pop()}`}
               className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div className="absolute inset-0 flex items-center justify-center bg-ink/60 opacity-0 backdrop-blur-[2px] transition-opacity duration-200 group-hover:opacity-100">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-ink/70 p-3 opacity-0 backdrop-blur-[2px] transition-opacity duration-200 group-hover:opacity-100">
               <Button
                 variant="light"
                 size="sm"
@@ -140,17 +181,40 @@ export default function AdminMediaPage() {
                   e.stopPropagation();
                   copyToClipboard(src);
                 }}
-                className="gap-1.5 bg-white text-ink hover:bg-cream"
+                className="w-full gap-1.5 bg-white text-ink hover:bg-cream"
               >
                 {copiedUrl === src ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
                 {copiedUrl === src ? 'Copied' : 'Copy URL'}
               </Button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(src);
+                }}
+                className="flex w-full items-center justify-center gap-1.5 rounded-md border border-red-500/50 bg-red-600/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </button>
             </div>
             <figcaption className="flex items-center justify-between gap-1.5 px-3 py-2 text-[10px] font-medium text-muted">
               <span className="flex items-center gap-1 truncate">
                 <Images aria-hidden="true" className="h-3 w-3 shrink-0" />
                 <span className="truncate">{src.split('/').pop()}</span>
               </span>
+              <button
+                type="button"
+                aria-label="Delete image"
+                title="Delete media asset"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(src);
+                }}
+                className="rounded p-1 text-muted transition-colors hover:bg-red-50 hover:text-red-600"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
             </figcaption>
           </figure>
         ))}

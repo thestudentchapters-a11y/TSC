@@ -100,38 +100,71 @@ export default async function CampaignPage() {
               possibilities. [Demo episode listings — video embeds are configured by the editorial team.]
             </p>
             <StaggerGrid className="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {(campaign?.episodes ?? []).map((ep) => (
-                <StaggerItem key={ep.id}>
-                  <article className="card-base card-hover group flex h-full flex-col overflow-hidden">
-                    <div className="relative aspect-video overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={ep.image} alt={ep.imageAlt} className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${ep.status === 'Coming Soon' ? 'grayscale-[35%]' : ''}`} />
-                      <span className="absolute left-3 top-3 rounded-[4px] bg-brand-dark/95 px-2 py-1 font-display text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
-                        Episode {String(ep.episodeNumber).padStart(2, '0')}
-                      </span>
-                      {ep.status === 'Released' ? (
-                        <span aria-hidden className="absolute bottom-3 right-3 flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink shadow-lift transition-transform duration-300 group-hover:scale-110">
-                          <Play className="ml-0.5 h-4 w-4 fill-current" />
+              {(campaign?.episodes ?? []).map((ep) => {
+                const isReleased = ep.status === 'Released' && !!ep.videoUrl;
+                const CardWrapper = isReleased ? 'a' : 'div';
+                const wrapperProps = isReleased
+                  ? {
+                      href: ep.videoUrl!,
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                      title: `Watch ${ep.title} on ${ep.videoUrl!.includes('youtube') ? 'YouTube' : 'video host'}`,
+                    }
+                  : {};
+
+                return (
+                  <StaggerItem key={ep.id}>
+                    <CardWrapper
+                      {...wrapperProps}
+                      className="card-base card-hover group flex h-full flex-col overflow-hidden text-inherit no-underline cursor-pointer"
+                    >
+                      <div className="relative aspect-video overflow-hidden bg-ink/10">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={ep.image}
+                          alt={ep.imageAlt || ep.title}
+                          className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+                            ep.status === 'Coming Soon' ? 'grayscale-[35%]' : ''
+                          }`}
+                        />
+                        <span className="absolute left-3 top-3 rounded-[4px] bg-brand-dark/95 px-2 py-1 font-display text-[10px] font-bold uppercase tracking-[0.14em] text-gold shadow-sm">
+                          Episode {String(ep.episodeNumber).padStart(2, '0')}
                         </span>
-                      ) : (
-                        <span className="absolute bottom-3 right-3 rounded-full bg-ink/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-cream">
-                          Coming Soon
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex flex-1 flex-col gap-2 p-5">
-                      <h3 className="font-display text-lg font-bold">{ep.title}</h3>
-                      <p className="text-[12px] font-semibold uppercase tracking-wider text-brand">
-                        {ep.profession} • <span className="text-muted">{ep.location}</span>
-                      </p>
-                      <p className="text-[13.5px] leading-6 text-muted">{ep.description}</p>
-                      <p className="mt-auto pt-2 text-[11px] font-medium uppercase tracking-wider text-muted">
-                        {ep.professional} • {ep.durationLabel}
-                      </p>
-                    </div>
-                  </article>
-                </StaggerItem>
-              ))}
+                        {isReleased ? (
+                          <span
+                            aria-hidden
+                            className="absolute bottom-3 right-3 flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink shadow-lift transition-all duration-300 group-hover:scale-110 group-hover:bg-gold-deep group-hover:text-white"
+                          >
+                            <Play className="ml-0.5 h-4 w-4 fill-current" />
+                          </span>
+                        ) : (
+                          <span className="absolute bottom-3 right-3 rounded-full bg-ink/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-cream">
+                            Coming Soon
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-1 flex-col gap-2 p-5">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-display text-lg font-bold transition-colors group-hover:text-brand">
+                            {ep.title}
+                          </h3>
+                        </div>
+                        <p className="text-[12px] font-semibold uppercase tracking-wider text-brand">
+                          {ep.profession} • <span className="text-muted">{ep.location}</span>
+                        </p>
+                        <p className="text-[13.5px] leading-6 text-muted">{ep.description}</p>
+                        <div className="mt-auto flex items-center justify-between border-t border-hairline/60 pt-3 text-[11px] font-medium uppercase tracking-wider text-muted">
+                          <span>{ep.professional}</span>
+                          <span className="flex items-center gap-1 font-bold text-ink/80">
+                            {isReleased && <span className="text-gold-deep font-semibold">Watch ↗</span>}
+                            <span>{ep.durationLabel}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </CardWrapper>
+                  </StaggerItem>
+                );
+              })}
             </StaggerGrid>
           </div>
 

@@ -200,6 +200,7 @@ export interface CampaignEpisode {
   description: string;
   image: string;
   imageAlt: string;
+  videoUrl?: string | null;
   durationLabel: string;
   status: 'Released' | 'Coming Soon';
 }

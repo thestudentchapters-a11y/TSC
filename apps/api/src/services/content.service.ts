@@ -37,13 +37,15 @@ export function createContentService<T = Record<string, unknown>>(
       const isOid = /^[a-f\d]{24}$/i.test(id);
       const doc = isOid
         ? await model.findById(id).lean()
-        : await model.findOne({ $or: [{ slug: id }, { id }] }).lean();
+        : await model.findOne({ slug: id }).lean();
       if (!doc) throw ApiError.notFound(`${model.modelName} not found`);
       return doc as T;
     },
 
     async create(payload: Record<string, unknown>): Promise<T> {
       const data = { ...payload } as Record<string, unknown>;
+      delete data.id;
+      if (data._id && !/^[a-f\d]{24}$/i.test(String(data._id))) delete data._id;
       if (!data.slug && typeof data.title === 'string') data.slug = slugify(data.title);
       // ensure slug uniqueness
       const existing = await model.exists({ slug: data.slug });
@@ -54,14 +56,18 @@ export function createContentService<T = Record<string, unknown>>(
 
     async update(id: string, payload: Record<string, unknown>): Promise<T> {
       const data: Record<string, unknown> = { ...payload, updatedAt: new Date() };
-      if (data.slug === '') delete data.slug;
+      delete data.id;
       const isOid = /^[a-f\d]{24}$/i.test(id);
+      if (data._id && (!isOid || !/^[a-f\d]{24}$/i.test(String(data._id)))) delete data._id;
+      if (data.slug === '') delete data.slug;
       let updated;
       if (isOid) {
         updated = await model.findByIdAndUpdate(id, data, { new: true, runValidators: true }).lean();
       } else {
+        const query = { slug: id };
+        if (!data.slug) data.slug = id;
         updated = await model.findOneAndUpdate(
-          { $or: [{ slug: id }, { id }] },
+          query,
           data,
           { new: true, runValidators: true, upsert: true }
         ).lean();
@@ -74,7 +80,7 @@ export function createContentService<T = Record<string, unknown>>(
       const isOid = /^[a-f\d]{24}$/i.test(id);
       const res = isOid
         ? await model.findByIdAndDelete(id)
-        : await model.findOneAndDelete({ $or: [{ slug: id }, { id }] });
+        : await model.findOneAndDelete({ slug: id });
       if (!res) throw ApiError.notFound(`${model.modelName} not found`);
     },
 

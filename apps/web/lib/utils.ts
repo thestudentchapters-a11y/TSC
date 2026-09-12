@@ -196,6 +196,11 @@ export function getYoutubeThumbnailUrl(
  * If a valid youtubeUrl or videoUrl is present, it returns the YouTube video thumbnail.
  * Otherwise, it falls back to the manual image URL or default placeholder.
  */
+/**
+ * Returns the effective thumbnail for a podcast episode:
+ * If a valid youtubeUrl or videoUrl is present, it returns the YouTube video thumbnail.
+ * Otherwise, it falls back to the manual image URL or default placeholder.
+ */
 export function getPodcastThumbnail(
   episode?: { image?: string; thumbnail?: string; youtubeUrl?: string | null; videoUrl?: string | null; platforms?: { youtube?: string | null } } | null,
   fallback = '/images/podcast/podcast-1.jpg'
@@ -207,6 +212,20 @@ export function getPodcastThumbnail(
     if (ytThumb) return ytThumb;
   }
   return episode.image || episode.thumbnail || fallback;
+}
+
+/**
+ * Returns the effective thumbnail for a video or documentary episode:
+ * Extracts YouTube thumbnail automatically when possible, or returns fallback.
+ */
+export function getVideoThumbnail(
+  url?: string | null,
+  fallback = '/images/campaign/campaign-1.jpg'
+): string {
+  if (!url || typeof url !== 'string') return fallback;
+  const ytThumb = getYoutubeThumbnailUrl(url, 'hq');
+  if (ytThumb) return ytThumb;
+  return fallback;
 }
 
 

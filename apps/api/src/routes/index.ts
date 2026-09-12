@@ -186,6 +186,31 @@ export function registerRoutes(app: Router) {
       res.json({ success: true, triggered: true, newEditionCreated: created });
     })
   );
+  app.get(
+    '/api/campaigns/:idOrSlug',
+    asyncHandler(async (req: Request, res: Response) => {
+      const key = req.params.idOrSlug;
+      const doc = isObjectId(key)
+        ? await Campaign.findById(key).lean()
+        : await Campaign.findOne({ slug: key }).lean();
+      if (!doc) throw ApiError.notFound('Campaign not found');
+
+      const episodes = await CampaignEpisode.find({
+        $or: [{ campaign: doc._id }, { campaign: { $exists: false } }, { campaign: null }],
+      })
+        .sort({ episodeNumber: 1 })
+        .lean();
+
+      res.json({
+        success: true,
+        data: {
+          ...doc,
+          episodes: episodes.length > 0 ? episodes : ((doc as any).episodes || []),
+        },
+      });
+    })
+  );
+
   contentRoutes('/api/campaigns', Campaign, ['status']);
   contentRoutes('/api/campaign-episodes', CampaignEpisode, ['status', 'campaign'], false);
   contentRoutes('/api/categories', Category, ['section'], false);

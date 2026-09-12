@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Pencil, Plus, Search, Star, Trash2, X, Mail, Send, Sparkles, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Pencil, Plus, Search, Star, Trash2, X, Mail, Send, Sparkles, ShieldCheck, RefreshCw, Play } from 'lucide-react';
 import { Modal } from '@/components/common/Modal';
 import { Field, Input, Textarea, Select, Checkbox } from '@/components/forms/Form';
 import { Button } from '@/components/common/Button';
 import { useToast } from '@/components/common/Toast';
 import { collections, type CollectionDef, type FieldDef } from '@/lib/admin-collections';
-import { cn, formatDate, slugify } from '@/lib/utils';
+import { cn, formatDate, slugify, getYoutubeThumbnailUrl } from '@/lib/utils';
 import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
 
 /* Demo datasets used as the base layer (replaced by API when connected). */
@@ -29,6 +29,7 @@ const SEEDS: Record<string, any[]> = {
   editions: demoEditions,
   legal: demoLegalArticles,
   campaign: [flagshipCampaign],
+  campaignEpisodes: flagshipCampaign.episodes,
   members: demoMembers,
   storySubmissions: demoStorySubmissions,
   campusSubmissions: demoCampusSubmissions,
@@ -230,14 +231,21 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 
     if (api) {
       try {
-        const res = exists
-          ? await fetch(`${api}/api/${def.key}/${row.id}`, {
+        const payload: Record<string, unknown> = { ...row };
+        delete payload.id;
+        if (typeof payload._id === 'string' && !/^[a-f\d]{24}$/i.test(payload._id)) {
+          delete payload._id;
+        }
+
+        const endpointId = row.id && /^[a-f\d]{24}$/i.test(row.id) ? row.id : (row.slug || row.id);
+        const res = exists && endpointId && !String(endpointId).startsWith('new-')
+          ? await fetch(`${api}/api/${def.key}/${endpointId}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
               },
-              body: JSON.stringify(row),
+              body: JSON.stringify(payload),
             })
           : await fetch(`${api}/api/${def.key}`, {
               method: 'POST',
@@ -245,12 +253,12 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
                 'Content-Type': 'application/json',
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
               },
-              body: JSON.stringify(row),
+              body: JSON.stringify(payload),
             });
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
-          push(`Database sync failed: ${errData.error || errData.message || res.statusText}. Please make sure you are logged in as admin.`, 'error');
+          push(`Database sync warning: ${errData.error || errData.message || res.statusText}. Please make sure you are logged in as admin.`, 'error');
           return;
         }
       } catch (err: any) {
@@ -731,11 +739,29 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
       if (def.key === 'podcasts') {
         if (name === 'youtubeUrl' && value && String(value).trim()) {
           next.audioUrl = '';
+          const thumb = getYoutubeThumbnailUrl(String(value), 'hq');
+          if (thumb && (!next.image || String(next.image).includes('img.youtube.com') || !String(next.image).trim())) {
+            next.image = thumb;
+          }
         } else if (name === 'audioUrl' && value && String(value).trim()) {
           next.youtubeUrl = '';
           next.videoUrl = '';
         }
       }
+
+      // Auto-extract thumbnail for documentary campaign episodes & videos
+      if (name === 'videoUrl' || name === 'youtubeUrl') {
+        if (value && typeof value === 'string' && value.trim()) {
+          const thumb = getYoutubeThumbnailUrl(value.trim(), 'hq');
+          if (thumb) {
+            next.image = thumb;
+            if (!next.imageAlt && next.title) {
+              next.imageAlt = `${next.title} (documentary still)`;
+            }
+          }
+        }
+      }
+
       return next;
     });
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
@@ -825,6 +851,61 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
           </div>
         ))}
       </div>
+
+      {/* Live Card Preview for documentary episodes or media */}
+      {Boolean(values.image || values.videoUrl) && (
+        <div className="rounded-xl border border-hairline bg-cream/40 p-4">
+          <p className="mb-2.5 font-display text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-gold-deep" /> Live Card Preview (How it appears on public documentary page)
+          </p>
+          <div className="max-w-sm rounded-lg border border-hairline bg-white overflow-hidden shadow-card">
+            <div className="relative aspect-video bg-ink/10 overflow-hidden">
+              {values.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={String(values.image)}
+                  alt={String(values.title || 'Preview')}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-xs text-muted">
+                  No thumbnail image
+                </div>
+              )}
+              {values.episodeNumber !== undefined && (
+                <span className="absolute left-2.5 top-2.5 rounded-[4px] bg-brand-dark/95 px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+                  Episode {String(values.episodeNumber).padStart(2, '0')}
+                </span>
+              )}
+              <span className="absolute bottom-2.5 right-2.5 rounded-full bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-ink shadow-sm flex items-center gap-1">
+                <Play className="h-3 w-3 fill-current" /> {values.status === 'Coming Soon' ? 'Coming Soon' : 'Watch Documentary'}
+              </span>
+            </div>
+            <div className="p-3.5 space-y-1">
+              <h4 className="font-display text-sm font-bold text-ink line-clamp-1">
+                {String(values.title || 'Untitled Documentary')}
+              </h4>
+              {Boolean(values.profession || values.location) && (
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-brand line-clamp-1">
+                  {String(values.profession || '')}{values.profession && values.location ? ' • ' : ''}
+                  <span className="text-muted">{String(values.location || '')}</span>
+                </p>
+              )}
+              {Boolean(values.description) && (
+                <p className="text-xs text-muted line-clamp-2 leading-relaxed">
+                  {String(values.description)}
+                </p>
+              )}
+              {Boolean(values.videoUrl) && (
+                <p className="text-[10px] text-brand/80 font-mono truncate pt-1 border-t border-hairline/60">
+                  🔗 {String(values.videoUrl)}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-end gap-3 border-t border-hairline pt-4">
         <Button variant="ghost" size="sm" onClick={onCancel}>
           <X aria-hidden className="h-4 w-4" /> Cancel
