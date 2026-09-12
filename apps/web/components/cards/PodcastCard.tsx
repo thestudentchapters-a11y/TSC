@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, Lightbulb, Mic, Play, Rocket, Target, Youtube } from 'lucide-react';
+import { Clock, Lightbulb, Mic, Play, Rocket, Target, Video } from 'lucide-react';
 import { CategoryPill, DemoChip } from '@/components/common/CategoryPill';
 import type { PodcastCategory, PodcastEpisode } from '@/types/content';
 import { formatDate, getPodcastThumbnail } from '@/lib/utils';
@@ -40,7 +40,7 @@ export function PodcastCard({ episode, priority = false }: { episode: PodcastEpi
         </span>
         {hasVideo && (
           <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-[4px] bg-black/75 backdrop-blur-sm px-2 py-1 font-display text-[9.5px] font-bold uppercase tracking-wider text-white shadow-sm">
-            <Youtube className="h-3 w-3 text-red-500 fill-current" />
+            <Video className="h-3 w-3 text-gold" />
             <span>Video</span>
           </span>
         )}

@@ -259,12 +259,12 @@ export default function SubmitArticlePage() {
             </Field>
           </div>
 
-          <Field label="Optional Video / Project Link" htmlFor="art-video" error={errors.videoUrl} hint="YouTube video, LinkedIn post or project repo">
+          <Field label="Video URL / Project Link (optional)" htmlFor="art-video" error={errors.videoUrl} hint="Video URL, app link, or project repo">
             <Input
               id="art-video"
               value={videoUrl}
               onChange={(e) => setVideoUrl(e.target.value)}
-              placeholder="https://youtube.com/watch?v=..."
+              placeholder="https://..."
             />
           </Field>
 
