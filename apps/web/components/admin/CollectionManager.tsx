@@ -619,7 +619,22 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
   const [values, setValues] = useState<Record<string, unknown>>(() => ({ ...(initial ?? {}) }));
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const setField = (name: string, value: unknown) => setValues((v) => ({ ...v, [name]: value }));
+  const setField = (name: string, value: unknown) => {
+    setValues((v) => {
+      const next = { ...v, [name]: value };
+      // Enforce either video or audio for podcasts
+      if (def.key === 'podcasts') {
+        if (name === 'youtubeUrl' && value && String(value).trim()) {
+          next.audioUrl = '';
+        } else if (name === 'audioUrl' && value && String(value).trim()) {
+          next.youtubeUrl = '';
+          next.videoUrl = '';
+        }
+      }
+      return next;
+    });
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -629,6 +644,17 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
         errs[f.name] = `${f.label} is required.`;
       }
     }
+
+    // Mutual exclusivity validation for podcasts
+    if (def.key === 'podcasts') {
+      const hasAudio = !!(values.audioUrl && String(values.audioUrl).trim());
+      const hasVideo = !!((values.youtubeUrl && String(values.youtubeUrl).trim()) || (values.videoUrl && String(values.videoUrl).trim()));
+      if (hasAudio && hasVideo) {
+        errs.audioUrl = 'Please provide either Audio URL or Video URL, not both.';
+        errs.youtubeUrl = 'Please provide either Video URL or Audio URL, not both.';
+      }
+    }
+
     setErrors(errs);
     if (Object.keys(errs).length) return;
 

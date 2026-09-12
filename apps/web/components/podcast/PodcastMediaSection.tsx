@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Headphones, Video, ExternalLink } from 'lucide-react';
+import { Video, ExternalLink } from 'lucide-react';
 import { PodcastPlayer } from '@/components/podcast/PodcastPlayer';
-import { getVideoEmbedInfo, cn } from '@/lib/utils';
+import { getVideoEmbedInfo } from '@/lib/utils';
 
 interface PodcastMediaSectionProps {
   videoUrl?: string | null;
@@ -16,10 +16,11 @@ interface PodcastMediaSectionProps {
 }
 
 /**
- * Universal responsive podcast media player supporting:
- * 1. Video embed (iframe from app/platform)
- * 2. Direct HTML5 video file playback (.mp4, .webm, .mov)
- * 3. Native audio player with seamless tab switching
+ * Universal podcast media section.
+ * Exclusive media format display:
+ * - If video link is present -> Displays exclusively the Video Player.
+ * - If only audio link is present -> Displays exclusively the Audio Player.
+ * - Does not show both or tab switchers.
  */
 export function PodcastMediaSection({
   videoUrl,
@@ -27,7 +28,6 @@ export function PodcastMediaSection({
   audioUrl,
   title,
   thumbnail,
-  defaultMode,
   compact = false,
 }: PodcastMediaSectionProps) {
   const rawVideoLink = videoUrl || youtubeUrl;
@@ -35,9 +35,6 @@ export function PodcastMediaSection({
   const hasVideo = !!embedInfo;
   const hasAudio = !!audioUrl;
 
-  // Determine initial active mode
-  const initialMode = defaultMode ?? (hasVideo ? 'video' : 'audio');
-  const [activeMode, setActiveMode] = useState<'video' | 'audio'>(initialMode);
   const [isVideoLoading, setIsVideoLoading] = useState(true);
 
   useEffect(() => {
@@ -48,123 +45,73 @@ export function PodcastMediaSection({
     }
   }, [hasVideo, embedInfo?.embedUrl]);
 
-  if (!hasVideo && !hasAudio) {
-    return <PodcastPlayer audioUrl={null} title={title} compact={compact} />;
-  }
+  // 1. If Video link is present, display ONLY the video player
+  if (hasVideo) {
+    const isDirectVideo = embedInfo?.type === 'direct';
 
-  const isDirectVideo = embedInfo?.type === 'direct';
-
-  return (
-    <div className="space-y-4">
-      {/* Mode Switcher Tabs when both video and audio are available */}
-      {hasVideo && hasAudio && (
-        <div className="flex items-center justify-between gap-3 border-b border-hairline pb-3">
-          <div className="flex items-center gap-1.5 rounded-lg bg-cream/70 p-1 border border-hairline/60">
-            <button
-              type="button"
-              onClick={() => setActiveMode('video')}
-              className={cn(
-                'inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all duration-200',
-                activeMode === 'video'
-                  ? 'bg-brand text-white shadow-sm'
-                  : 'text-muted hover:text-ink'
-              )}
-              aria-label="Watch video"
+    return (
+      <div className="relative overflow-hidden rounded-xl border border-hairline bg-ink shadow-lift">
+        <div className="relative aspect-video w-full bg-black">
+          {isDirectVideo ? (
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              poster={thumbnail}
+              className="h-full w-full object-contain"
+              src={embedInfo!.embedUrl}
             >
-              <Video className="h-3.5 w-3.5" />
-              <span>Watch Video</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveMode('audio')}
-              className={cn(
-                'inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all duration-200',
-                activeMode === 'audio'
-                  ? 'bg-brand text-white shadow-sm'
-                  : 'text-muted hover:text-ink'
+              <source src={embedInfo!.embedUrl} />
+              Your browser does not support HTML5 video playback.
+            </video>
+          ) : (
+            <>
+              {isVideoLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/90 text-white/70 z-10 pointer-events-none">
+                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-gold border-t-transparent mb-3" />
+                  <p className="text-xs font-medium tracking-wide">
+                    Loading Video Player…
+                  </p>
+                </div>
               )}
-              aria-label="Listen to audio version"
-            >
-              <Headphones className="h-3.5 w-3.5" />
-              <span>Listen Audio</span>
-            </button>
-          </div>
-
+              <iframe
+                src={embedInfo!.embedUrl}
+                title={`${title} — Video Episode`}
+                className="absolute inset-0 h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                allowFullScreen
+                loading="lazy"
+                onLoad={() => setIsVideoLoading(false)}
+              />
+            </>
+          )}
+        </div>
+        <div className="flex items-center justify-between bg-brand-dark/95 px-4 py-2.5 text-xs text-white/80">
+          <span className="flex items-center gap-1.5 font-medium truncate">
+            <Video className="h-3.5 w-3.5 text-gold shrink-0" />
+            <span className="truncate">{title}</span>
+          </span>
           {rawVideoLink && (
             <a
               href={rawVideoLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-muted hover:text-brand transition-colors"
+              className="shrink-0 ml-2 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-gold hover:text-white transition-colors"
             >
-              <span>Open in App</span>
-              <ExternalLink className="h-3 w-3" />
+              Open in App <ExternalLink className="h-3 w-3" />
             </a>
           )}
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Video View */}
-      {hasVideo && (activeMode === 'video' || !hasAudio) && (
-        <div className="relative overflow-hidden rounded-xl border border-hairline bg-ink shadow-lift">
-          <div className="relative aspect-video w-full bg-black">
-            {isDirectVideo ? (
-              <video
-                controls
-                playsInline
-                preload="metadata"
-                poster={thumbnail}
-                className="h-full w-full object-contain"
-                src={embedInfo!.embedUrl}
-              >
-                <source src={embedInfo!.embedUrl} />
-                Your browser does not support HTML5 video playback.
-              </video>
-            ) : (
-              <>
-                {isVideoLoading && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/90 text-white/70 z-10 pointer-events-none">
-                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-gold border-t-transparent mb-3" />
-                    <p className="text-xs font-medium tracking-wide">
-                      Loading Video Player…
-                    </p>
-                  </div>
-                )}
-                <iframe
-                  src={embedInfo!.embedUrl}
-                  title={`${title} — Video Episode`}
-                  className="absolute inset-0 h-full w-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                  allowFullScreen
-                  loading="lazy"
-                  onLoad={() => setIsVideoLoading(false)}
-                />
-              </>
-            )}
-          </div>
-          <div className="flex items-center justify-between bg-brand-dark/95 px-4 py-2.5 text-xs text-white/80">
-            <span className="flex items-center gap-1.5 font-medium truncate">
-              <Video className="h-3.5 w-3.5 text-gold shrink-0" />
-              <span className="truncate">{title}</span>
-            </span>
-            {rawVideoLink && (
-              <a
-                href={rawVideoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 ml-2 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-gold hover:text-white transition-colors"
-              >
-                Open in App <ExternalLink className="h-3 w-3" />
-              </a>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Audio View */}
-      {hasAudio && (activeMode === 'audio' || !hasVideo) && (
-        <PodcastPlayer audioUrl={audioUrl!} title={title} compact={compact} />
-      )}
-    </div>
+  // 2. If Video link is NOT present, display the Audio Player
+  return (
+    <PodcastPlayer
+      audioUrl={hasAudio ? audioUrl! : null}
+      title={title}
+      compact={compact}
+    />
   );
 }

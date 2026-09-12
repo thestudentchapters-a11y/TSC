@@ -314,7 +314,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     date: '2026-08-25',
     image: 'https://img.youtube.com/vi/uIkqEfxUmXc/hqdefault.jpg',
     imageAlt: 'We Met These Little Monks - Rumtek Monastery Sikkim',
-    audioUrl: '/audio/tsc-placeholder-audio.wav',
+    audioUrl: null,
     videoUrl: 'https://www.youtube.com/watch?v=uIkqEfxUmXc',
     youtubeUrl: 'https://www.youtube.com/watch?v=uIkqEfxUmXc',
     platforms: {
@@ -345,7 +345,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     date: '2026-08-25',
     image: 'https://img.youtube.com/vi/uIkqEfxUmXc/hqdefault.jpg',
     imageAlt: 'We Met These Little Monks - Rumtek Monastery Sikkim',
-    audioUrl: '/audio/tsc-placeholder-audio.wav',
+    audioUrl: null,
     videoUrl: 'https://www.youtube.com/watch?v=uIkqEfxUmXc',
     youtubeUrl: 'https://www.youtube.com/watch?v=uIkqEfxUmXc',
     platforms: {
@@ -376,7 +376,7 @@ export const demoEpisodes: PodcastEpisode[] = [
     date: '2026-08-11',
     image: '/images/podcast/podcast-1.jpg',
     imageAlt: 'A modern podcast recording setup with microphone and laptop',
-    audioUrl: null,
+    audioUrl: '/audio/tsc-placeholder-audio.wav',
     videoUrl: null,
     youtubeUrl: null,
     platforms: { youtube: null, spotify: null, apple: null },
