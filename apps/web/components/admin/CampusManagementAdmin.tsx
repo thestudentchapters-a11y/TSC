@@ -916,18 +916,24 @@ export function CampusManagementAdmin() {
                       className="border-b border-hairline/60 last:border-0 hover:bg-cream/40 transition-colors"
                     >
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
+                        <Link
+                          href={`/admin/campuses/${campus.slug}`}
+                          className="group flex items-center gap-3"
+                        >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={campus.image}
                             alt={campus.name}
-                            className="h-10 w-14 rounded object-cover border border-hairline shrink-0"
+                            className="h-10 w-14 rounded object-cover border border-hairline shrink-0 group-hover:ring-1 group-hover:ring-brand"
                           />
                           <div>
-                            <p className="font-bold text-ink">{campus.name}</p>
+                            <p className="font-bold text-ink group-hover:text-brand transition-colors flex items-center gap-1.5">
+                              <span>{campus.name}</span>
+                              <span className="opacity-0 group-hover:opacity-100 text-xs text-brand">&rarr;</span>
+                            </p>
                             <p className="text-[11px] text-muted">{campus.university}</p>
                           </div>
-                        </div>
+                        </Link>
                       </td>
                       <td className="px-4 py-3 text-muted">
                         <div className="flex items-center gap-1">
@@ -943,7 +949,11 @@ export function CampusManagementAdmin() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
+                        <Link
+                          href={`/admin/campuses/${campus.slug}`}
+                          className="inline-flex items-center gap-2 rounded-md hover:bg-cream/80 p-1 -m-1 transition-colors"
+                          title="Manage news and stories for this campus"
+                        >
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700">
                             <Newspaper className="h-3 w-3" /> {newsCount} news
                           </span>
@@ -951,10 +961,16 @@ export function CampusManagementAdmin() {
                           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
                             <BookOpen className="h-3 w-3" /> {storiesCount} stories
                           </span>
-                        </div>
+                        </Link>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          <Link
+                            href={`/admin/campuses/${campus.slug}`}
+                            className="hidden sm:inline-flex items-center gap-1 rounded bg-brand-50 border border-brand/20 px-2.5 py-1 text-[11px] font-bold text-brand hover:bg-brand hover:text-white transition-colors mr-1"
+                          >
+                            <Layers className="h-3 w-3" /> Manage Hub
+                          </Link>
                           <Link
                             href={`/campus/${campus.slug}`}
                             target="_blank"
