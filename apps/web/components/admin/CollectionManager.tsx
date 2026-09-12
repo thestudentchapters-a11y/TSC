@@ -107,17 +107,31 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
   const [generatingDraft, setGeneratingDraft] = useState(false);
 
   useEffect(() => {
-    if (def) setRows(loadRows(def));
+    if (def) {
+      setRows(loadRows(def));
+      if (api) {
+        fetch(`${api}/api/${def.key}`)
+          .then((res) => res.ok ? res.json() : null)
+          .then((json) => {
+            if (json && Array.isArray(json.data)) {
+              setRows(json.data.map((item: any) => ({ ...item, id: item.id || item._id?.toString() || item.slug })));
+            }
+          })
+          .catch(() => {
+            // Keep local rows fallback
+          });
+      }
+    }
     setReady(true);
-  }, [def]);
+  }, [def, api]);
 
   const save = useCallback(
     (updated: Row[]) => {
       if (!def) return;
       setRows(updated);
-      if (!api) persist(def, updated, originalIds);
+      persist(def, updated, originalIds);
     },
-    [def, api, originalIds]
+    [def, originalIds]
   );
 
   if (!def) {
@@ -137,23 +151,92 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
     visible = visible.filter((r) => Object.values(r).some((v) => typeof v === 'string' && v.toLowerCase().includes(q)));
   }
 
-  const toggleField = (row: Row, field: string) => {
-    const updated = rows.map((r) => (r.id === row.id ? { ...r, [field]: !r[field] } : r));
+  const toggleField = async (row: Row, field: string) => {
+    const nextVal = !row[field];
+    let updated: Row[];
+
+    if (field === 'featured' && nextVal) {
+      // Set this row as the single active featured spotlight
+      updated = rows.map((r) =>
+        r.id === row.id ? { ...r, featured: true } : { ...r, featured: false }
+      );
+    } else {
+      updated = rows.map((r) => (r.id === row.id ? { ...r, [field]: nextVal } : r));
+    }
+
     save(updated);
-    push(`${field === 'featured' ? 'Featured flag' : 'Value'} updated.`, 'success');
+
+    if (api) {
+      try {
+        await fetch(`${api}/api/${def.key}/${row.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ [field]: nextVal }),
+        });
+      } catch {}
+    }
+
+    const itemLabel = String(row.title ?? row.name ?? def.singular);
+    if (field === 'featured') {
+      push(nextVal ? `“${itemLabel}” is now the featured spotlight.` : `“${itemLabel}” unfeatured.`, 'success');
+    } else {
+      push(`${field} updated.`, 'success');
+    }
   };
 
-  const remove = (row: Row) => {
-    if (!window.confirm(`Delete “${String(row.title ?? row.name ?? row.id)}”? This cannot be undone in demo mode.`)) return;
-    save(rows.filter((r) => r.id !== row.id));
+  const remove = async (row: Row) => {
+    if (!window.confirm(`Delete “${String(row.title ?? row.name ?? row.id)}”?`)) return;
+    const updated = rows.filter((r) => r.id !== row.id);
+    save(updated);
+
+    if (api) {
+      try {
+        await fetch(`${api}/api/${def.key}/${row.id}`, {
+          method: 'DELETE',
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+      } catch {}
+    }
+
     push('Deleted.', 'info');
   };
 
-  const upsert = (row: Row) => {
+  const upsert = async (row: Row) => {
     const exists = rows.some((r) => r.id === row.id);
-    save(exists ? rows.map((r) => (r.id === row.id ? row : r)) : [row, ...rows]);
+    const updated = exists ? rows.map((r) => (r.id === row.id ? row : r)) : [row, ...rows];
+    save(updated);
     setEditing(null);
     setCreating(false);
+
+    if (api) {
+      try {
+        if (exists) {
+          await fetch(`${api}/api/${def.key}/${row.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(row),
+          });
+        } else {
+          await fetch(`${api}/api/${def.key}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(row),
+          });
+        }
+      } catch {}
+    }
+
     push(exists ? 'Item updated.' : 'Item created.', 'success');
   };
 
