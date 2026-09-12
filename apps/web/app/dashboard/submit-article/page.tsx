@@ -233,7 +233,7 @@ export default function SubmitArticlePage() {
           </Field>
 
           <div className="grid gap-5 sm:grid-cols-3">
-            <Field label="College / University" htmlFor="art-college">
+            <Field label="College / University / School" htmlFor="art-college">
               <Input
                 id="art-college"
                 value={college}

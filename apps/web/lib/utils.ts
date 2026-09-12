@@ -70,6 +70,85 @@ export function initialsOf(name: string): string {
     .join('');
 }
 
+export interface VideoEmbedInfo {
+  type: 'youtube' | 'vimeo' | 'direct' | 'iframe';
+  embedUrl: string;
+  directUrl: string;
+  platformName: string;
+  isCustomApp?: boolean;
+}
+
+/**
+ * Universal video / app embed URL resolver.
+ * Handles:
+ * 1. YouTube (watch, shorts, youtu.be, embed, live)
+ * 2. Vimeo (vimeo.com/...)
+ * 3. Direct HTML5 video files (.mp4, .webm, .ogg, .mov, etc.)
+ * 4. Any external web app, iframe link or video platform URL
+ */
+export function getVideoEmbedInfo(url?: string | null): VideoEmbedInfo | null {
+  if (!url || typeof url !== 'string') return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  // 1. YouTube check
+  const ytId = getYoutubeVideoId(trimmed);
+  if (ytId) {
+    return {
+      type: 'youtube',
+      embedUrl: `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1&enablejsapi=1`,
+      directUrl: trimmed,
+      platformName: 'YouTube',
+    };
+  }
+
+  // 2. Vimeo check
+  const vimeoMatch = trimmed.match(/(?:vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/[^\/]*\/videos\/|album\/(?:\d+\/)?video\/|video\/|)(\d+))/i);
+  if (vimeoMatch && vimeoMatch[1]) {
+    return {
+      type: 'vimeo',
+      embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}?dnt=1&app_id=122963`,
+      directUrl: trimmed,
+      platformName: 'Vimeo',
+    };
+  }
+
+  // 3. Direct video files (.mp4, .webm, .ogg, .mov, .m4v, .m3u8, etc.)
+  const cleanUrl = trimmed.split('?')[0].toLowerCase();
+  const directVideoExts = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.m3u8', '.mpd'];
+  if (directVideoExts.some((ext) => cleanUrl.endsWith(ext))) {
+    return {
+      type: 'direct',
+      embedUrl: trimmed,
+      directUrl: trimmed,
+      platformName: 'Direct Video',
+    };
+  }
+
+  // 4. Any generic URL (different app, iframe embed link, custom web player, etc.)
+  if (/^(https?:\/\/|\/\/|\/)/i.test(trimmed)) {
+    let hostname = 'External Video';
+    try {
+      if (trimmed.startsWith('http')) {
+        const u = new URL(trimmed);
+        hostname = u.hostname.replace(/^www\./, '');
+      }
+    } catch {
+      // fallback
+    }
+
+    return {
+      type: 'iframe',
+      embedUrl: trimmed,
+      directUrl: trimmed,
+      platformName: hostname,
+      isCustomApp: true,
+    };
+  }
+
+  return null;
+}
+
 /**
  * Extracts YouTube video ID from various YouTube URL formats
  * (watch?v=, youtu.be/, embed/, shorts/, live/).
@@ -83,12 +162,11 @@ export function getYoutubeVideoId(url?: string | null): string | null {
 }
 
 /**
- * Converts a YouTube URL into a privacy-enhanced, clean iframe embed URL.
+ * Converts a YouTube or universal URL into a privacy-enhanced, clean iframe embed URL.
  */
 export function getYoutubeEmbedUrl(url?: string | null): string | null {
-  const videoId = getYoutubeVideoId(url);
-  if (!videoId) return null;
-  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&enablejsapi=1`;
+  const info = getVideoEmbedInfo(url);
+  return info ? info.embedUrl : null;
 }
 
 /**

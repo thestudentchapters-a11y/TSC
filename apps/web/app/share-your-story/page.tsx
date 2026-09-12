@@ -28,7 +28,7 @@ export default function ShareYourStoryPage() {
     if (form.phone.trim() && !/^[\d+\-\s()]{8,18}$/.test(form.phone.trim())) {
       e.phone = 'Please enter a valid phone number (at least 8 digits).';
     }
-    if (!form.college.trim()) e.college = 'Please enter your college or university.';
+    if (!form.college.trim()) e.college = 'Please enter your college, university, or school.';
     if (!form.city.trim()) e.city = 'Please enter your city.';
     if (!form.state) e.state = 'Please select your state.';
     if (form.title.trim().length < 6) e.title = 'Give your story a title (at least 6 characters).';
@@ -97,7 +97,7 @@ export default function ShareYourStoryPage() {
                 <Field label="Phone (optional)" htmlFor="s-phone" error={errors.phone}>
                   <Input id="s-phone" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+91…" autoComplete="tel" />
                 </Field>
-                <Field label="College / University" htmlFor="s-college" required error={errors.college}>
+                <Field label="College / University / School" htmlFor="s-college" required error={errors.college}>
                   <Input id="s-college" value={form.college} onChange={(e) => set('college', e.target.value)} placeholder="Your institution" />
                 </Field>
                 <Field label="City" htmlFor="s-city" required error={errors.city}>

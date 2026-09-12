@@ -23,7 +23,7 @@ export default function RegisterPage() {
     const e: Record<string, string> = {};
     if (form.name.trim().length < 3) e.name = 'Please enter your full name.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Please enter a valid email.';
-    if (!form.college.trim()) e.college = 'Please enter your college or university.';
+    if (!form.college.trim()) e.college = 'Please enter your college, university, or school.';
     if (!form.city.trim()) e.city = 'Please enter your city.';
     if (form.password.length < 8) e.password = 'Password must be at least 8 characters.';
     setErrors(e);
@@ -113,7 +113,7 @@ export default function RegisterPage() {
               <Field label="Email" htmlFor="r-email" required error={errors.email}>
                 <Input id="r-email" type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="you@example.com" autoComplete="email" />
               </Field>
-              <Field label="College / University" htmlFor="r-college" required error={errors.college}>
+              <Field label="College / University / School" htmlFor="r-college" required error={errors.college}>
                 <Input id="r-college" value={form.college} onChange={(e) => set('college', e.target.value)} placeholder="Your institution" />
               </Field>
               <Field label="City" htmlFor="r-city" required error={errors.city}>

@@ -421,7 +421,7 @@ export default function DashboardPage() {
           <Field label="KonnectX ID" htmlFor="prof-kx" hint="Your KonnectX username or handle (@handle)">
             <Input id="prof-kx" value={profileKonnectxId} onChange={(e) => setProfileKonnectxId(e.target.value)} placeholder="@yourhandle" />
           </Field>
-          <Field label="College / University" htmlFor="prof-college">
+          <Field label="College / University / School" htmlFor="prof-college">
             <Input id="prof-college" value={profileCollege} onChange={(e) => setProfileCollege(e.target.value)} />
           </Field>
           <Field label="City & State" htmlFor="prof-city">

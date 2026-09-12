@@ -339,7 +339,7 @@ export default function AdminMembersPage() {
 
             <div className="grid gap-3 sm:grid-cols-2 text-xs">
               <div className="rounded-md border border-hairline p-3">
-                <p className="font-semibold text-muted uppercase tracking-wider text-[10px]">College / University</p>
+                <p className="font-semibold text-muted uppercase tracking-wider text-[10px]">College / University / School</p>
                 <p className="mt-1 font-bold text-ink">{viewingMember.college || 'Not specified'}</p>
               </div>
               <div className="rounded-md border border-hairline p-3">

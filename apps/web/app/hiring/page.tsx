@@ -186,7 +186,7 @@ function HiringContent() {
       errs.location = 'Please enter your current city / location.';
     }
     if (!formData.collegeOrCompany.trim() || formData.collegeOrCompany.trim().length < 2) {
-      errs.collegeOrCompany = activeType === 'Internship' ? 'Please specify your college or university.' : 'Please specify your current / past organization or college.';
+      errs.collegeOrCompany = activeType === 'Internship' ? 'Please specify your college, university, or school.' : 'Please specify your current / past organization, college, or school.';
     }
     if (!formData.resumeUrl.trim()) {
       errs.resumeUrl = 'Please provide a valid URL to your resume / CV (Google Drive, Dropbox, Notion, etc.).';
@@ -628,7 +628,7 @@ function HiringContent() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className="meta-text block !text-[11px] font-bold uppercase">
-                        {activeType === 'Internship' ? 'College / University' : 'Current / Last Organization or College'}{' '}
+                        {activeType === 'Internship' ? 'College / University / School' : 'Current / Last Organization or College / School'}{' '}
                         <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -636,7 +636,7 @@ function HiringContent() {
                         name="collegeOrCompany"
                         value={formData.collegeOrCompany}
                         onChange={handleChange}
-                        placeholder={activeType === 'Internship' ? 'e.g. Patna University' : 'e.g. Current Company or Alma Mater'}
+                        placeholder={activeType === 'Internship' ? 'e.g. Patna University or Delhi Public School' : 'e.g. Current Company or Alma Mater'}
                         className={`mt-1.5 w-full rounded-[4px] border px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/60 focus:outline-none ${errors.collegeOrCompany
                           ? 'border-red-400 bg-red-50/20 focus:border-red-500 focus:ring-1 focus:ring-red-400'
                           : 'border-hairline bg-white focus:border-brand'

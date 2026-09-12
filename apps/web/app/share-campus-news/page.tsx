@@ -25,7 +25,7 @@ export default function ShareCampusNewsPage() {
     const e: Record<string, string> = {};
     if (form.name.trim().length < 3) e.name = 'Please enter your name.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Please enter a valid email.';
-    if (!form.college.trim()) e.college = 'Please enter your college or university.';
+    if (!form.college.trim()) e.college = 'Please enter your college, university, or school.';
     if (!form.campus.trim()) e.campus = 'Please enter the campus this news is from.';
     if (!form.city.trim()) e.city = 'Please enter your city.';
     if (!form.state) e.state = 'Please select your state.';
@@ -92,7 +92,7 @@ export default function ShareCampusNewsPage() {
                 <Field label="Email" htmlFor="c-email" required error={errors.email}>
                   <Input id="c-email" type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                 </Field>
-                <Field label="College / University" htmlFor="c-college" required error={errors.college}>
+                <Field label="College / University / School" htmlFor="c-college" required error={errors.college}>
                   <Input id="c-college" value={form.college} onChange={(e) => set('college', e.target.value)} placeholder="Your institution" />
                 </Field>
                 <Field label="Campus" htmlFor="c-campus" required error={errors.campus}>

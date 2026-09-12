@@ -173,7 +173,7 @@ export const hiringApplicationSchema = z.object({
   location: z.string().trim().min(2, 'Please specify your city/state'),
   department: z.string().trim().min(2, 'Please select a track/department'),
   experienceLevel: z.string().trim().min(2, 'Please specify your experience level or year of study'),
-  collegeOrCompany: z.string().trim().min(2, 'Please specify your college or current organization'),
+  collegeOrCompany: z.string().trim().min(2, 'Please specify your college, university, school, or current organization'),
   konnectxId: z.string().trim().optional(),
   linkedinUrl: z.string().trim().url().optional().or(z.literal('')),
   portfolioUrl: z.string().trim().url().optional().or(z.literal('')),

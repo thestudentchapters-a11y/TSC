@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Headphones, Play, Tv, Video, Youtube, ExternalLink } from 'lucide-react';
+import { Headphones, Video, Youtube, ExternalLink, Globe, Play } from 'lucide-react';
 import { PodcastPlayer } from '@/components/podcast/PodcastPlayer';
-import { getYoutubeEmbedUrl, cn } from '@/lib/utils';
+import { getVideoEmbedInfo, cn } from '@/lib/utils';
 
 interface PodcastMediaSectionProps {
+  videoUrl?: string | null;
   youtubeUrl?: string | null;
   audioUrl?: string | null;
   title: string;
@@ -15,10 +16,15 @@ interface PodcastMediaSectionProps {
 }
 
 /**
- * Responsive podcast media player supporting YouTube video iframe embed
- * and audio player with seamless tab switching.
+ * Universal responsive podcast media player supporting:
+ * 1. YouTube video embed (iframe)
+ * 2. Vimeo video embed (iframe)
+ * 3. Direct HTML5 video file playback (.mp4, .webm, .mov)
+ * 4. Universal custom app & external video link iframe embed
+ * 5. Native audio player with seamless tab switching
  */
 export function PodcastMediaSection({
+  videoUrl,
   youtubeUrl,
   audioUrl,
   title,
@@ -26,8 +32,9 @@ export function PodcastMediaSection({
   defaultMode,
   compact = false,
 }: PodcastMediaSectionProps) {
-  const embedUrl = getYoutubeEmbedUrl(youtubeUrl);
-  const hasVideo = !!embedUrl;
+  const rawVideoLink = videoUrl || youtubeUrl;
+  const embedInfo = getVideoEmbedInfo(rawVideoLink);
+  const hasVideo = !!embedInfo;
   const hasAudio = !!audioUrl;
 
   // Determine initial active mode
@@ -37,14 +44,19 @@ export function PodcastMediaSection({
 
   useEffect(() => {
     if (hasVideo) {
+      setIsVideoLoading(true);
       const timer = setTimeout(() => setIsVideoLoading(false), 1200);
       return () => clearTimeout(timer);
     }
-  }, [hasVideo, embedUrl]);
+  }, [hasVideo, embedInfo?.embedUrl]);
 
   if (!hasVideo && !hasAudio) {
     return <PodcastPlayer audioUrl={null} title={title} compact={compact} />;
   }
+
+  const isYouTube = embedInfo?.type === 'youtube';
+  const isDirectVideo = embedInfo?.type === 'direct';
+  const platformName = embedInfo?.platformName || 'External Source';
 
   return (
     <div className="space-y-4">
@@ -61,9 +73,13 @@ export function PodcastMediaSection({
                   ? 'bg-brand text-white shadow-sm'
                   : 'text-muted hover:text-ink'
               )}
-              aria-label="Watch video version on YouTube"
+              aria-label={`Watch video on ${platformName}`}
             >
-              <Youtube className="h-3.5 w-3.5 text-red-500 fill-current" />
+              {isYouTube ? (
+                <Youtube className="h-3.5 w-3.5 text-red-500 fill-current" />
+              ) : (
+                <Video className="h-3.5 w-3.5 text-brand" />
+              )}
               <span>Watch Video</span>
             </button>
             <button
@@ -82,14 +98,14 @@ export function PodcastMediaSection({
             </button>
           </div>
 
-          {youtubeUrl && (
+          {rawVideoLink && (
             <a
-              href={youtubeUrl}
+              href={rawVideoLink}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-muted hover:text-brand transition-colors"
             >
-              <span>Open in YouTube</span>
+              <span>Open on {platformName}</span>
               <ExternalLink className="h-3 w-3" />
             </a>
           )}
@@ -99,36 +115,58 @@ export function PodcastMediaSection({
       {/* Video View */}
       {hasVideo && (activeMode === 'video' || !hasAudio) && (
         <div className="relative overflow-hidden rounded-xl border border-hairline bg-ink shadow-lift">
-          <div className="relative aspect-video w-full">
-            {isVideoLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/90 text-white/70">
-                <div className="h-10 w-10 animate-spin rounded-full border-2 border-gold border-t-transparent mb-3" />
-                <p className="text-xs font-medium tracking-wide">Loading YouTube Player…</p>
-              </div>
+          <div className="relative aspect-video w-full bg-black">
+            {isDirectVideo ? (
+              <video
+                controls
+                playsInline
+                preload="metadata"
+                poster={thumbnail}
+                className="h-full w-full object-contain"
+                src={embedInfo!.embedUrl}
+              >
+                <source src={embedInfo!.embedUrl} />
+                Your browser does not support HTML5 video playback.
+              </video>
+            ) : (
+              <>
+                {isVideoLoading && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/90 text-white/70 z-10 pointer-events-none">
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-gold border-t-transparent mb-3" />
+                    <p className="text-xs font-medium tracking-wide">
+                      Loading {platformName} Player…
+                    </p>
+                  </div>
+                )}
+                <iframe
+                  src={embedInfo!.embedUrl}
+                  title={`${title} — Video Episode`}
+                  className="absolute inset-0 h-full w-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                  allowFullScreen
+                  loading="lazy"
+                  onLoad={() => setIsVideoLoading(false)}
+                />
+              </>
             )}
-            <iframe
-              src={embedUrl!}
-              title={`${title} — Video Episode`}
-              className="absolute inset-0 h-full w-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              loading="lazy"
-              onLoad={() => setIsVideoLoading(false)}
-            />
           </div>
           <div className="flex items-center justify-between bg-brand-dark/95 px-4 py-2.5 text-xs text-white/80">
             <span className="flex items-center gap-1.5 font-medium truncate">
-              <Youtube className="h-3.5 w-3.5 text-red-500 shrink-0 fill-current" />
+              {isYouTube ? (
+                <Youtube className="h-3.5 w-3.5 text-red-500 shrink-0 fill-current" />
+              ) : (
+                <Video className="h-3.5 w-3.5 text-gold shrink-0" />
+              )}
               <span className="truncate">{title}</span>
             </span>
-            {youtubeUrl && (
+            {rawVideoLink && (
               <a
-                href={youtubeUrl}
+                href={rawVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="shrink-0 ml-2 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-gold hover:text-white transition-colors"
               >
-                Watch on YouTube <ExternalLink className="h-3 w-3" />
+                Watch on {platformName} <ExternalLink className="h-3 w-3" />
               </a>
             )}
           </div>

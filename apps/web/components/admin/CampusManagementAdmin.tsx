@@ -1378,7 +1378,7 @@ export function CampusManagementAdmin() {
                 id="c-type"
                 value={campusForm.type}
                 onChange={(e) => setCampusForm({ ...campusForm, type: e.target.value })}
-                placeholder="e.g. Engineering College / University Campus"
+                placeholder="e.g. Engineering College / University Campus / School"
               />
             </Field>
 

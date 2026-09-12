@@ -44,7 +44,7 @@ export function ApplyOpportunityModal({ open, onClose, opportunity }: ApplyOppor
       errs.phone = 'Please enter a valid phone number (at least 8 digits).';
     }
     if (!college.trim() || college.trim().length < 2) {
-      errs.college = 'Please specify your college or university.';
+      errs.college = 'Please specify your college, university, or school.';
     }
     if (!resumeUrl.trim()) {
       errs.resumeUrl = 'Please provide a valid resume link (Google Drive, Dropbox, Notion, etc.).';
@@ -189,7 +189,7 @@ export function ApplyOpportunityModal({ open, onClose, opportunity }: ApplyOppor
               />
             </Field>
 
-            <Field label="College / Institution" htmlFor="app-college" required error={errors.college}>
+            <Field label="College / University / School" htmlFor="app-college" required error={errors.college}>
               <Input
                 id="app-college"
                 value={college}
@@ -197,7 +197,7 @@ export function ApplyOpportunityModal({ open, onClose, opportunity }: ApplyOppor
                   setCollege(e.target.value);
                   if (errors.college) setErrors((prev) => ({ ...prev, college: '' }));
                 }}
-                placeholder="e.g. Patna University"
+                placeholder="e.g. Patna University or Delhi Public School"
               />
             </Field>
           </div>

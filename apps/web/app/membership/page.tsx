@@ -40,7 +40,7 @@ export default function MembershipPage() {
     if (form.name.trim().length < 3) e.name = 'Please enter your full name.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Please enter a valid email.';
     if (form.phone && !/^[\d+\-\s()]{8,18}$/.test(form.phone)) e.phone = 'Please enter a valid phone number (at least 8 digits).';
-    if (!form.college.trim()) e.college = 'Please enter your college or university.';
+    if (!form.college.trim()) e.college = 'Please enter your college, university, or school.';
     if (!form.city.trim()) e.city = 'Please enter your city.';
     if (!form.state) e.state = 'Please select your state.';
     if (form.password.length < 8) e.password = 'Password must be at least 8 characters.';
@@ -129,7 +129,7 @@ export default function MembershipPage() {
                   <Field label="Date of birth (optional)" htmlFor="m-dob">
                     <Input id="m-dob" type="date" value={form.dob} onChange={(e) => set('dob', e.target.value)} />
                   </Field>
-                  <Field label="College / University" htmlFor="m-college" required error={errors.college}>
+                  <Field label="College / University / School" htmlFor="m-college" required error={errors.college}>
                     <Input id="m-college" value={form.college} onChange={(e) => set('college', e.target.value)} placeholder="e.g. Nalanda Institute of Technology" />
                   </Field>
                   <Field label="Course / Programme" htmlFor="m-course">
