@@ -8,7 +8,7 @@ export const env = {
   mongoUri: process.env.MONGODB_URI ?? 'mongodb://127.0.0.1:27017/the-student-chapters',
   jwtSecret: process.env.JWT_SECRET ?? 'dev-only-secret-change-me',
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET ?? 'dev-only-refresh-secret-change-me',
-  jwtExpires: process.env.JWT_EXPIRES ?? '15m',
+  jwtExpires: process.env.JWT_EXPIRES ?? '7d',
   jwtRefreshExpires: process.env.JWT_REFRESH_EXPIRES ?? '30d',
   clientUrl: process.env.CLIENT_URL ?? 'https://thestudentchapters.com',
   corsOrigin: (process.env.CORS_ORIGIN ?? process.env.CLIENT_URL ?? 'https://thestudentchapters.com,http://localhost:3000').split(','),
