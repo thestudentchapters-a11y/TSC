@@ -120,6 +120,15 @@ export default function ContactPage() {
                 <span>Office: <span className="font-semibold text-ink/85">{site.address}</span></span>
               </p>
               <div className="flex flex-wrap gap-2.5 border-t border-hairline pt-4">
+                {site.konnectxUrl ? (
+                  <a href={site.konnectxUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
+                    <Globe aria-hidden className="h-3.5 w-3.5 text-brand" /> KonnectX
+                  </a>
+                ) : (
+                  <span className="inline-flex cursor-default items-center gap-2 rounded-full border border-dashed border-hairline px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-muted/60" title="Link to be configured">
+                    <Globe aria-hidden className="h-3.5 w-3.5" /> KonnectX
+                  </span>
+                )}
                 <a href={site.social.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
                   <Instagram aria-hidden className="h-3.5 w-3.5 text-brand" /> Instagram
                 </a>
@@ -139,15 +148,6 @@ export default function ContactPage() {
                 ) : (
                   <span className="inline-flex cursor-default items-center gap-2 rounded-full border border-dashed border-hairline px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-muted/60" title="Link to be configured">
                     <MessageCircle aria-hidden className="h-3.5 w-3.5" /> WhatsApp
-                  </span>
-                )}
-                {site.konnectxUrl ? (
-                  <a href={site.konnectxUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-ink/70 transition-colors hover:border-gold hover:text-gold-deep">
-                    <Globe aria-hidden className="h-3.5 w-3.5 text-brand" /> KonnectX
-                  </a>
-                ) : (
-                  <span className="inline-flex cursor-default items-center gap-2 rounded-full border border-dashed border-hairline px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-muted/60" title="Link to be configured">
-                    <Globe aria-hidden className="h-3.5 w-3.5" /> KonnectX
                   </span>
                 )}
               </div>
