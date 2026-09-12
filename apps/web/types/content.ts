@@ -191,6 +191,7 @@ export interface LegalArticle {
 
 export interface CampaignEpisode {
   id: string;
+  campaign?: string;
   slug: string;
   episodeNumber: number;
   title: string;
@@ -216,6 +217,8 @@ export interface Campaign {
   episodes: CampaignEpisode[];
   categories: string[];
   locations: string[];
+  status?: 'draft' | 'published' | 'archived';
+  featured?: boolean;
 }
 
 export interface StorySubmissionRecord {

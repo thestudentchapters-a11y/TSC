@@ -100,7 +100,7 @@ export default async function CampaignPage() {
               possibilities. [Demo episode listings — video embeds are configured by the editorial team.]
             </p>
             <StaggerGrid className="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {(campaign?.episodes ?? []).map((ep) => {
+              {(campaign?.episodes ?? []).map((ep, idx) => {
                 const isReleased = ep.status === 'Released' && !!ep.videoUrl;
                 const CardWrapper = isReleased ? 'a' : 'div';
                 const wrapperProps = isReleased
@@ -113,7 +113,7 @@ export default async function CampaignPage() {
                   : {};
 
                 return (
-                  <StaggerItem key={ep.id}>
+                  <StaggerItem key={`campaign-ep-${ep.id || idx}-${ep.episodeNumber}`}>
                     <CardWrapper
                       {...wrapperProps}
                       className="card-base card-hover group flex h-full flex-col overflow-hidden text-inherit no-underline cursor-pointer"
@@ -172,8 +172,8 @@ export default async function CampaignPage() {
           <div className="mt-16 border-t border-hairline pt-12">
             <h2 className="font-display text-2xl font-bold tracking-tight">Professionals featured</h2>
             <StaggerGrid className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {(campaign?.episodes ?? []).map((ep) => (
-                <StaggerItem key={ep.id}>
+              {(campaign?.episodes ?? []).map((ep, idx) => (
+                <StaggerItem key={`campaign-prof-${ep.id || idx}-${ep.episodeNumber}`}>
                   <div className="flex items-center gap-4 rounded-md border border-hairline bg-white p-4">
                     <span aria-hidden className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-50 font-display text-sm font-bold text-brand">
                       {String(ep.episodeNumber).padStart(2, '0')}

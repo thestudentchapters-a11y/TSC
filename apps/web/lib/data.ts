@@ -6,7 +6,7 @@
  */
 import type {
   Article, Story, Campus, PodcastEpisode, TscEvent, Opportunity,
-  CurrentAffairsEdition, LegalArticle, Campaign, SearchHit,
+  CurrentAffairsEdition, LegalArticle, Campaign, CampaignEpisode, SearchHit,
 } from '@/types/content';
 import {
   demoArticles, demoStories, demoCampuses, demoEpisodes, demoEvents,
@@ -244,6 +244,53 @@ function normalizeLegal(raw: any): LegalArticle {
   };
 }
 
+function normalizeCampaignEpisode(raw: any): CampaignEpisode {
+  if (!raw) return flagshipCampaign.episodes[0];
+  const videoUrl = raw.videoUrl || null;
+  const youtubeThumb = videoUrl ? getYoutubeThumbnailUrl(videoUrl, 'hq') : null;
+  return {
+    id: raw.id || raw._id?.toString() || raw.slug,
+    campaign: raw.campaign ? (typeof raw.campaign === 'object' ? raw.campaign._id?.toString() : String(raw.campaign)) : undefined,
+    slug: raw.slug || '',
+    episodeNumber: Number(raw.episodeNumber) || 1,
+    title: raw.title || '',
+    professional: raw.professional || '',
+    profession: raw.profession || '',
+    location: raw.location || '',
+    description: raw.description || '',
+    image: raw.image || youtubeThumb || '/images/campaign/campaign-1.jpg',
+    imageAlt: raw.imageAlt || raw.title || 'Documentary episode',
+    videoUrl: videoUrl,
+    durationLabel: raw.durationLabel || '25 min',
+    status: raw.status === 'Released' ? 'Released' : 'Coming Soon',
+  };
+}
+
+function normalizeCampaign(raw: any): Campaign {
+  if (!raw) return flagshipCampaign;
+  return {
+    id: raw.id || raw._id?.toString() || raw.slug,
+    slug: raw.slug || 'all-india-career-awareness',
+    eyebrow: raw.eyebrow || 'TSC ORIGINAL CAMPAIGN',
+    title: raw.title || 'ALL INDIA CAREER AWARENESS YOUTH DOCUMENTARY SERIES',
+    headline: raw.headline || 'Real Careers. Real People. Real Possibilities.',
+    description: raw.description || flagshipCampaign.description,
+    stills: Array.isArray(raw.stills) && raw.stills.length > 0
+      ? raw.stills.map((s: any) => ({
+          image: typeof s === 'string' ? s : s.image || '/images/campaign/campaign-1.jpg',
+          alt: typeof s === 'string' ? 'Campaign still' : s.alt || 'Campaign still',
+        }))
+      : flagshipCampaign.stills,
+    episodes: Array.isArray(raw.episodes)
+      ? raw.episodes.map(normalizeCampaignEpisode)
+      : flagshipCampaign.episodes,
+    categories: Array.isArray(raw.categories) ? raw.categories : flagshipCampaign.categories,
+    locations: Array.isArray(raw.locations) ? raw.locations : flagshipCampaign.locations,
+    status: raw.status || 'published',
+    featured: raw.featured ?? true,
+  };
+}
+
 async function withApi<T>(path: string, fallback: T, transform?: (data: any) => T): Promise<T> {
   if (!API) return fallback;
   try {
@@ -377,7 +424,27 @@ export async function getLegalBySlug(slug: string): Promise<LegalArticle | undef
 }
 
 /* Campaigns */
-export const getCampaign = () => withApi<Campaign>('/api/campaigns/all-india-career-awareness', flagshipCampaign);
+export const getCampaigns = () =>
+  withApi<Campaign[]>('/api/campaigns', [flagshipCampaign], (data) =>
+    Array.isArray(data) ? data.map(normalizeCampaign) : [flagshipCampaign]
+  );
+
+export const getCampaign = () =>
+  withApi<Campaign>('/api/campaigns/all-india-career-awareness', flagshipCampaign, (data) =>
+    data ? normalizeCampaign(data) : flagshipCampaign
+  );
+
+export async function getCampaignBySlug(slug: string): Promise<Campaign | undefined> {
+  const item = await withApi<Campaign | null>(`/api/campaigns/${slug}`, null, (data) =>
+    data ? normalizeCampaign(data) : null
+  );
+  if (item) return item;
+  const items = await getCampaigns();
+  const match = items.find((c) => c.slug === slug);
+  if (match) return match;
+  if (slug === 'all-india-career-awareness') return flagshipCampaign;
+  return undefined;
+}
 
 /* Site Settings */
 export interface SiteSettingsData {

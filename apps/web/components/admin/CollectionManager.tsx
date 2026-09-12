@@ -443,9 +443,9 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
           </thead>
           <tbody>
             <AnimatePresence initial={false}>
-              {visible.map((row) => (
+              {visible.map((row, rIdx) => (
                 <motion.tr
-                  key={row.id}
+                  key={String(row.id || (row as any)._id || `col-row-${rIdx}`)}
                   layout
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

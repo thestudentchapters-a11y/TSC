@@ -195,9 +195,12 @@ export function registerRoutes(app: Router) {
         : await Campaign.findOne({ slug: key }).lean();
       if (!doc) throw ApiError.notFound('Campaign not found');
 
-      const episodes = await CampaignEpisode.find({
-        $or: [{ campaign: doc._id }, { campaign: { $exists: false } }, { campaign: null }],
-      })
+      const isDefault = doc.slug === 'all-india-career-awareness';
+      const episodes = await CampaignEpisode.find(
+        isDefault
+          ? { $or: [{ campaign: doc._id }, { campaign: { $exists: false } }, { campaign: null }] }
+          : { campaign: doc._id }
+      )
         .sort({ episodeNumber: 1 })
         .lean();
 

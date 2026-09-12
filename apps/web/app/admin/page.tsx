@@ -66,8 +66,8 @@ export default function AdminDashboardPage() {
             <Share2 aria-hidden className="h-4 w-4 text-brand" /> Review queue
           </h2>
           <ul className="mt-4 space-y-3">
-            {[...demoStorySubmissions, ...demoCampusSubmissions].slice(0, 4).map((s) => (
-              <li key={s.id} className="flex items-start justify-between gap-3 rounded-md border border-hairline bg-cream p-3.5">
+            {[...demoStorySubmissions, ...demoCampusSubmissions].slice(0, 4).map((s, idx) => (
+              <li key={`queue-${s.id}-${idx}`} className="flex items-start justify-between gap-3 rounded-md border border-hairline bg-cream p-3.5">
                 <div>
                   <p className="font-display text-[13.5px] font-bold leading-snug">{s.title}</p>
                   <p className="mt-0.5 text-[11.5px] text-muted">{s.name} • {formatDate(s.submittedOn)}</p>
@@ -90,7 +90,7 @@ export default function AdminDashboardPage() {
           </h2>
           <ul className="mt-4 space-y-3">
             {demoContactMessages.slice(0, 3).map((m) => (
-              <li key={m.id} className="rounded-md border border-hairline bg-cream p-3.5">
+              <li key={`inbox-msg-${m.id}`} className="rounded-md border border-hairline bg-cream p-3.5">
                 <p className="font-display text-[13.5px] font-bold leading-snug">{m.subject}</p>
                 <p className="mt-0.5 text-[11.5px] text-muted">{m.name} • {formatDate(m.receivedOn)}</p>
               </li>
@@ -110,7 +110,7 @@ export default function AdminDashboardPage() {
         </h2>
         <ol className="mt-4 grid gap-3 text-[13px] leading-6 text-muted sm:grid-cols-6">
           {['Contributor submits', 'Stored in database', 'Admin notified', 'Editor reviews & edits', 'Editor approves & publishes', 'Goes live'].map((step, i) => (
-            <li key={step} className="rounded-md border border-hairline bg-cream p-3">
+            <li key={`editorial-step-${i}-${step}`} className="rounded-md border border-hairline bg-cream p-3">
               <span className="mb-2 inline-flex h-6 w-6 items-center justify-center rounded-[4px] bg-gold font-display text-[11px] font-bold text-ink">
                 {String(i + 1).padStart(2, '0')}
               </span>
