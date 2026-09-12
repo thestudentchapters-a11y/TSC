@@ -34,7 +34,10 @@ export function createContentService<T = Record<string, unknown>>(
     },
 
     async getById(id: string): Promise<T> {
-      const doc = await model.findById(id).lean();
+      const isOid = /^[a-f\d]{24}$/i.test(id);
+      const doc = isOid
+        ? await model.findById(id).lean()
+        : await model.findOne({ $or: [{ slug: id }, { id }] }).lean();
       if (!doc) throw ApiError.notFound(`${model.modelName} not found`);
       return doc as T;
     },
@@ -52,13 +55,26 @@ export function createContentService<T = Record<string, unknown>>(
     async update(id: string, payload: Record<string, unknown>): Promise<T> {
       const data: Record<string, unknown> = { ...payload, updatedAt: new Date() };
       if (data.slug === '') delete data.slug;
-      const updated = await model.findByIdAndUpdate(id, data, { new: true, runValidators: true }).lean();
+      const isOid = /^[a-f\d]{24}$/i.test(id);
+      let updated;
+      if (isOid) {
+        updated = await model.findByIdAndUpdate(id, data, { new: true, runValidators: true }).lean();
+      } else {
+        updated = await model.findOneAndUpdate(
+          { $or: [{ slug: id }, { id }] },
+          data,
+          { new: true, runValidators: true, upsert: true }
+        ).lean();
+      }
       if (!updated) throw ApiError.notFound(`${model.modelName} not found`);
       return updated as T;
     },
 
     async remove(id: string): Promise<void> {
-      const res = await model.findByIdAndDelete(id);
+      const isOid = /^[a-f\d]{24}$/i.test(id);
+      const res = isOid
+        ? await model.findByIdAndDelete(id)
+        : await model.findOneAndDelete({ $or: [{ slug: id }, { id }] });
       if (!res) throw ApiError.notFound(`${model.modelName} not found`);
     },
 

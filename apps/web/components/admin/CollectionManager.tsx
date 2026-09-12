@@ -72,6 +72,8 @@ function persist(def: CollectionDef, rows: Row[], originalIds: Set<string>) {
   window.localStorage.setItem(`tsc.admin.${def.key}`, JSON.stringify(overlay));
 }
 
+import { useAuth } from '@/components/providers/AuthProvider';
+
 /**
  * Generic collection manager: list, search, create, edit, delete, publish
  * and feature toggles. With the API connected it syncs over REST; in demo
@@ -80,8 +82,9 @@ function persist(def: CollectionDef, rows: Row[], originalIds: Set<string>) {
 export function CollectionManager({ collectionKey, presetFilter }: { collectionKey: string; presetFilter?: Record<string, string> }) {
   const def = collections[collectionKey];
   const { push } = useToast();
+  const { getToken } = useAuth();
   const api = process.env.NEXT_PUBLIC_API_URL;
-  const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
+  const token = getToken() || (typeof window !== 'undefined' ? (localStorage.getItem('tsc_token') || localStorage.getItem('tsc.token')) : null);
 
   const [rows, setRows] = useState<Row[]>([]);
   const [ready, setReady] = useState(false);
@@ -168,7 +171,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 
     if (api) {
       try {
-        await fetch(`${api}/api/${def.key}/${row.id}`, {
+        const res = await fetch(`${api}/api/${def.key}/${row.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -176,7 +179,13 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
           },
           body: JSON.stringify({ [field]: nextVal }),
         });
-      } catch {}
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          push(`Database update warning: ${errData.error || errData.message || res.statusText}. Please ensure you are logged in as admin.`, 'error');
+        }
+      } catch (err: any) {
+        push(`Could not reach live API: ${err.message}`, 'info');
+      }
     }
 
     const itemLabel = String(row.title ?? row.name ?? def.singular);
@@ -194,13 +203,19 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 
     if (api) {
       try {
-        await fetch(`${api}/api/${def.key}/${row.id}`, {
+        const res = await fetch(`${api}/api/${def.key}/${row.id}`, {
           method: 'DELETE',
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
-      } catch {}
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          push(`Database delete warning: ${errData.error || errData.message || res.statusText}`, 'error');
+        }
+      } catch (err: any) {
+        push(`Could not reach live API: ${err.message}`, 'info');
+      }
     }
 
     push('Deleted.', 'info');
@@ -215,26 +230,33 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 
     if (api) {
       try {
-        if (exists) {
-          await fetch(`${api}/api/${def.key}/${row.id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify(row),
-          });
-        } else {
-          await fetch(`${api}/api/${def.key}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify(row),
-          });
+        const res = exists
+          ? await fetch(`${api}/api/${def.key}/${row.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+              body: JSON.stringify(row),
+            })
+          : await fetch(`${api}/api/${def.key}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+              body: JSON.stringify(row),
+            });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          push(`Database sync failed: ${errData.error || errData.message || res.statusText}. Please make sure you are logged in as admin.`, 'error');
+          return;
         }
-      } catch {}
+      } catch (err: any) {
+        push(`Could not reach backend API at ${api}: ${err.message}`, 'error');
+        return;
+      }
     }
 
     push(exists ? 'Item updated.' : 'Item created.', 'success');

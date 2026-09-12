@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Settings,
   KeyRound,
@@ -17,6 +18,7 @@ import {
   Sparkles,
   BookOpen,
   Megaphone,
+  LogOut,
 } from 'lucide-react';
 import { Field, Input, Select } from '@/components/forms/Form';
 import { Button } from '@/components/common/Button';
@@ -25,8 +27,9 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { site } from '@/lib/site';
 
 export default function AdminSettingsPage() {
+  const router = useRouter();
   const { push } = useToast();
-  const { user, getToken } = useAuth();
+  const { user, logout, getToken } = useAuth();
   const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
   // Site Configuration Form
@@ -546,6 +549,31 @@ export default function AdminSettingsPage() {
               Auto-prepares email dispatch for verified student internships and fellowship opportunities.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Session & Security */}
+      <section className="card-base p-6 border-red-200/60 bg-red-50/20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="font-display text-base font-bold text-ink flex items-center gap-2">
+              <LogOut className="h-4 w-4 text-red-500" /> Session &amp; Security
+            </h2>
+            <p className="mt-1 text-xs text-muted">
+              Signed in as <strong className="text-ink">{user?.email || 'admin'}</strong> ({user?.role || 'administrator'}). End your newsroom console session anytime.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              push('You have been logged out of the Newsroom console.', 'info');
+              router.push('/login');
+            }}
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-red-700"
+          >
+            <LogOut className="h-3.5 w-3.5" /> Log Out of Newsroom
+          </button>
         </div>
       </section>
     </div>

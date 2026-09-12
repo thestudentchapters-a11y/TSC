@@ -89,8 +89,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!res.ok) return { ok: false, error: json?.message ?? 'Invalid email or password' };
         const loggedUser = json.data?.user ?? json.user;
         persist(loggedUser);
-        if (json.data?.token ?? json.token) {
-          window.localStorage.setItem('tsc.token', String(json.data?.token ?? json.token));
+        const jwtToken = String(json.data?.token ?? json.token ?? '');
+        if (jwtToken) {
+          window.localStorage.setItem('tsc.token', jwtToken);
+          window.localStorage.setItem('tsc_token', jwtToken);
         }
         return { ok: true, role: loggedUser?.role };
       } catch {
@@ -121,12 +123,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     persist(null);
-    window.localStorage.removeItem('tsc.token');
+    try {
+      window.localStorage.removeItem('tsc.token');
+      window.localStorage.removeItem('tsc_token');
+    } catch {}
   }, [persist]);
 
   const getToken = useCallback(() => {
     try {
-      return window.localStorage.getItem('tsc.token');
+      return window.localStorage.getItem('tsc_token') || window.localStorage.getItem('tsc.token');
     } catch {
       return null;
     }
