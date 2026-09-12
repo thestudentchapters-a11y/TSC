@@ -104,14 +104,9 @@ function normalizeCampus(raw: any): Campus {
 
 function normalizeEpisode(raw: any): PodcastEpisode {
   if (!raw) return demoEpisodes[0];
-  const hasRawVideo = !!(raw.youtubeUrl || raw.videoUrl || raw.platforms?.youtube);
-  const youtubeUrl = hasRawVideo
-    ? raw.youtubeUrl || raw.videoUrl || raw.platforms?.youtube
-    : !raw.audioUrl && (raw.slug === 'what-nobody-tells-you-about-your-first-startup' || raw.slug?.includes('startup') || raw.episodeNumber === 1 || raw.episodeNumber === 18)
-    ? 'https://www.youtube.com/watch?v=uIkqEfxUmXc'
-    : null;
-  const audioUrl = youtubeUrl ? null : (raw.audioUrl || (!hasRawVideo ? '/audio/tsc-placeholder-audio.wav' : null));
-  const youtubeThumb = youtubeUrl ? getYoutubeThumbnailUrl(youtubeUrl, 'hq') : null;
+  const videoUrl = raw.videoUrl || raw.youtubeUrl || raw.platforms?.youtube || null;
+  const audioUrl = videoUrl ? null : (raw.audioUrl || '/audio/tsc-placeholder-audio.wav');
+  const youtubeThumb = videoUrl ? getYoutubeThumbnailUrl(videoUrl, 'hq') : null;
   return {
     id: raw.id || raw._id?.toString() || raw.slug,
     slug: raw.slug || '',
@@ -126,10 +121,10 @@ function normalizeEpisode(raw: any): PodcastEpisode {
     image: youtubeThumb || raw.image || raw.thumbnail || '/images/podcast/podcast-host.jpg',
     imageAlt: raw.imageAlt || raw.title || 'Podcast episode',
     audioUrl: audioUrl,
-    videoUrl: youtubeUrl,
-    youtubeUrl: youtubeUrl,
+    videoUrl: videoUrl,
+    youtubeUrl: videoUrl,
     platforms: {
-      youtube: raw.platforms?.youtube || youtubeUrl,
+      youtube: raw.platforms?.youtube || videoUrl,
       spotify: raw.platforms?.spotify || null,
       apple: raw.platforms?.apple || null,
     },
