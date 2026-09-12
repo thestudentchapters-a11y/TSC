@@ -12,8 +12,8 @@ export const site = {
   description:
     'The Student Chapters™ is a platform built for the next generation — bringing together student stories, campus news, career opportunities, current affairs, events, podcasts, legal awareness and communities from across India.',
   address: 'B-HUB, Maurya Lok Complex, New Dak Bunglow Rd, Patna, Bihar 800001',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
-  email: '', // [TO BE CONFIGURED] official contact email — set via admin → Settings
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://thestudentchapters.com',
+  email: 'Konnectx@gmail.com',
   whatsappUrl:
     process.env.NEXT_PUBLIC_WHATSAPP_URL ??
     'https://whatsapp.com/channel/0029VajGqlK60eBkTXgEAK2m',
@@ -72,8 +72,8 @@ export const mainNav: NavLink[] = [
     href: '/community',
     children: [
       { label: 'Campaigns', href: '/campaigns', description: 'All India Career Awareness Youth Documentary Series.' },
-      { label: 'Join TSC', href: '/membership', description: 'Become a member of the movement.' },
-      { label: 'Membership', href: '/membership', description: 'What membership includes.' },
+      { label: 'Join Us', href: '/konnectx', description: 'Connect with the TSC community on KonnectX.' },
+      // { label: 'Membership', href: '/membership', description: 'What membership includes.' },
       { label: 'Share Your Story', href: '/share-your-story', description: 'Your journey could inspire someone else.' },
       { label: 'Share Campus News', href: '/share-campus-news', description: "What's happening at your campus?" },
       { label: 'KonnectX', href: '/konnectx', description: 'Social learning & student networking platform.' },
@@ -94,8 +94,8 @@ export const footerNav = {
     { label: 'Legal Awareness', href: '/legal-awareness' },
   ],
   community: [
-    { label: 'Join TSC', href: '/membership' },
-    { label: 'Membership', href: '/membership' },
+    { label: 'Join Us', href: '/konnectx' },
+    // { label: 'Membership', href: '/membership' },
     { label: 'Share Your Story', href: '/share-your-story' },
     { label: 'Share Campus News', href: '/share-campus-news' },
     { label: 'Campaigns', href: '/campaigns' },

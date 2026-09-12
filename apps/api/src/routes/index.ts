@@ -316,6 +316,34 @@ export function registerRoutes(app: Router) {
       res.json({ success: true, data });
     })
   );
+  app.post(
+    '/api/users',
+    requireAuth,
+    requireAdmin,
+    asyncHandler(async (req: Request, res: Response) => {
+      const { name, email, password, role, college, city, state, customPermissions } = req.body;
+      if (!name || !email || !password) {
+        throw ApiError.badRequest('Name, email, and password are required');
+      }
+      const existing = await User.findOne({ email: email.toLowerCase().trim() });
+      if (existing) {
+        throw ApiError.conflict('A user with this email already exists');
+      }
+      const validRole = ['editor', 'admin'].includes(role) ? role : 'editor';
+      const user = await User.create({
+        name,
+        email: email.toLowerCase().trim(),
+        passwordHash: password,
+        role: validRole,
+        college: college || '',
+        city: city || '',
+        state: state || '',
+        customPermissions: Array.isArray(customPermissions) ? customPermissions : [],
+        isEmailVerified: true,
+      });
+      res.status(201).json({ success: true, data: user });
+    })
+  );
   app.put(
     '/api/users/:id/role',
     requireAuth,

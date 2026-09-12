@@ -119,8 +119,8 @@ export default async function ArticlePage({ params }: Props) {
                 <p className="mt-2 text-[13px] leading-6 text-ink/70">
                   Get the latest from campuses across India — join the TSC community.
                 </p>
-                <Link href="/membership" className="cta-underline mt-3 inline-block font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-brand">
-                  Join TSC
+                <Link href="/konnectx" className="cta-underline mt-3 inline-block font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-brand">
+                  Join Us
                 </Link>
               </div>
             </aside>

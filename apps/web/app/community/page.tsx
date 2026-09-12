@@ -114,7 +114,7 @@ export default function CommunityPage() {
         eyebrow="Join the Movement"
         title="Your Chapter Starts Here."
         copy="TSC is building a network of students, campus communities, creators, entrepreneurs and young professionals who believe that young voices deserve a bigger platform."
-        primary={{ label: 'Join the Student Chapters™ / Become a Member', href: '/membership' }}
+        primary={{ label: 'Join Us on KonnectX', href: '/konnectx' }}
         secondary={{ label: 'Explore Campaigns', href: '/campaigns' }}
         variant="brand"
       />

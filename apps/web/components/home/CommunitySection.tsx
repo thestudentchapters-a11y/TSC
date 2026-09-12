@@ -88,8 +88,8 @@ export function CommunitySection({ initialBg }: { initialBg?: string }) {
 
         <Reveal delay={0.2}>
           <div className="mt-12 flex justify-center">
-            <Button href="/membership" size="lg" arrow>
-              Join the Student Chapters™ / Become a Member
+            <Button href="/konnectx" size="lg" arrow>
+              Join Us on KonnectX
             </Button>
           </div>
         </Reveal>

@@ -96,8 +96,8 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
             </nav>
 
             <div className="space-y-3 border-t border-hairline p-5">
-              <Button href="/membership" variant="accent" size="md" className="w-full" arrow>
-                Join TSC
+              <Button href="/konnectx" variant="accent" size="md" className="w-full" arrow onClick={onClose}>
+                Join Us
               </Button>
               <Button href="/share-your-story" variant="outline" size="md" className="w-full" arrow>
                 Submit Your Story

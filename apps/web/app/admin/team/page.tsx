@@ -9,6 +9,13 @@ import {
   Search,
   Users,
   CheckCircle2,
+  UserPlus,
+  Plus,
+  Mail,
+  Lock,
+  User as UserIcon,
+  Building2,
+  MapPin,
 } from 'lucide-react';
 import { Button } from '@/components/common/Button';
 import { Modal } from '@/components/common/Modal';
@@ -75,6 +82,22 @@ export default function AdminTeamPage() {
   const [roleFilter, setRoleFilter] = useState<'all' | 'editor' | 'admin'>('all');
   const [loading, setLoading] = useState(true);
 
+  // Add Staff Modal
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newStaffName, setNewStaffName] = useState('');
+  const [newStaffEmail, setNewStaffEmail] = useState('');
+  const [newStaffPassword, setNewStaffPassword] = useState('');
+  const [newStaffRole, setNewStaffRole] = useState<'editor' | 'admin'>('editor');
+  const [newStaffCollege, setNewStaffCollege] = useState('');
+  const [newStaffCity, setNewStaffCity] = useState('');
+  const [newStaffState, setNewStaffState] = useState('');
+  const [newStaffPermissions, setNewStaffPermissions] = useState<string[]>([
+    'publish_articles',
+    'manage_events',
+    'moderate_submissions',
+  ]);
+  const [savingNewStaff, setSavingNewStaff] = useState(false);
+
   // Permission modal
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [activePermissions, setActivePermissions] = useState<string[]>([]);
@@ -135,6 +158,20 @@ export default function AdminTeamPage() {
         joinedOn: m.joinedOn,
       }));
 
+    // Load newly added staff stored in local storage
+    try {
+      const addedStaff = JSON.parse(window.localStorage.getItem('tsc.admin.staff_added') || '[]');
+      if (Array.isArray(addedStaff)) {
+        for (const s of addedStaff) {
+          if (!mapped.some((u) => u.id === s.id || u.email === s.email)) {
+            mapped.push(s);
+          }
+        }
+      }
+    } catch {
+      /* noop */
+    }
+
     // Load stored local overrides
     try {
       const stored = JSON.parse(window.localStorage.getItem('tsc.admin.custom_permissions') || '{}');
@@ -178,6 +215,114 @@ export default function AdminTeamPage() {
     setActivePermissions((prev) =>
       prev.includes(permId) ? prev.filter((p) => p !== permId) : [...prev, permId]
     );
+  };
+
+  const handleToggleNewStaffPerm = (permId: string) => {
+    setNewStaffPermissions((prev) =>
+      prev.includes(permId) ? prev.filter((p) => p !== permId) : [...prev, permId]
+    );
+  };
+
+  const handleCreateStaff = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newStaffName.trim() || !newStaffEmail.trim() || !newStaffPassword.trim()) {
+      push('Name, email and password are required.', 'error');
+      return;
+    }
+
+    setSavingNewStaff(true);
+    const api = process.env.NEXT_PUBLIC_API_URL;
+    const token = window.localStorage.getItem('tsc_token');
+    let createdUser: AdminUser = {
+      id: `staff_${Date.now()}`,
+      name: newStaffName.trim(),
+      email: newStaffEmail.trim().toLowerCase(),
+      college: newStaffCollege.trim() || 'The Student Chapters™',
+      city: newStaffCity.trim() || 'National Newsroom',
+      state: newStaffState.trim() || 'India',
+      role: newStaffRole,
+      customPermissions:
+        newStaffRole === 'admin' ? AVAILABLE_PERMISSIONS.map((p) => p.id) : newStaffPermissions,
+      joinedOn: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+    };
+
+    if (api) {
+      try {
+        const res = await fetch(`${api}/api/users`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            name: newStaffName.trim(),
+            email: newStaffEmail.trim().toLowerCase(),
+            password: newStaffPassword.trim(),
+            role: newStaffRole,
+            college: newStaffCollege.trim(),
+            city: newStaffCity.trim(),
+            state: newStaffState.trim(),
+            customPermissions:
+              newStaffRole === 'admin' ? AVAILABLE_PERMISSIONS.map((p) => p.id) : newStaffPermissions,
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.data) {
+            createdUser = {
+              id: data.data._id || data.data.id || createdUser.id,
+              _id: data.data._id,
+              name: data.data.name,
+              email: data.data.email,
+              college: data.data.college,
+              city: data.data.city,
+              state: data.data.state,
+              role: data.data.role,
+              customPermissions: data.data.customPermissions,
+              joinedOn: data.data.createdAt,
+              createdAt: data.data.createdAt,
+            };
+          }
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          push(errData.message || errData.error || 'Failed to create staff member on server.', 'error');
+          setSavingNewStaff(false);
+          return;
+        }
+      } catch {
+        /* fallback handled in local storage */
+      }
+    }
+
+    // Persist to local storage
+    try {
+      const addedStaff = JSON.parse(window.localStorage.getItem('tsc.admin.staff_added') || '[]');
+      addedStaff.push(createdUser);
+      window.localStorage.setItem('tsc.admin.staff_added', JSON.stringify(addedStaff));
+
+      const storedPerms = JSON.parse(window.localStorage.getItem('tsc.admin.custom_permissions') || '{}');
+      storedPerms[createdUser.id] = {
+        role: createdUser.role,
+        customPermissions: createdUser.customPermissions,
+      };
+      window.localStorage.setItem('tsc.admin.custom_permissions', JSON.stringify(storedPerms));
+    } catch {
+      /* noop */
+    }
+
+    setAllUsers((prev) => [createdUser, ...prev]);
+    setIsAddModalOpen(false);
+    setNewStaffName('');
+    setNewStaffEmail('');
+    setNewStaffPassword('');
+    setNewStaffCollege('');
+    setNewStaffCity('');
+    setNewStaffState('');
+    setNewStaffRole('editor');
+    setNewStaffPermissions(['publish_articles', 'manage_events', 'moderate_submissions']);
+    setSavingNewStaff(false);
+    push(`Staff member ${createdUser.name} added successfully as ${createdUser.role.toUpperCase()}.`, 'success');
   };
 
   const handleSavePermissions = async () => {
@@ -272,12 +417,19 @@ export default function AdminTeamPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
+          <Button
+            size="sm"
+            onClick={() => setIsAddModalOpen(true)}
+            className="shadow-sm"
+          >
+            <UserPlus className="h-4 w-4 mr-1.5" /> Add Staff Member
+          </Button>
+          {/* <Link
             href="/admin/members"
             className="inline-flex items-center gap-1.5 rounded-md border border-hairline bg-white px-3.5 py-2 text-xs font-semibold text-ink transition-colors hover:bg-cream hover:text-brand"
           >
             <Users className="h-3.5 w-3.5 text-muted" /> View Community Members
-          </Link>
+          </Link> */}
         </div>
       </div>
 
@@ -454,6 +606,178 @@ export default function AdminTeamPage() {
           </table>
         </div>
       </div>
+
+      {/* Add Staff Member Modal */}
+      {isAddModalOpen && (
+        <Modal
+          open={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          title="Add Staff Member"
+        >
+          <form onSubmit={handleCreateStaff} className="space-y-4">
+            <p className="text-xs text-muted">
+              Create an administrative or editorial staff member. Once created, they can log in to the newsroom console.
+            </p>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. John Doe"
+                    value={newStaffName}
+                    onChange={(e) => setNewStaffName(e.target.value)}
+                    className="w-full rounded-md border border-hairline bg-white pl-9 pr-3 py-2 text-xs text-ink placeholder:text-muted focus:border-brand focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">
+                  Official Email <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="e.g. editor@tsc.org"
+                    value={newStaffEmail}
+                    onChange={(e) => setNewStaffEmail(e.target.value)}
+                    className="w-full rounded-md border border-hairline bg-white pl-9 pr-3 py-2 text-xs text-ink placeholder:text-muted focus:border-brand focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">
+                  Password <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted" />
+                  <input
+                    type="password"
+                    required
+                    placeholder="Set temporary password"
+                    value={newStaffPassword}
+                    onChange={(e) => setNewStaffPassword(e.target.value)}
+                    className="w-full rounded-md border border-hairline bg-white pl-9 pr-3 py-2 text-xs text-ink placeholder:text-muted focus:border-brand focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">
+                  Role <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={newStaffRole}
+                  onChange={(e) => setNewStaffRole(e.target.value as 'editor' | 'admin')}
+                  className="w-full rounded-md border border-hairline bg-white px-3 py-2 text-xs text-ink focus:border-brand focus:outline-none"
+                >
+                  <option value="editor">Editor (Newsroom &amp; Editorial)</option>
+                  <option value="admin">Administrator (Full Rights)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">
+                  College / Affiliation
+                </label>
+                <input
+                  type="text"
+                  placeholder="Optional college"
+                  value={newStaffCollege}
+                  onChange={(e) => setNewStaffCollege(e.target.value)}
+                  className="w-full rounded-md border border-hairline bg-white px-3 py-2 text-xs text-ink placeholder:text-muted focus:border-brand focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">
+                  City
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. New Delhi"
+                  value={newStaffCity}
+                  onChange={(e) => setNewStaffCity(e.target.value)}
+                  className="w-full rounded-md border border-hairline bg-white px-3 py-2 text-xs text-ink placeholder:text-muted focus:border-brand focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">
+                  State
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Delhi"
+                  value={newStaffState}
+                  onChange={(e) => setNewStaffState(e.target.value)}
+                  className="w-full rounded-md border border-hairline bg-white px-3 py-2 text-xs text-ink placeholder:text-muted focus:border-brand focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {newStaffRole === 'editor' && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-ink">
+                    Assign Editorial Permissions
+                  </label>
+                  <span className="text-[11px] text-muted">
+                    {newStaffPermissions.length} selected
+                  </span>
+                </div>
+                <div className="max-h-48 overflow-y-auto space-y-2 rounded-md border border-hairline bg-cream p-3">
+                  {AVAILABLE_PERMISSIONS.map((perm) => {
+                    const checked = newStaffPermissions.includes(perm.id);
+                    return (
+                      <label
+                        key={perm.id}
+                        className="flex cursor-pointer items-start gap-2.5"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => handleToggleNewStaffPerm(perm.id)}
+                          className="mt-0.5 h-3.5 w-3.5 rounded border-hairline text-brand focus:ring-brand"
+                        />
+                        <div className="text-xs">
+                          <p className="font-bold text-ink text-[11.5px]">{perm.label}</p>
+                          <p className="text-muted text-[10.5px]">{perm.description}</p>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2.5 border-t border-hairline pt-4">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsAddModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" size="sm" disabled={savingNewStaff}>
+                {savingNewStaff ? 'Adding Staff…' : 'Add Staff Member'}
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
 
       {/* Granular Permissions Modal for Staff */}
       {selectedUser && (

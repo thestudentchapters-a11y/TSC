@@ -386,7 +386,7 @@ export const adminNavGroups: { label: string; items: { href: string; label: stri
     label: 'People & Inbox',
     items: [
       { href: '/admin/team', label: 'Team & Editors', icon: ShieldCheck },
-      { href: '/admin/members', label: 'Community Members', icon: Users },
+      // { href: '/admin/members', label: 'Community Members', icon: Users },
       { href: '/admin/broadcast', label: 'Broadcast Notification Mail', icon: Megaphone },
       { href: '/admin/hiring', label: 'Hiring Applications', icon: Briefcase },
       { href: '/admin/subscribers', label: 'Newsletter Subscribers', icon: Mail },

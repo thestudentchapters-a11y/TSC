@@ -191,8 +191,8 @@ export default function LoginPage() {
               <div className="pt-2 text-center border-t border-hairline/40 space-y-1.5">
                 <p className="text-xs text-muted">
                   New to TSC?{' '}
-                  <Link href="/membership" className="font-semibold text-brand hover:text-brand-dark hover:underline">
-                    Become a member
+                  <Link href="/konnectx" className="font-semibold text-brand hover:text-brand-dark hover:underline">
+                    Join on KonnectX
                   </Link>
                 </p>
                 <p className="text-[11px] text-muted/80">

@@ -495,7 +495,7 @@ export default function BroadcastAdminPage() {
           <p className="text-[11px] text-muted mt-1">Users subscribed to website newsletter</p>
         </div>
 
-        <div
+        {/* <div
           onClick={() => setTargetAudience('members')}
           className={`cursor-pointer rounded-xl border p-5 transition-all ${
             targetAudience === 'members'
@@ -509,7 +509,7 @@ export default function BroadcastAdminPage() {
           </div>
           <div className="mt-2 text-2xl font-bold text-ink font-mono">{stats.memberCount}</div>
           <p className="text-[11px] text-muted mt-1">Active student &amp; campus accounts</p>
-        </div>
+        </div> */}
 
         <div
           onClick={() => setTargetAudience('all')}
@@ -596,7 +596,7 @@ export default function BroadcastAdminPage() {
                     >
                       Subscribers ({stats.subscriberCount})
                     </button>
-                    <button
+                    {/* <button
                       type="button"
                       onClick={() => setTargetAudience('members')}
                       className={`rounded-lg px-3 py-2 text-xs font-semibold transition-all text-center border ${
@@ -606,7 +606,7 @@ export default function BroadcastAdminPage() {
                       }`}
                     >
                       Members ({stats.memberCount})
-                    </button>
+                    </button> */}
                   </div>
                 </div>
 
@@ -930,7 +930,7 @@ export default function BroadcastAdminPage() {
                 >
                   <option value="all">All Combined Audience ({stats.totalUniqueCount})</option>
                   <option value="subscribers">Newsletter Subscribers ({stats.subscriberCount})</option>
-                  <option value="members">Registered Members ({stats.memberCount})</option>
+                  {/* <option value="members">Registered Members ({stats.memberCount})</option> */}
                 </select>
               </div>
             </div>
@@ -986,7 +986,7 @@ export default function BroadcastAdminPage() {
                 >
                   <option value="all">All Combined Audience ({stats.totalUniqueCount})</option>
                   <option value="subscribers">Newsletter Subscribers ({stats.subscriberCount})</option>
-                  <option value="members">Registered Members ({stats.memberCount})</option>
+                  {/* <option value="members">Registered Members ({stats.memberCount})</option> */}
                 </select>
               </div>
             </div>
@@ -1042,7 +1042,7 @@ export default function BroadcastAdminPage() {
                 >
                   <option value="all">All Combined Audience ({stats.totalUniqueCount})</option>
                   <option value="subscribers">Newsletter Subscribers ({stats.subscriberCount})</option>
-                  <option value="members">Registered Members ({stats.memberCount})</option>
+                  {/* <option value="members">Registered Members ({stats.memberCount})</option> */}
                 </select>
               </div>
             </div>
@@ -1098,7 +1098,7 @@ export default function BroadcastAdminPage() {
                 >
                   <option value="all">All Combined Audience ({stats.totalUniqueCount})</option>
                   <option value="subscribers">Newsletter Subscribers ({stats.subscriberCount})</option>
-                  <option value="members">Registered Members ({stats.memberCount})</option>
+                  {/* <option value="members">Registered Members ({stats.memberCount})</option> */}
                 </select>
               </div>
             </div>

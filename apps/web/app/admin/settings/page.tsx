@@ -259,7 +259,7 @@ export default function AdminSettingsPage() {
             /* Clean Overview Card with Change Button */
             <div className="space-y-5">
               <p className="text-xs text-muted leading-relaxed">
-                Your administrative credentials grant full access to newsroom publishing, membership management, and platform configurations.
+                Your administrative credentials grant full access to newsroom publishing, staff governance, and platform configurations.
               </p>
 
               <div className="rounded-xl border border-hairline bg-cream/50 p-4 space-y-3">

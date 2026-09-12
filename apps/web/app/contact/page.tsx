@@ -97,7 +97,7 @@ export default function ContactPage() {
                   error={errors.consent}
                 />
                 <p className="text-xs text-muted">
-                  Protected by rate limiting and spam filtering on the API. [Contact email: TO BE CONFIGURED]
+                  Protected by rate limiting and spam filtering on the API. Contact email: {site.email}
                 </p>
                 <div className="flex justify-end border-t border-hairline pt-5">
                   <Button type="submit" size="lg" disabled={busy} arrow>
@@ -113,7 +113,7 @@ export default function ContactPage() {
               <h2 className="font-display text-base font-bold">Reach us directly</h2>
               <p className="flex items-center gap-3 text-sm text-muted">
                 <Mail aria-hidden className="h-4 w-4 text-brand" />
-                Email: <span className="font-semibold text-ink/70">[TO BE CONFIGURED]</span>
+                Email: <a href={`mailto:${site.email}`} className="font-semibold text-ink/85 hover:text-brand hover:underline">{site.email}</a>
               </p>
               <p className="flex items-start gap-3 text-sm text-muted">
                 <MapPin aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-brand" />

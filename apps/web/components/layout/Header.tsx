@@ -125,8 +125,8 @@ export function Header() {
               <PenLine aria-hidden className="h-3.5 w-3.5" />
               Submit Your Story
             </Link>
-            <Button href="/membership" variant="accent" size="sm" className="hidden sm:inline-flex">
-              Join TSC
+            <Button href="/konnectx" variant="accent" size="sm" className="hidden sm:inline-flex">
+              KonnectX
             </Button>
             <button
               type="button"

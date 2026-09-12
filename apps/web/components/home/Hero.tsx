@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import { Mic, Sparkles } from 'lucide-react';
 import { Button } from '@/components/common/Button';
 import { cn } from '@/lib/utils';
@@ -75,6 +75,79 @@ function HeadlineLine({ text, delay, accent = false }: { text: string; delay: nu
       >
         {text}
       </motion.span>
+    </span>
+  );
+}
+
+const INSIGHT_WORDS = ['Watching', 'Observing', 'Learning'];
+
+function InsightBadge() {
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(() => setActive((a) => (a + 1) % INSIGHT_WORDS.length), 2000);
+    return () => clearInterval(id);
+  }, [reduce]);
+
+  return (
+    <span className="relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-gold/50 bg-white px-4 py-1.5 shadow-sm ring-1 ring-gold/20">
+      {/* Light shimmer sweep */}
+      {!reduce && (
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-amber-200/40 to-transparent"
+          animate={{ x: ['-140%', '340%'] }}
+          transition={{ duration: 3, repeat: Infinity, repeatDelay: 1.5, ease: 'easeInOut' }}
+        />
+      )}
+
+      {/* Live radar pulse */}
+      <span className="relative flex h-2 w-2 shrink-0 items-center justify-center">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-75" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-gold-deep" />
+      </span>
+
+      <span className="relative font-display text-[12px] sm:text-[12.5px] font-bold text-ink tracking-wide">
+        Students are{' '}
+        {INSIGHT_WORDS.map((word, i) => {
+          const isActive = active === i;
+          return (
+            <span key={word} className="relative inline-block">
+              <span className="relative inline-block px-2 py-0.5 font-extrabold uppercase tracking-wider">
+                {/* Continuous sliding pill background */}
+                {isActive && (
+                  <motion.span
+                    layoutId="hero-insight-slider"
+                    className="absolute inset-0 rounded-md bg-brand shadow-sm ring-1 ring-brand/30"
+                    transition={{
+                      type: 'spring',
+                      stiffness: 320,
+                      damping: 26,
+                      mass: 0.8,
+                    }}
+                  />
+                )}
+                {/* Text on top with crisp color transition */}
+                <span
+                  className={cn(
+                    'relative z-10 transition-colors duration-300',
+                    isActive ? 'text-white font-black' : 'text-ink/80 hover:text-ink'
+                  )}
+                >
+                  {word}
+                </span>
+              </span>
+              {i < INSIGHT_WORDS.length - 1 && (
+                <span className="text-ink/40 font-semibold px-0.5">
+                  {i === INSIGHT_WORDS.length - 2 ? ' & ' : ', '}
+                </span>
+              )}
+            </span>
+          );
+        })}
+      </span>
     </span>
   );
 }
@@ -186,8 +259,8 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.62, ease: EASE }}
           >
-            <Button href="/membership" variant="primary" size="lg" arrow>
-              Join TSC
+            <Button href="/konnectx" variant="primary" size="lg" arrow>
+              Join Us
             </Button>
             <Button href="/stories" variant="outline" size="lg" arrow>
               Explore Stories
@@ -200,14 +273,12 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.78 }}
           >
-            <span className="inline-flex items-center rounded-full border border-gold/40 bg-gold-50/80 px-3 py-1 font-display text-[11px] font-bold uppercase tracking-[0.14em] text-gold-deep shadow-sm">
-              Students are Watching, Observing &amp; Learning
-            </span>
-            <p className="flex items-center gap-2.5 font-serif text-lg italic text-gold-deep">
+            <InsightBadge />
+            {/* <p className="flex items-center gap-2.5 font-serif text-lg italic text-gold-deep">
               <Sparkles aria-hidden className="h-4 w-4 text-gold" />
               Discover. Learn. Connect. Create.
             </p>
-            <span aria-hidden className="hidden text-gold-deep/40 sm:inline">•</span>
+            <span aria-hidden className="hidden text-gold-deep/40 sm:inline">•</span> */}
           </motion.div>
         </div>
 

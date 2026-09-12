@@ -1089,7 +1089,7 @@ export function CurrentAffairsAdmin() {
                       >
                         Subscribers
                       </button>
-                      <button
+                      {/* <button
                         type="button"
                         onClick={() => setDraftAudience('members')}
                         className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
@@ -1099,7 +1099,7 @@ export function CurrentAffairsAdmin() {
                         }`}
                       >
                         Members
-                      </button>
+                      </button> */}
                     </div>
                   </div>
 

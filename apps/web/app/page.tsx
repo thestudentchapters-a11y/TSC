@@ -69,7 +69,7 @@ export default async function HomePage() {
           </>
         }
         copy="Your ideas matter. Your experiences matter. Your questions matter. Your voice matters. Start your chapter with TSC."
-        primary={{ label: 'Join TSC', href: '/membership' }}
+        primary={{ label: 'Join Us', href: '/konnectx' }}
         secondary={{ label: 'Explore the Platform', href: '/news' }}
       />
     </>
