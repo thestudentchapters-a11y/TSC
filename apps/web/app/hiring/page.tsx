@@ -724,12 +724,12 @@ function HiringContent() {
                 {/* 4. Portfolio & Profiles */}
                 <div className="space-y-4">
                   <h3 className="font-display text-sm font-bold uppercase tracking-wider text-brand">
-                    4. Social Profiles &amp; Work Samples
+                    4. Social Profiles &amp; Work Samples (Optional)
                   </h3>
                   <div className="grid gap-4 sm:grid-cols-3">
                     <div>
                       <label className="meta-text block !text-[11px] font-bold uppercase">
-                        KonnectX ID / Profile (Optional)
+                        KonnectX ID / Profile
                       </label>
                       <input
                         type="text"
