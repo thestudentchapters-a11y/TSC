@@ -14,7 +14,7 @@ export function EventCard({ event, priority = false }: { event: TscEvent; priori
   const imageAlt = event.imageAlt || event.title || 'Event image';
 
   return (
-    <article className="card-base card-hover group flex h-full flex-col overflow-hidden">
+    <article className="card-base card-hover group flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden">
       <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
         <Image
           src={imageSrc}
@@ -40,24 +40,24 @@ export function EventCard({ event, priority = false }: { event: TscEvent; priori
           </span>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      <div className="flex flex-1 min-w-0 flex-col gap-3 p-5">
         <div className="flex min-h-[1.75rem] items-center">
           <CategoryPill>{event.category}</CategoryPill>
         </div>
-        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem]">
+        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem] min-w-0">
           <Link href={`/events/${event.slug}`}>{event.title}</Link>
         </h3>
-        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted min-h-[1.5rem] overflow-hidden">
-          <span className="inline-flex items-center gap-1">
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted min-h-[1.5rem] overflow-hidden min-w-0">
+          <span className="inline-flex items-center gap-1 shrink-0">
             <MapPin aria-hidden className="h-3.5 w-3.5 text-brand" />
             {event.city}, {event.state}
           </span>
-          <span className="inline-flex items-center gap-1 truncate">
-            <Users aria-hidden className="h-3.5 w-3.5 text-brand" />
-            <span className="truncate">{event.organizer}</span>
+          <span className="inline-flex items-center gap-1 min-w-0 flex-1">
+            <Users aria-hidden className="h-3.5 w-3.5 shrink-0 text-brand" />
+            <span className="truncate min-w-0">{event.organizer}</span>
           </span>
         </p>
-        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem]">{event.dek}</p>
+        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem] break-words">{event.dek}</p>
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-hairline pt-3">
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted">
             <Calendar aria-hidden className="h-3.5 w-3.5 text-gold-deep" />

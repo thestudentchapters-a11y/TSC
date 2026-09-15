@@ -23,7 +23,7 @@ export function PodcastCard({ episode, priority = false }: { episode: PodcastEpi
   return (
     <Link
       href={`/podcast/${episode.slug}`}
-      className="card-base card-hover group flex h-full w-[264px] shrink-0 flex-col overflow-hidden snap-start sm:w-[288px]"
+      className="card-base card-hover group flex h-full w-[264px] max-w-[85vw] shrink-0 flex-col overflow-hidden snap-start sm:w-[288px] sm:max-w-none"
     >
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden">
         <Image
@@ -51,25 +51,25 @@ export function PodcastCard({ episode, priority = false }: { episode: PodcastEpi
           <Play className="ml-0.5 h-4 w-4 fill-current" />
         </span>
       </div>
-      <div className="flex flex-1 flex-col gap-2.5 p-4">
-        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
+      <div className="flex flex-1 min-w-0 flex-col gap-2.5 p-4">
+        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2 min-w-0">
           <CategoryPill>
             <Icon aria-hidden className="mr-1 h-3 w-3" />
             {categoryName}
           </CategoryPill>
           {episode.demo && <DemoChip />}
         </div>
-        <h3 className="font-display text-[15px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[2.5rem]">
+        <h3 className="font-display text-[15px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[2.5rem] min-w-0">
           {episode.title}
         </h3>
-        <p className="text-xs font-medium text-muted truncate min-h-[1.25rem]">with {episode.guest}</p>
-        <p className="mt-auto flex items-center gap-2 border-t border-hairline pt-2.5 text-[11px] font-medium uppercase tracking-wider text-muted">
-          <Clock aria-hidden className="h-3 w-3 text-gold-deep" />
-          {episode.durationLabel}
+        <p className="text-xs font-medium text-muted truncate min-w-0 min-h-[1.25rem]">with {episode.guest}</p>
+        <p className="mt-auto flex items-center gap-2 border-t border-hairline pt-2.5 text-[11px] font-medium uppercase tracking-wider text-muted min-w-0">
+          <Clock aria-hidden className="h-3 w-3 shrink-0 text-gold-deep" />
+          <span className="shrink-0">{episode.durationLabel}</span>
           {dateStr && (
             <>
-              <span aria-hidden>•</span>
-              <span className="truncate">{dateStr}</span>
+              <span aria-hidden className="shrink-0">•</span>
+              <span className="truncate min-w-0">{dateStr}</span>
             </>
           )}
         </p>

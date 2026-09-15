@@ -8,16 +8,36 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    overflow-x: clip;
+    overflow-x: hidden;
     width: 100%;
+    max-width: 100%;
   }
 
   body {
     @apply bg-cream text-ink font-sans antialiased;
-    overflow-x: clip;
+    overflow-x: hidden;
     width: 100%;
+    max-width: 100%;
     min-height: 100vh;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  main {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    min-width: 0;
+  }
+
+  /* Prevent grid children from blowing out grid tracks with long content */
+  .grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Universal media element constraint */
+  img, svg, video, canvas, audio, iframe, embed, object {
+    max-width: 100%;
   }
 
   /* Prevent auto-zoom on iOS inputs while retaining crisp typography on desktop */
@@ -49,7 +69,7 @@
 
 @layer components {
   .container-tsc {
-    @apply mx-auto w-full max-w-[1480px] px-4 sm:px-6 lg:px-8 xl:px-12;
+    @apply mx-auto w-full max-w-[1480px] px-4 sm:px-6 lg:px-8 xl:px-12 min-w-0;
   }
 
   .eyebrow {
@@ -65,7 +85,7 @@
   }
 
   .card-base {
-    @apply rounded-md border border-hairline bg-white transition-all duration-300 ease-out;
+    @apply rounded-md border border-hairline bg-white transition-all duration-300 ease-out w-full max-w-full min-w-0;
   }
 
   .card-hover {

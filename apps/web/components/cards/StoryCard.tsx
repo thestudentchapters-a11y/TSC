@@ -27,7 +27,7 @@ export function StoryCard({ story, priority = false }: { story: Story; priority?
   const dateStr = formatDate(story.date);
 
   return (
-    <Link href={`/stories/${story.slug}`} className="card-base card-hover group flex h-full flex-col overflow-hidden">
+    <Link href={`/stories/${story.slug}`} className="card-base card-hover group flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden">
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden">
         <Image
           src={imageSrc}
@@ -42,8 +42,8 @@ export function StoryCard({ story, priority = false }: { story: Story; priority?
           className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-gold transition-transform duration-500 group-hover:scale-x-100"
         />
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
+      <div className="flex flex-1 min-w-0 flex-col gap-3 p-5">
+        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2 min-w-0">
           <CategoryPill variant={pillVariant[cat] || 'brand'}>{categoryLabel[cat] || cat}</CategoryPill>
           {story.campus && (
             <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-50/70 px-2 py-0.5 text-[10px] font-bold text-brand">
@@ -52,19 +52,19 @@ export function StoryCard({ story, priority = false }: { story: Story; priority?
           )}
           {story.demo && <DemoChip />}
         </div>
-        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem]">
+        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem] min-w-0">
           {story.title}
         </h3>
-        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem]">{story.dek}</p>
-        <div className="mt-auto flex items-center gap-2 border-t border-hairline pt-3 text-xs font-medium uppercase tracking-wider text-muted">
-          <span className="truncate">{authorName}</span>
+        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem] break-words">{story.dek}</p>
+        <div className="mt-auto flex items-center gap-2 border-t border-hairline pt-3 text-xs font-medium uppercase tracking-wider text-muted min-w-0">
+          <span className="truncate min-w-0 flex-1">{authorName}</span>
           {dateStr && (
             <>
-              <span aria-hidden>•</span>
+              <span aria-hidden className="shrink-0">•</span>
               <span className="shrink-0">{dateStr}</span>
             </>
           )}
-          <span aria-hidden>•</span>
+          <span aria-hidden className="shrink-0">•</span>
           <span className="shrink-0">{story.readingTime || 4} min</span>
         </div>
       </div>

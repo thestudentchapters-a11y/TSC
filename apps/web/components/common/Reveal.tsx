@@ -20,7 +20,7 @@ export function Reveal({
   const reduce = useReducedMotion();
   return (
     <motion.div
-      className={className}
+      className={cn('min-w-0 max-w-full', className)}
       initial={{ opacity: 0, y: reduce ? 0 : y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
@@ -50,10 +50,10 @@ export function StaggerGrid({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  if (reduce) return <div className={className}>{children}</div>;
+  if (reduce) return <div className={cn('w-full min-w-0', className)}>{children}</div>;
   return (
     <motion.div
-      className={className}
+      className={cn('w-full min-w-0', className)}
       variants={staggerParent}
       initial="hidden"
       whileInView="show"
@@ -72,9 +72,9 @@ export function StaggerItem({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  if (reduce) return <div className={cn('h-full', className)}>{children}</div>;
+  if (reduce) return <div className={cn('h-full min-w-0 max-w-full', className)}>{children}</div>;
   return (
-    <motion.div variants={staggerChild} className={cn('h-full', className)}>
+    <motion.div variants={staggerChild} className={cn('h-full min-w-0 max-w-full', className)}>
       {children}
     </motion.div>
   );

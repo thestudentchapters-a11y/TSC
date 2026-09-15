@@ -11,7 +11,7 @@ export function CampusCard({ campus, priority = false }: { campus: Campus; prior
   const locationText = [campus.university, [campus.city, campus.state].filter(Boolean).join(', ')].filter(Boolean).join(' • ');
 
   return (
-    <Link href={`/campus/${campus.slug}`} className="card-base card-hover group flex h-full flex-col overflow-hidden">
+    <Link href={`/campus/${campus.slug}`} className="card-base card-hover group flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden">
       <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden">
         <Image
           src={imageSrc}
@@ -22,37 +22,37 @@ export function CampusCard({ campus, priority = false }: { campus: Campus; prior
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" aria-hidden />
-        <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-2">
-          <h3 className="font-display text-lg font-bold leading-tight text-white line-clamp-1">{campus.name}</h3>
+        <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-2 min-w-0">
+          <h3 className="font-display text-lg font-bold leading-tight text-white line-clamp-1 min-w-0 flex-1">{campus.name}</h3>
           {campus.demo && <DemoChip className="bg-white/90 shrink-0" />}
         </div>
       </div>
-      <div className="flex flex-1 flex-col gap-3.5 p-5">
+      <div className="flex flex-1 min-w-0 flex-col gap-3.5 p-5">
         {locationText && (
-          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted truncate min-h-[1.25rem]">
+          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted min-w-0 min-h-[1.25rem]">
             <MapPin aria-hidden className="h-3.5 w-3.5 shrink-0 text-brand" />
-            <span className="truncate">{locationText}</span>
+            <span className="truncate min-w-0 flex-1">{locationText}</span>
           </p>
         )}
-        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem]">{campus.description || 'Discover campus initiatives, student stories, and opportunities.'}</p>
+        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem] break-words">{campus.description || 'Discover campus initiatives, student stories, and opportunities.'}</p>
         
         {(campus.latestStory?.title || campus.upcomingEvent?.title) && (
-          <div className="mt-auto space-y-2 border-t border-hairline pt-3.5">
+          <div className="mt-auto space-y-2 border-t border-hairline pt-3.5 min-w-0">
             {campus.latestStory?.title && (
-              <p className="flex items-start gap-2 text-[13px] leading-5 text-ink/80">
+              <p className="flex items-start gap-2 text-[13px] leading-5 text-ink/80 min-w-0">
                 <PenLine aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold-deep" />
                 <span className="min-w-0 flex-1">
                   <span className="meta-text block !text-[10px]">Latest story</span>
-                  <span className="font-medium transition-colors group-hover:text-brand line-clamp-1">{campus.latestStory.title}</span>
+                  <span className="font-medium transition-colors group-hover:text-brand line-clamp-1 break-words">{campus.latestStory.title}</span>
                 </span>
               </p>
             )}
             {campus.upcomingEvent?.title && (
-              <p className="flex items-start gap-2 text-[13px] leading-5 text-ink/80">
+              <p className="flex items-start gap-2 text-[13px] leading-5 text-ink/80 min-w-0">
                 <Calendar aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold-deep" />
                 <span className="min-w-0 flex-1">
                   <span className="meta-text block !text-[10px]">Upcoming event</span>
-                  <span className="font-medium transition-colors group-hover:text-brand line-clamp-1">{campus.upcomingEvent.title}</span>
+                  <span className="font-medium transition-colors group-hover:text-brand line-clamp-1 break-words">{campus.upcomingEvent.title}</span>
                 </span>
               </p>
             )}

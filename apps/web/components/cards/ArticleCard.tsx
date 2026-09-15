@@ -44,7 +44,7 @@ export function ArticleCard({
     return (
       <Link
         href={`/news/${article.slug}`}
-        className="card-base card-hover group flex h-full gap-5 p-4 sm:p-5"
+        className="card-base card-hover group flex h-full w-full min-w-0 max-w-full gap-5 p-4 sm:p-5"
       >
         <div className="relative hidden w-44 shrink-0 overflow-hidden rounded-sm sm:block">
           <Image
@@ -56,8 +56,8 @@ export function ArticleCard({
           />
         </div>
         <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
-          <div className="space-y-2.5">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="space-y-2.5 min-w-0">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <CategoryPill>{categoryName}</CategoryPill>
               {article.campus && (
                 <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-50/70 px-2 py-0.5 text-[10px] font-bold text-brand">
@@ -66,12 +66,12 @@ export function ArticleCard({
               )}
               {article.demo && <DemoChip />}
             </div>
-            <h3 className="font-display text-[17px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3rem]">
+            <h3 className="font-display text-[17px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3rem] min-w-0 break-words">
               {article.title}
             </h3>
-            <p className="line-clamp-2 text-sm leading-6 text-muted">{article.excerpt}</p>
+            <p className="line-clamp-2 text-sm leading-6 text-muted break-words">{article.excerpt}</p>
           </div>
-          <div className="mt-auto pt-3">
+          <div className="mt-auto pt-3 min-w-0">
             {meta}
           </div>
         </div>
@@ -81,7 +81,7 @@ export function ArticleCard({
 
   if (variant === 'featured') {
     return (
-      <Link href={`/news/${article.slug}`} className="card-base card-hover group grid overflow-hidden lg:grid-cols-2">
+      <Link href={`/news/${article.slug}`} className="card-base card-hover group grid w-full min-w-0 max-w-full overflow-hidden lg:grid-cols-2">
         <div className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:min-h-[340px]">
           <Image
             src={imageSrc}
@@ -95,8 +95,8 @@ export function ArticleCard({
             <CategoryPill variant="ink">Featured</CategoryPill>
           </span>
         </div>
-        <div className="flex flex-col justify-center gap-4 p-6 sm:p-8">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-col justify-center gap-4 p-6 sm:p-8">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <CategoryPill>{categoryName}</CategoryPill>
             {article.campus && (
               <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-50/70 px-2 py-0.5 text-[10px] font-bold text-brand">
@@ -105,10 +105,10 @@ export function ArticleCard({
             )}
             {article.demo && <DemoChip />}
           </div>
-          <h3 className="font-display text-2xl font-bold leading-tight transition-colors group-hover:text-brand sm:text-[1.7rem]">
+          <h3 className="font-display text-2xl font-bold leading-tight transition-colors group-hover:text-brand sm:text-[1.7rem] min-w-0 break-words">
             {article.title}
           </h3>
-          <p className="line-clamp-3 text-[15px] leading-7 text-muted">{article.excerpt}</p>
+          <p className="line-clamp-3 text-[15px] leading-7 text-muted break-words">{article.excerpt}</p>
           {meta}
           <span className="cta-underline w-fit font-display text-[12px] font-bold uppercase tracking-[0.14em] text-brand">
             Read Full Story
@@ -119,7 +119,7 @@ export function ArticleCard({
   }
 
   return (
-    <Link href={`/news/${article.slug}`} className="card-base card-hover group flex h-full flex-col overflow-hidden">
+    <Link href={`/news/${article.slug}`} className="card-base card-hover group flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden">
       <div className={cn('relative aspect-[16/10] w-full shrink-0 overflow-hidden')}>
         <Image
           src={imageSrc}
@@ -129,8 +129,8 @@ export function ArticleCard({
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
+      <div className="flex flex-1 min-w-0 flex-col gap-3 p-5">
+        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2 min-w-0">
           <CategoryPill>{categoryName}</CategoryPill>
           {article.campus && (
             <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand-50/70 px-2 py-0.5 text-[10px] font-bold text-brand">
@@ -139,11 +139,11 @@ export function ArticleCard({
           )}
           {article.demo && <DemoChip />}
         </div>
-        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem]">
+        <h3 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[3.25rem] min-w-0">
           {article.title}
         </h3>
-        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem]">{article.excerpt}</p>
-        <div className="mt-auto space-y-3 pt-2">
+        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem] break-words">{article.excerpt}</p>
+        <div className="mt-auto space-y-3 pt-2 min-w-0">
           {meta}
           <span className="cta-underline font-display text-[11px] font-bold uppercase tracking-[0.14em] text-brand">
             Read Story

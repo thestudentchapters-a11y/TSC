@@ -37,8 +37,8 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
         )}`;
 
   return (
-    <article className="card-base card-hover group flex h-full flex-col gap-4 p-5">
-      <div className="flex items-start justify-between gap-3 min-h-[3.25rem]">
+    <article className="card-base card-hover group flex h-full w-full min-w-0 max-w-full flex-col gap-4 p-5">
+      <div className="flex items-start justify-between gap-3 min-h-[3.25rem] min-w-0">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <span
             aria-hidden
@@ -47,12 +47,12 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
             {initialsOf(opportunity.organization.replace(/\[Demo.*?\]/g, '').trim() || 'TSC')}
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-[16px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[2.5rem]">
+            <h3 className="font-display text-[16px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[2.5rem] min-w-0">
               {opportunity.title}
             </h3>
-            <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-muted truncate">
+            <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-muted min-w-0">
               <Building2 aria-hidden className="h-3 w-3 shrink-0" />
-              <span className="truncate">{opportunity.organization}</span>
+              <span className="truncate min-w-0">{opportunity.organization}</span>
             </p>
           </div>
         </div>
@@ -71,7 +71,7 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
         </span>
       </div>
 
-      <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2">
+      <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2 min-w-0">
         <CategoryPill variant={typeVariant[opportunity.type]}>
           {opportunity.type === 'Career Awareness' ? (
             <Sprout aria-hidden className="mr-1 h-3 w-3" />
@@ -84,13 +84,13 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
           <ModeIcon aria-hidden className="mr-1 h-3 w-3 text-brand" />
           {opportunity.mode}
         </span>
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-muted truncate">
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-muted min-w-0 flex-1">
           <MapPin aria-hidden className="h-3.5 w-3.5 shrink-0 text-brand" />
-          <span className="truncate">{opportunity.location}</span>
+          <span className="truncate min-w-0">{opportunity.location}</span>
         </span>
       </div>
 
-      <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem]">{opportunity.description}</p>
+      <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem] break-words">{opportunity.description}</p>
 
       <div className="flex h-[1.75rem] min-h-[1.75rem] flex-wrap gap-1.5 overflow-hidden">
         {opportunity.skills.slice(0, 4).map((s) => (
@@ -100,11 +100,11 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
         ))}
       </div>
 
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-hairline pt-4">
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-hairline pt-4 min-w-0">
         <p className="flex flex-col gap-0.5 text-[11px] leading-4 text-muted min-w-0 flex-1">
-          <span className="inline-flex items-center gap-1 truncate">
+          <span className="inline-flex items-center gap-1 min-w-0">
             <GraduationCap aria-hidden className="h-3 w-3 shrink-0 text-brand" />
-            <span className="truncate">{opportunity.eligibility}</span>
+            <span className="truncate min-w-0">{opportunity.eligibility}</span>
           </span>
           <span className="inline-flex items-center gap-1">
             <CalendarDays aria-hidden className="h-3 w-3 shrink-0 text-gold-deep" />
