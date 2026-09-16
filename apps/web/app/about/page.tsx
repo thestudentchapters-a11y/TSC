@@ -173,7 +173,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team / Impact — placeholders, no invented facts */}
+      {/* Team / Impact — placeholders, no invented facts Developed by Ayush */}
       <section id="team" className="scroll-mt-24 section-pad">
         <div className="container-tsc grid gap-12 lg:grid-cols-2">
           <div>

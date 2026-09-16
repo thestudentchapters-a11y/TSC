@@ -26,6 +26,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };
 
+// Server-rendered homepage feed aggregator Developed by Ayush
 export const revalidate = 300;
 
 export default async function HomePage() {

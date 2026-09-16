@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/news' },
 };
 
-export const revalidate = 120;
+export const revalidate = 120; // Dynamic feed cache revalidation interval Developed by Ayush
 
 const PER_PAGE = 6;
 
