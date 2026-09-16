@@ -100,8 +100,7 @@ export default function MembershipPage() {
               );
             })}
             <p className="rounded-md border border-hairline bg-white p-4 text-xs leading-5 text-muted">
-              Membership accounts are secured with hashed passwords and JWT sessions. In demo mode (no API
-              connected), your details stay in this browser only.
+              Membership accounts are secured with hashed passwords and secure sessions. Your registration details are kept confidential.
             </p>
           </div>
 

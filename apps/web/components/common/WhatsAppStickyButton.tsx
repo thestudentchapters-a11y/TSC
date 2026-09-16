@@ -23,7 +23,7 @@ export function WhatsAppStickyButton() {
     'https://whatsapp.com/channel/0029VajGqlK60eBkTXgEAK2m';
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[110] flex items-center gap-3">
+    <div className="pointer-events-none fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[110] flex items-center gap-3">
       {/* Tooltip Label */}
       <div
         className={`pointer-events-none hidden sm:flex rounded-full border border-emerald-700/20 bg-white/95 px-3.5 py-1.5 font-display text-xs font-bold text-ink shadow-lift backdrop-blur-md transition-all duration-300 ${hovered ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-3 opacity-0 scale-95'
@@ -44,7 +44,7 @@ export function WhatsAppStickyButton() {
         aria-label="Chat with The Student Chapters on WhatsApp"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="group relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lift transition-all duration-300 hover:scale-110 hover:bg-[#20ba5a] hover:shadow-2xl hover:shadow-emerald-500/40 active:scale-95"
+        className="pointer-events-auto group relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lift transition-all duration-300 hover:scale-110 hover:bg-[#20ba5a] hover:shadow-2xl hover:shadow-emerald-500/40 active:scale-95"
       >
         {/* Pulsing ring animation */}
         <span

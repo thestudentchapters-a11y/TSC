@@ -109,7 +109,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-tsc flex flex-col items-center justify-between gap-4 py-6 text-xs text-cream/75 md:flex-row">
+        <div className="container-tsc flex flex-col items-center justify-between gap-4 py-6 text-xs text-cream/75 md:flex-row md:pr-16">
           <p className="font-medium text-cream/90 text-center md:text-left">
             © {year} THE STUDENT CHAPTERS™. All rights reserved.
           </p>
@@ -126,11 +126,9 @@ export function Footer() {
               KYNYX SOLUTIONS.
             </span>
           </a>
-          <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 md:justify-end">
+          <p className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 md:justify-end font-medium">
             <Link href="/about" className="transition-colors hover:text-gold">About</Link>
             <Link href="/contact" className="transition-colors hover:text-gold">Contact</Link>
-            <span aria-hidden className="text-cream/40">•</span>
-            <span className="text-cream/70">Sample content is marked “Demo”</span>
           </p>
         </div>
       </div>
