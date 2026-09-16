@@ -84,7 +84,7 @@ export interface VideoEmbedInfo {
  * 1. YouTube (watch, shorts, youtu.be, embed, live)
  * 2. Vimeo (vimeo.com/...)
  * 3. Direct HTML5 video files (.mp4, .webm, .ogg, .mov, etc.)
- * 4. Any external web app, iframe link or video platform URL
+ * 4. Any external web app, iframe link or video platform URL Developed by Ayush
  */
 export function getVideoEmbedInfo(url?: string | null): VideoEmbedInfo | null {
   if (!url || typeof url !== 'string') return null;

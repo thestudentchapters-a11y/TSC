@@ -1,3 +1,8 @@
+/**
+ * Root Layout Component
+ * Frontend Platform Architecture
+ * Developed by AYUSH
+ */
 import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk, Fraunces } from 'next/font/google';
 import './globals.css';

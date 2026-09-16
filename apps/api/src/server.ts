@@ -1,3 +1,8 @@
+/**
+ * THE STUDENT CHAPTERS™ — API Server
+ * Core Backend Architecture & Engine
+ * Developed by AYUSH
+ */
 import { createApp } from './app';
 import { connectDB, disconnectDB } from './config/db';
 import { env } from './config/env';

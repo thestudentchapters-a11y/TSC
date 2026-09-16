@@ -2,6 +2,8 @@
  * Central site configuration for THE STUDENT CHAPTERS (TSC).
  * Community links (WhatsApp / KonnectX) are admin-configurable via env /
  * SiteSettings — they are never hardcoded to unknown URLs.
+ *
+ * Developed by AYUSH
  */
 export const site = {
   name: 'THE STUDENT CHAPTERS™',

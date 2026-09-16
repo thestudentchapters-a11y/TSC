@@ -2,7 +2,7 @@
  * Server-side data access layer.
  * - When NEXT_PUBLIC_API_URL is set, content is pulled from the TSC REST API.
  * - Otherwise (and on any API failure) it falls back to bundled demo content,
- *   so the platform always renders — with graceful loading/error states upstream.
+ *   so the platform always renders — with graceful loading/error states upstream Developed by Ayush.
  */
 import type {
   Article, Story, Campus, PodcastEpisode, TscEvent, Opportunity,
@@ -28,8 +28,8 @@ function normalizeArticle(raw: any): Article {
     content: Array.isArray(raw.content)
       ? raw.content
       : typeof raw.content === 'string'
-      ? raw.content.split('\n\n').filter(Boolean)
-      : [],
+        ? raw.content.split('\n\n').filter(Boolean)
+        : [],
     category:
       (typeof raw.category === 'object' && raw.category?.name ? raw.category.name : raw.category) ||
       'Student News',
@@ -72,8 +72,8 @@ function normalizeStory(raw: any): Story {
     content: Array.isArray(raw.content)
       ? raw.content
       : typeof raw.content === 'string'
-      ? raw.content.split('\n\n').filter(Boolean)
-      : [],
+        ? raw.content.split('\n\n').filter(Boolean)
+        : [],
     quote: raw.quote,
     featured: Boolean(raw.featured),
     status: raw.status || 'published',
@@ -131,8 +131,8 @@ function normalizeEpisode(raw: any): PodcastEpisode {
     transcript: Array.isArray(raw.transcript)
       ? raw.transcript
       : typeof raw.transcript === 'string'
-      ? raw.transcript.split('\n\n').filter(Boolean)
-      : [],
+        ? raw.transcript.split('\n\n').filter(Boolean)
+        : [],
     featured: Boolean(raw.featured),
     demo: Boolean(raw.demo),
   };
@@ -148,8 +148,8 @@ function normalizeEvent(raw: any): TscEvent {
     description: Array.isArray(raw.description)
       ? raw.description
       : typeof raw.description === 'string'
-      ? raw.description.split('\n\n').filter(Boolean)
-      : [],
+        ? raw.description.split('\n\n').filter(Boolean)
+        : [],
     date: raw.date || raw.createdAt || new Date().toISOString(),
     time: raw.time || raw.startTime || '10:00 AM',
     venue: raw.venue || '',
@@ -182,8 +182,8 @@ function normalizeOpportunity(raw: any): Opportunity {
     description: typeof raw.description === 'string'
       ? raw.description
       : Array.isArray(raw.description)
-      ? raw.description.join('\n\n')
-      : '',
+        ? raw.description.join('\n\n')
+        : '',
     skills: Array.isArray(raw.skills) ? raw.skills : [],
     applicationUrl: raw.applicationUrl || raw.applyUrl || null,
     featured: Boolean(raw.featured),
@@ -207,17 +207,17 @@ function normalizeEdition(raw: any): CurrentAffairsEdition {
     topics: Array.isArray(raw.topics) ? raw.topics : ['India', 'Education'],
     articles: Array.isArray(raw.articles)
       ? raw.articles.map((art: any) => ({
-          title: art.title || '',
-          category: art.category || 'India',
-          summary: art.summary || '',
-          content: Array.isArray(art.content)
-            ? art.content
-            : typeof art.content === 'string'
+        title: art.title || '',
+        category: art.category || 'India',
+        summary: art.summary || '',
+        content: Array.isArray(art.content)
+          ? art.content
+          : typeof art.content === 'string'
             ? art.content.split('\n\n').filter(Boolean)
             : undefined,
-          keyPoints: Array.isArray(art.keyPoints) ? art.keyPoints : undefined,
-          readingTime: art.readingTime || 3,
-        }))
+        keyPoints: Array.isArray(art.keyPoints) ? art.keyPoints : undefined,
+        readingTime: art.readingTime || 3,
+      }))
       : [],
     pdfUrl: raw.pdfUrl || null,
     demo: raw.demo,
@@ -235,8 +235,8 @@ function normalizeLegal(raw: any): LegalArticle {
     content: Array.isArray(raw.content)
       ? raw.content
       : typeof raw.content === 'string'
-      ? raw.content.split('\n\n').filter(Boolean)
-      : [],
+        ? raw.content.split('\n\n').filter(Boolean)
+        : [],
     keyPoints: Array.isArray(raw.keyPoints) ? raw.keyPoints : [],
     readingTime: raw.readingTime || 4,
     date: raw.date || raw.createdAt || new Date().toISOString(),
@@ -277,9 +277,9 @@ function normalizeCampaign(raw: any): Campaign {
     description: raw.description || flagshipCampaign.description,
     stills: Array.isArray(raw.stills) && raw.stills.length > 0
       ? raw.stills.map((s: any) => ({
-          image: typeof s === 'string' ? s : s.image || '/images/campaign/campaign-1.jpg',
-          alt: typeof s === 'string' ? 'Campaign still' : s.alt || 'Campaign still',
-        }))
+        image: typeof s === 'string' ? s : s.image || '/images/campaign/campaign-1.jpg',
+        alt: typeof s === 'string' ? 'Campaign still' : s.alt || 'Campaign still',
+      }))
       : flagshipCampaign.stills,
     episodes: Array.isArray(raw.episodes)
       ? raw.episodes.map(normalizeCampaignEpisode)

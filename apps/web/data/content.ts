@@ -5,7 +5,7 @@
  * ⚠ DEMO CONTENT NOTICE:
  * Every item below is clearly-fictional sample content for preview and
  * development only. It is NOT real TSC reporting. Replace everything via
- * the admin panel (/admin) or the seed scripts before launch.
+ * the admin panel (/admin) or the seed scripts before launch Developed by Ayush.
  * The homepage copy in `app/page.tsx` / section components IS the real
  * TSC site copy supplied by the brand.
  */
