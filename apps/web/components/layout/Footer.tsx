@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Instagram, Youtube, Linkedin, Facebook, MessageCircle, MapPin } from 'lucide-react';
+import { Instagram, Youtube, Linkedin, Facebook, MessageCircle, MapPin, Heart } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 import { NewsletterForm } from '@/components/layout/NewsletterForm';
 import { footerNav, site } from '@/lib/site';
@@ -109,14 +109,24 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-tsc flex flex-col items-center justify-between gap-3 py-6 text-xs text-cream/75 sm:flex-row">
-          <p className="font-medium text-cream/90">
+        <div className="container-tsc flex flex-col items-center justify-between gap-4 py-6 text-xs text-cream/75 md:flex-row">
+          <p className="font-medium text-cream/90 text-center md:text-left">
             © {year} THE STUDENT CHAPTERS™. All rights reserved.
           </p>
-          <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            {/* <span className="rounded-full border border-gold/50 bg-gold/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold">
-              Demo build
-            </span> */}
+          <a
+            href="https://kynyx.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center justify-center gap-1.5 font-medium text-cream/90 transition-colors hover:text-gold text-center"
+          >
+            <span>Made with</span>
+            <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500 inline transition-transform duration-200 group-hover:scale-125" aria-hidden="true" />
+            <span>By</span>
+            <span className="font-semibold text-gold group-hover:text-white group-hover:underline underline-offset-4">
+              KYNYX SOLUTIONS.
+            </span>
+          </a>
+          <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 md:justify-end">
             <Link href="/about" className="transition-colors hover:text-gold">About</Link>
             <Link href="/contact" className="transition-colors hover:text-gold">Contact</Link>
             <span aria-hidden className="text-cream/40">•</span>
