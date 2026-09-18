@@ -61,7 +61,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   );
 
   const userFooter = (
-    <div className="border-t border-white/10 bg-black/20 p-4">
+    <div className="shrink-0 border-t border-white/10 bg-black/20 p-4">
       {user && (
         <div className="mb-3 flex items-center gap-3 rounded-md bg-white/[0.04] p-2.5">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold font-display text-sm font-bold text-ink">
@@ -97,10 +97,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="flex min-h-screen bg-cream pt-16">
-      {/* desktop sidebar */}
-      <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-64 shrink-0 flex-col bg-brand-dark lg:flex">
-        <div className="border-b border-white/10 px-5 py-4">
+    <div className="flex min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-4.5rem)] bg-cream pt-16 lg:pt-[72px]">
+      {/* desktop sticky sidebar */}
+      <aside className="sticky top-16 lg:top-[72px] z-30 hidden h-[calc(100vh-4rem)] lg:h-[calc(100vh-4.5rem)] w-64 shrink-0 flex-col bg-brand-dark lg:flex">
+        <div className="shrink-0 border-b border-white/10 px-5 py-4">
           <p className="font-display text-sm font-bold uppercase tracking-[0.16em] text-gold">TSC Newsroom</p>
           <p className="mt-1 text-[11px] text-cream/50">Admin &amp; editorial console</p>
         </div>
@@ -120,14 +120,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 top-16 flex flex-col bg-brand-dark/95 backdrop-blur">
+          <div className="absolute inset-0 top-16 lg:top-[72px] flex flex-col bg-brand-dark/95 backdrop-blur">
             {nav}
             {userFooter}
           </div>
         </div>
       )}
 
-      <main className="min-w-0 flex-1 px-4 py-8 sm:px-8 lg:px-10">{children}</main>
+      <div className="min-w-0 flex-1 px-4 py-8 sm:px-8 lg:px-10">{children}</div>
     </div>
   );
 }
