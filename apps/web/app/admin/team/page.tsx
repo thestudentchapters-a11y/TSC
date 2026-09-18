@@ -20,6 +20,8 @@ import {
 import { Button } from '@/components/common/Button';
 import { Modal } from '@/components/common/Modal';
 import { useToast } from '@/components/common/Toast';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { AVAILABLE_PERMISSIONS } from '@/lib/permissions';
 import { demoMembers } from '@/data/content';
 import { formatDate } from '@/lib/utils';
 
@@ -37,45 +39,8 @@ interface AdminUser {
   createdAt?: string;
 }
 
-const AVAILABLE_PERMISSIONS = [
-  {
-    id: 'publish_articles',
-    label: 'Direct Article Publishing',
-    description: 'Bypass review queue and publish articles directly to the live feed.',
-  },
-  {
-    id: 'manage_events',
-    label: 'Event Management',
-    description: 'Create, edit, schedule, and cancel campus events.',
-  },
-  {
-    id: 'manage_opportunities',
-    label: 'Opportunities & Jobs',
-    description: 'Post and manage internships, job openings, and fellowships.',
-  },
-  {
-    id: 'manage_campuses',
-    label: 'Campus Chapter Management',
-    description: 'Add and update campus partner pages and college communities.',
-  },
-  {
-    id: 'manage_podcasts',
-    label: 'Podcast Management',
-    description: 'Publish and organize audio podcast episodes.',
-  },
-  {
-    id: 'moderate_submissions',
-    label: 'Submission Review & Moderation',
-    description: 'Review and approve/reject community stories and campus news.',
-  },
-  {
-    id: 'manage_media',
-    label: 'Media Library Access',
-    description: 'Upload, replace, and manage media library assets.',
-  },
-];
-
 export default function AdminTeamPage() {
+  const { user: currentUser, updateUser } = useAuth();
   const { push } = useToast();
   const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
   const [search, setSearch] = useState('');
@@ -362,6 +327,10 @@ export default function AdminTeamPage() {
       }
     }
 
+    if (currentUser && (currentUser.id === selectedUser.id || (selectedUser._id && currentUser.id === selectedUser._id))) {
+      updateUser({ customPermissions: activePermissions });
+    }
+
     setSavingPermissions(false);
     setSelectedUser(null);
     push(`Updated permissions for ${selectedUser.name}.`, 'success');
@@ -380,6 +349,10 @@ export default function AdminTeamPage() {
       window.localStorage.setItem('tsc.admin.custom_permissions', JSON.stringify(stored));
     } catch {
       /* noop */
+    }
+
+    if (currentUser && currentUser.id === userId) {
+      updateUser({ role: newRole });
     }
 
     const api = process.env.NEXT_PUBLIC_API_URL;

@@ -18,7 +18,7 @@ export const broadcastRouter = Router();
 broadcastRouter.get(
   '/api/admin/broadcasts/audience-stats',
   requireAuth,
-  requireEditor,
+  requireAdmin,
   asyncHandler(async (_req: AuthRequest, res: Response) => {
     const [subscribers, members] = await Promise.all([
       Subscriber.find({ status: 'active' }).select('email').lean(),
@@ -46,7 +46,7 @@ broadcastRouter.get(
 broadcastRouter.get(
   '/api/admin/broadcasts',
   requireAuth,
-  requireEditor,
+  requireAdmin,
   asyncHandler(async (_req: AuthRequest, res: Response) => {
     const logs = await BroadcastLog.find().sort({ createdAt: -1 }).limit(50).populate('sentBy', 'name email').lean();
     res.json({ success: true, data: logs });
@@ -59,7 +59,7 @@ broadcastRouter.get(
 broadcastRouter.get(
   '/api/admin/broadcasts/automation-settings',
   requireAuth,
-  requireEditor,
+  requireAdmin,
   asyncHandler(async (_req: AuthRequest, res: Response) => {
     const settings = await SiteSettings.findById('global').lean();
     const automations = settings?.emailAutomations || {
@@ -100,7 +100,7 @@ broadcastRouter.put(
 broadcastRouter.post(
   '/api/admin/broadcasts/auto-write',
   requireAuth,
-  requireEditor,
+  requireAdmin,
   asyncHandler(async (req: AuthRequest, res: Response) => {
     const input = req.body as EmailWriterInput;
     const draft = await autoWriteBroadcastEmail(input);
@@ -114,7 +114,7 @@ broadcastRouter.post(
 broadcastRouter.post(
   '/api/admin/broadcasts/test',
   requireAuth,
-  requireEditor,
+  requireAdmin,
   asyncHandler(async (req: AuthRequest, res: Response) => {
     const { subject, previewText, heading, body, buttonLabel, buttonUrl, testEmail } = req.body;
 

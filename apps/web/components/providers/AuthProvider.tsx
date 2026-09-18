@@ -8,6 +8,7 @@ export interface AuthUser {
   name: string;
   email: string;
   role: Role;
+  customPermissions?: string[];
   college?: string;
   city?: string;
   phone?: string;
@@ -20,6 +21,7 @@ interface AuthContextValue {
   register: (payload: RegisterPayload) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
   getToken: () => string | null;
+  updateUser: (u: Partial<AuthUser>) => void;
 }
 
 export interface RegisterPayload {
@@ -137,9 +139,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const updateUser = useCallback(
+    (partial: Partial<AuthUser>) => {
+      setUser((prev) => {
+        if (!prev) return null;
+        const updated = { ...prev, ...partial };
+        persist(updated);
+        return updated;
+      });
+    },
+    [persist]
+  );
+
   const value = useMemo(
-    () => ({ user, ready, login, register, logout, getToken }),
-    [user, ready, login, register, logout, getToken]
+    () => ({ user, ready, login, register, logout, getToken, updateUser }),
+    [user, ready, login, register, logout, getToken, updateUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

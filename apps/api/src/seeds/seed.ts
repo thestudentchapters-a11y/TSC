@@ -43,7 +43,13 @@ async function seed() {
   /* Official Administrative & Newsroom Accounts */
   const [admin, editor, member] = await User.create([
     { name: 'TSC Administrator', email: 'admin@thestudentchapters.org', passwordHash: 'TSCAdmin@2026!', role: 'admin' },
-    { name: 'TSC Senior Editor', email: 'editor@thestudentchapters.org', passwordHash: 'TSCEditor@2026!', role: 'editor' },
+    {
+      name: 'TSC Senior Editor',
+      email: 'editor@thestudentchapters.org',
+      passwordHash: 'TSCEditor@2026!',
+      role: 'editor',
+      customPermissions: ['publish_articles', 'manage_events', 'moderate_submissions'],
+    },
     { name: 'Aarav Sharma', email: 'member@thestudentchapters.org', passwordHash: 'TSCMember@2026!', role: 'member', college: 'Patna University', city: 'Patna' },
   ]);
   await Membership.create({ user: member._id, memberCode: 'TSC-IND001', status: 'active' });

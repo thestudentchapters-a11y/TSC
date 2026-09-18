@@ -266,6 +266,7 @@ export interface MemberRecord {
   college: string;
   city: string;
   role: 'member' | 'editor' | 'admin';
+  customPermissions?: string[];
   joinedOn: string;
   status: 'active' | 'pending';
 }

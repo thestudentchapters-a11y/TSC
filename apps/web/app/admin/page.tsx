@@ -8,6 +8,9 @@ import {
 } from '@/data/content';
 import { formatDate } from '@/lib/utils';
 
+import { useAuth } from '@/components/providers/AuthProvider';
+import { canAccessRoute, getUserPermissions } from '@/lib/permissions';
+
 function StatCard({ label, value, sub, icon: Icon, href }: { label: string; value: string | number; sub?: string; icon: typeof Users; href: string }) {
   return (
     <Link href={href} className="card-base card-hover group flex h-full flex-col justify-between gap-3 p-5">
@@ -26,11 +29,24 @@ function StatCard({ label, value, sub, icon: Icon, href }: { label: string; valu
 }
 
 export default function AdminDashboardPage() {
+  const { user } = useAuth();
+  const perms = getUserPermissions(user);
   const pending = [...demoStorySubmissions, ...demoCampusSubmissions].filter((s) => s.status === 'pending').length;
   const newMembers = demoMembers.filter((m) => m.joinedOn >= '2026-08-01').length;
   const upcoming = demoEvents.filter((e) => e.status === 'upcoming').length;
   const activeOpps = demoOpportunities.filter((o) => o.active).length;
   const unread = demoContactMessages.filter((m) => m.status === 'new').length;
+
+  const statCards = [
+    { label: 'Hiring applications', value: '12', sub: 'Jobs & Internships', icon: Briefcase, href: '/admin/hiring' },
+    { label: 'Team & Staff', value: demoMembers.filter((m) => m.role === 'admin' || m.role === 'editor').length, sub: 'Admins & Editors', icon: Users, href: '/admin/team' },
+    { label: 'Pending submissions', value: pending, sub: 'Awaiting review', icon: Share2, href: '/admin/story-submissions' },
+    { label: 'Published articles', value: demoArticles.filter((a) => a.status === 'published').length, sub: 'News section', icon: Newspaper, href: '/admin/news' },
+    { label: 'Upcoming events', value: upcoming, icon: CalendarDays, href: '/admin/events' },
+    { label: 'Active opportunities', value: activeOpps, sub: 'Jobs · Internships · Fellowships', icon: TrendingUp, href: '/admin/opportunities' },
+    { label: 'Podcast episodes', value: demoEpisodes.length, icon: Mic, href: '/admin/podcasts' },
+    { label: 'Campuses', value: demoCampuses.length, icon: School, href: '/admin/campuses' },
+  ].filter((card) => canAccessRoute(user, card.href));
 
   return (
     <div>
@@ -43,21 +59,29 @@ export default function AdminDashboardPage() {
             demo dataset.
           </p>
         </div>
-        <span className="rounded-full border border-gold/50 bg-gold-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gold-deep">
-          Demo data
-        </span>
+        <div className="flex items-center gap-2">
+          {user?.role === 'editor' && (
+            <span className="rounded-full border border-brand/30 bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand">
+              Editor Mode ({perms.length} active permissions)
+            </span>
+          )}
+          <span className="rounded-full border border-gold/50 bg-gold-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gold-deep">
+            Demo data
+          </span>
+        </div>
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Hiring applications" value="12" sub="Jobs & Internships" icon={Briefcase} href="/admin/hiring" />
-        {/* <StatCard label="Community members" value={demoMembers.filter((m) => m.role === 'member').length} sub={`${newMembers} active`} icon={Users} href="/admin/members" Developed by Ayush /> */}
-        <StatCard label="Team & Staff" value={demoMembers.filter((m) => m.role === 'admin' || m.role === 'editor').length} sub="Admins & Editors" icon={Users} href="/admin/team" />
-        <StatCard label="Pending submissions" value={pending} sub="Awaiting review" icon={Share2} href="/admin/story-submissions" />
-        <StatCard label="Published articles" value={demoArticles.filter((a) => a.status === 'published').length} sub="News section" icon={Newspaper} href="/admin/news" />
-        <StatCard label="Upcoming events" value={upcoming} icon={CalendarDays} href="/admin/events" />
-        <StatCard label="Active opportunities" value={activeOpps} sub="Jobs · Internships · Fellowships" icon={TrendingUp} href="/admin/opportunities" />
-        <StatCard label="Podcast episodes" value={demoEpisodes.length} icon={Mic} href="/admin/podcasts" />
-        <StatCard label="Campuses" value={demoCampuses.length} icon={School} href="/admin/campuses" />
+        {statCards.map((card) => (
+          <StatCard
+            key={card.href}
+            label={card.label}
+            value={card.value}
+            sub={card.sub}
+            icon={card.icon}
+            href={card.href}
+          />
+        ))}
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -78,9 +102,13 @@ export default function AdminDashboardPage() {
               </li>
             ))}
           </ul>
-          <div className="mt-4 flex gap-4 text-xs font-bold uppercase tracking-wider">
-            <Link href="/admin/story-submissions" className="cta-underline text-brand">Story submissions</Link>
-            <Link href="/admin/campus-submissions" className="cta-underline text-brand">Campus submissions</Link>
+          <div className="mt-4 flex flex-wrap gap-4 text-xs font-bold uppercase tracking-wider">
+            {canAccessRoute(user, '/admin/story-submissions') && (
+              <Link href="/admin/story-submissions" className="cta-underline text-brand">Story submissions</Link>
+            )}
+            {canAccessRoute(user, '/admin/campus-submissions') && (
+              <Link href="/admin/campus-submissions" className="cta-underline text-brand">Campus submissions</Link>
+            )}
           </div>
         </section>
 
@@ -97,9 +125,15 @@ export default function AdminDashboardPage() {
             ))}
           </ul>
           <div className="mt-4 flex flex-wrap gap-4 text-xs font-bold uppercase tracking-wider">
-            <Link href="/admin/contact-messages" className="cta-underline text-brand">All messages ({unread} new)</Link>
-            <Link href="/admin/media" className="cta-underline text-brand">Media library</Link>
-            <Link href="/admin/settings" className="cta-underline text-brand">Settings</Link>
+            {canAccessRoute(user, '/admin/contact-messages') && (
+              <Link href="/admin/contact-messages" className="cta-underline text-brand">All messages ({unread} new)</Link>
+            )}
+            {canAccessRoute(user, '/admin/media') && (
+              <Link href="/admin/media" className="cta-underline text-brand">Media library</Link>
+            )}
+            {canAccessRoute(user, '/admin/settings') && (
+              <Link href="/admin/settings" className="cta-underline text-brand">Settings</Link>
+            )}
           </div>
         </section>
       </div>

@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { ExternalLink, LayoutDashboard, Menu, X, LogOut, User, Shield } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { ExternalLink, LayoutDashboard, Menu, X, LogOut, User, Shield, ShieldCheck } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 import { adminNavGroups } from '@/lib/admin-collections';
+import { filterNavGroups, getUserPermissions } from '@/lib/permissions';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useToast } from '@/components/common/Toast';
 import { cn } from '@/lib/utils';
@@ -18,6 +19,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const { push } = useToast();
   const [open, setOpen] = useState(false);
 
+  const visibleNavGroups = useMemo(() => filterNavGroups(adminNavGroups, user), [user]);
+  const userPerms = useMemo(() => getUserPermissions(user), [user]);
+
   const handleLogout = () => {
     logout();
     push('You have been logged out of the Newsroom console.', 'info');
@@ -26,7 +30,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   const nav = (
     <nav aria-label="Admin" className="flex-1 space-y-6 overflow-y-auto px-3 py-5 [scrollbar-width:thin]">
-      {adminNavGroups.map((g) => (
+      {visibleNavGroups.map((g) => (
         <div key={g.label}>
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-cream/40">{g.label}</p>
           <ul className="space-y-0.5">
@@ -68,7 +72,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <p className="truncate text-[11px] text-cream/50">{user.email}</p>
           </div>
           <span className="inline-flex items-center gap-1 rounded bg-gold/20 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-gold">
-            <Shield className="h-2.5 w-2.5" />
+            {user.role === 'admin' ? <ShieldCheck className="h-2.5 w-2.5" /> : <Shield className="h-2.5 w-2.5" />}
             {user.role}
           </span>
         </div>

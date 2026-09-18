@@ -48,19 +48,25 @@ export const requireRole = (...roles: Array<'member' | 'editor' | 'admin'>) =>
 export const requireEditor = requireRole('editor');
 export const requireAdmin = requireRole('admin');
 
-/** Require editor/admin role OR a specific granular permission granted to the member. */
-export const requirePermissionOrEditor = (permission: string) =>
+/** Require admin role OR a specific granular permission for editors. */
+export const requirePermission = (permission: string) =>
   asyncHandler(async (req: AuthRequest, _res, next) => {
     if (!req.user) throw ApiError.unauthorized('Authentication required');
-    if (req.user.role === 'admin' || req.user.role === 'editor') {
+    if (req.user.role === 'admin') {
       return next();
     }
-    const perms = (req.user as any).customPermissions as string[] | undefined;
-    if (perms && Array.isArray(perms) && perms.includes(permission)) {
-      return next();
+    if (req.user.role === 'editor') {
+      const perms = (req.user as any).customPermissions as string[] | undefined;
+      if (perms && Array.isArray(perms) && perms.includes(permission)) {
+        return next();
+      }
+      throw ApiError.forbidden(`You do not have the "${permission}" permission to perform this action`);
     }
-    throw ApiError.forbidden(`You do not have the "${permission}" permission to perform this action`);
+    throw ApiError.forbidden('Staff authorization required');
   });
+
+/** Backward compatibility alias. */
+export const requirePermissionOrEditor = requirePermission;
 
 /** Optional auth — attaches user if a valid token exists, never blocks. */
 export const optionalAuth = asyncHandler(async (req: AuthRequest, _res, next) => {

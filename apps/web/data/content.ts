@@ -1085,7 +1085,7 @@ export const demoContactMessages: ContactMessageRecord[] = [
 
 export const demoMembers: MemberRecord[] = [
   { id: 'm1', name: 'Aarav Kumar ', email: 'aarav.demo@example.com', college: 'Nalanda Institute ', city: 'Patna', role: 'member', joinedOn: '2026-08-02', status: 'active' },
-  { id: 'm2', name: 'Priya Sharma ', email: 'priya.demo@example.com', college: 'Vidya Vihar Central ', city: 'Pune', role: 'editor', joinedOn: '2026-07-18', status: 'active' },
+  { id: 'm2', name: 'Priya Sharma ', email: 'priya.demo@example.com', college: 'Vidya Vihar Central ', city: 'Pune', role: 'editor', customPermissions: ['publish_articles', 'manage_events', 'moderate_submissions'], joinedOn: '2026-07-18', status: 'active' },
   { id: 'm3', name: 'Zoya Ahmed ', email: 'zoya.demo@example.com', college: 'Coastal University ', city: 'Kochi', role: 'member', joinedOn: '2026-08-14', status: 'active' },
   { id: 'm4', name: 'Vikram Shetty ', email: 'vikram.demo@example.com', college: 'Sunrise Engineering ', city: 'Hyderabad', role: 'member', joinedOn: '2026-08-20', status: 'pending' },
   { id: 'm5', name: 'TSC Admin ', email: 'admin@tsc.demo', college: '—', city: '—', role: 'admin', joinedOn: '2026-06-01', status: 'active' },
