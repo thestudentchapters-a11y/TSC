@@ -14,7 +14,17 @@ export const metadata: Metadata = {
   alternates: { canonical: '/events' },
 };
 
-export const revalidate = 120;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const STANDARD_EVENT_CATEGORIES = [
+  'Workshop',
+  'Competition',
+  'Conference',
+  'Campus Programme',
+  'Networking',
+  'Youth Initiative',
+];
 
 export default async function EventsPage({
   searchParams,
@@ -22,12 +32,21 @@ export default async function EventsPage({
   searchParams: { category?: string; status?: string };
 }) {
   const all = await getEvents();
-  const categories = Array.from(new Set(all.map((e) => e.category))).sort();
+  const dynamicCategories = all.map((e) => e.category).filter(Boolean);
+  const categories = Array.from(new Set([...STANDARD_EVENT_CATEGORIES, ...dynamicCategories])).sort();
   const statuses = ['upcoming', 'ongoing', 'past'];
 
   let items = all;
-  if (searchParams.category) items = items.filter((e) => e.category === searchParams.category);
-  if (searchParams.status) items = items.filter((e) => e.status === searchParams.status);
+  if (searchParams.category) {
+    items = items.filter(
+      (e) => e.category && e.category.toLowerCase() === searchParams.category!.toLowerCase()
+    );
+  }
+  if (searchParams.status) {
+    items = items.filter(
+      (e) => e.status && e.status.toLowerCase() === searchParams.status!.toLowerCase()
+    );
+  }
   items = [...items].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (

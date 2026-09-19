@@ -36,8 +36,10 @@ export function StoriesFeed({
     }
   }, []);
 
-  const published = stories.filter((s) => s.status === 'published');
-  let filtered = category ? published.filter((s) => s.category === category) : published;
+  const published = stories.filter((s) => !s.status || s.status.toLowerCase() === 'published');
+  let filtered = category
+    ? published.filter((s) => s.category?.toLowerCase() === category.toLowerCase())
+    : published;
 
   const q = query.trim().toLowerCase();
   if (q) {

@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: '/campaigns' },
 };
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function CampaignsPage() {
   const allCampaigns = await getCampaigns();

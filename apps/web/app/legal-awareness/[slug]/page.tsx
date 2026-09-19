@@ -8,7 +8,8 @@ import { Reveal } from '@/components/common/Reveal';
 import { getLegalBySlug, getLegalArticles } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 type Props = { params: { slug: string } };
 

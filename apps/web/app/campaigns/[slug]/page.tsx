@@ -7,7 +7,8 @@ import { StaggerGrid, StaggerItem, Reveal } from '@/components/common/Reveal';
 import { Button } from '@/components/common/Button';
 import { getCampaignBySlug, getCampaigns } from '@/lib/data';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateStaticParams() {
   const campaigns = await getCampaigns();

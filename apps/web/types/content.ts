@@ -5,28 +5,33 @@ export type SubmissionStatus = 'pending' | 'under review' | 'approved' | 'reject
 
 export type NewsCategory =
   | 'Student News'
+  | 'Campus News'
   | 'Education'
   | 'Youth & Society'
-  | 'Technology & Innovation';
+  | 'Technology & Innovation'
+  | 'Achievements'
+  | string;
 
-export type StoryCategory = 'student' | 'startup' | 'campus';
+export type StoryCategory = 'student' | 'startup' | 'campus' | string;
 
 export type PodcastCategory =
   | 'Student Voices'
   | 'Founder Stories'
   | 'Career Conversations'
-  | 'Ideas & Perspectives';
+  | 'Ideas & Perspectives'
+  | string;
 
-export type LegalTopic = 'Student Rights' | 'Cyber Safety' | 'Digital Rights' | 'Education Laws';
+export type LegalTopic = 'Student Rights' | 'Cyber Safety' | 'Digital Rights' | 'Education Laws' | string;
 
-export type AffairTopic = 'India' | 'World' | 'Economy' | 'Science & Technology' | 'Education';
+export type AffairTopic = 'India' | 'World' | 'Economy' | 'Science & Technology' | 'Education' | string;
 
 export type OpportunityType =
   | 'Job'
   | 'Internship'
   | 'Fellowship'
   | 'Scholarship'
-  | 'Career Awareness';
+  | 'Career Awareness'
+  | string;
 
 export type WorkMode = 'Remote' | 'Hybrid' | 'On-site';
 

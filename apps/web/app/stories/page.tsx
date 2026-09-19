@@ -13,14 +13,16 @@ export const metadata: Metadata = {
   alternates: { canonical: '/stories' },
 };
 
-export const revalidate = 120;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function StoriesPage({
   searchParams,
 }: {
   searchParams: { category?: string; q?: string; page?: string };
 }) {
-  const all = (await getStories()).filter((s) => s.status === 'published');
+  const stories = await getStories();
+  const all = stories.filter((s) => !s.status || s.status.toLowerCase() === 'published');
 
   return (
     <>

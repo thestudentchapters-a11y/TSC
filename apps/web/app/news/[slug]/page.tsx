@@ -12,7 +12,8 @@ import { getArticleBySlug, getArticles } from '@/lib/data';
 import { formatDate, readingTimeFromContent } from '@/lib/utils';
 import { site } from '@/lib/site';
 
-export const revalidate = 120;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 type Props = { params: { slug: string } };
 

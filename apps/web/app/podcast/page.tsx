@@ -18,7 +18,15 @@ export const metadata: Metadata = {
   alternates: { canonical: '/podcast' },
 };
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const STANDARD_PODCAST_CATEGORIES = [
+  'Student Voices',
+  'Founder Stories',
+  'Career Conversations',
+  'Ideas & Perspectives',
+];
 
 const CATEGORY_DESC: { name: 'Student Voices' | 'Founder Stories' | 'Career Conversations' | 'Ideas & Perspectives'; desc: string }[] = [
   { name: 'Student Voices', desc: 'Real students, real journeys — the voices behind the stories.' },
@@ -33,9 +41,10 @@ export default async function PodcastPage({
   searchParams: { category?: string };
 }) {
   const all = await getEpisodes();
-  const categories = Array.from(new Set(all.map((e) => e.category)));
+  const dynamicCategories = all.map((e) => e.category).filter(Boolean);
+  const categories = Array.from(new Set([...STANDARD_PODCAST_CATEGORIES, ...dynamicCategories]));
   const filtered = searchParams.category
-    ? all.filter((e) => e.category === searchParams.category)
+    ? all.filter((e) => e.category && e.category.toLowerCase() === searchParams.category!.toLowerCase())
     : all;
   const featured = all.find((e) => e.featured) ?? all[0];
   const rest = filtered.filter((e) => e.id !== featured?.id || !!searchParams.category);

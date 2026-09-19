@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   alternates: { canonical: '/career' },
 };
 
-export const revalidate = 120; // Opportunity catalog live refresh rate Developed by Ayush
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const PATHS = [
   { icon: Briefcase, title: 'Jobs', copy: 'Discover jobs and early-career opportunities for students and young professionals.', cta: 'Explore Jobs →', href: '/career/jobs' },

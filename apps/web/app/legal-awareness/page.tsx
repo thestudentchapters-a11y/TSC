@@ -12,7 +12,15 @@ export const metadata: Metadata = {
   alternates: { canonical: '/legal-awareness' },
 };
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const STANDARD_LEGAL_TOPICS = [
+  'Student Rights',
+  'Cyber Safety',
+  'Digital Rights',
+  'Education Laws',
+];
 
 const TOPIC_META: Record<string, { icon: typeof Scale; desc: string }> = {
   'Student Rights': { icon: ShieldCheck, desc: 'Understand your rights within educational institutions.' },
@@ -28,8 +36,11 @@ export default async function LegalAwarenessPage({
 }) {
   const all = await getLegalArticles();
   const topic = searchParams.topic;
-  const topics = Array.from(new Set(all.map((l) => l.topic)));
-  const items = topic ? all.filter((l) => l.topic === topic) : all;
+  const dynamicTopics = all.map((l) => l.topic).filter(Boolean);
+  const topics = Array.from(new Set([...STANDARD_LEGAL_TOPICS, ...dynamicTopics]));
+  const items = topic
+    ? all.filter((l) => l.topic && l.topic.toLowerCase() === topic.toLowerCase())
+    : all;
 
   return (
     <>
