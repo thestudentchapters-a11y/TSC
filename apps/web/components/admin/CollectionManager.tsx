@@ -756,12 +756,37 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
   const { push } = useToast();
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     if (initial) return { ...(initial ?? {}) };
+    const today = new Date().toISOString().slice(0, 10);
     const defaults: Record<string, unknown> = {
       status: 'published',
-      date: new Date().toISOString().slice(0, 10),
+      date: today,
     };
     if (def.key === 'news' || def.key === 'articles') {
       defaults.category = 'Student News';
+    } else if (def.key === 'stories') {
+      defaults.category = 'student';
+    } else if (def.key === 'campuses') {
+      defaults.state = 'Bihar';
+      defaults.type = 'University';
+    } else if (def.key === 'podcasts') {
+      defaults.category = 'Student Voices';
+      defaults.durationLabel = '25:00';
+      defaults.episodeNumber = 1;
+    } else if (def.key === 'events') {
+      defaults.status = 'upcoming';
+      defaults.category = 'Summit';
+      defaults.registrationDeadline = today;
+    } else if (def.key === 'opportunities') {
+      defaults.type = 'Job';
+      defaults.mode = 'Remote';
+      defaults.active = true;
+      defaults.deadline = today;
+    } else if (def.key === 'current-affairs') {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      defaults.month = months[new Date().getMonth()];
+      defaults.year = new Date().getFullYear();
+    } else if (def.key === 'legal-awareness' || def.key === 'legal') {
+      defaults.topic = 'Fundamental Rights';
     }
     return defaults;
   });

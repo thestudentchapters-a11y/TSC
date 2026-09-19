@@ -39,13 +39,39 @@ export default function ShareYourStoryPage() {
     }
     if (!form.consent) e.consent = 'Please confirm consent so we can review your story.';
     setErrors(e);
-    return Object.keys(e).length === 0;
+    if (Object.keys(e).length > 0) {
+      const fieldIdMap: Record<string, string> = {
+        name: 's-name',
+        email: 's-email',
+        phone: 's-phone',
+        college: 's-college',
+        city: 's-city',
+        state: 's-state',
+        title: 's-title',
+        category: 's-cat',
+        content: 's-content',
+        videoUrl: 's-video',
+        consent: 's-consent',
+      };
+      const firstKey = Object.keys(e)[0];
+      const targetId = fieldIdMap[firstKey] || `s-${firstKey}`;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+      }
+      return false;
+    }
+    return true;
   };
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     if (honey) return;
-    if (!validate()) return;
+    if (!validate()) {
+      push('Please fix the highlighted required fields before submitting.', 'error');
+      return;
+    }
     setBusy(true);
     try {
       const api = process.env.NEXT_PUBLIC_API_URL;

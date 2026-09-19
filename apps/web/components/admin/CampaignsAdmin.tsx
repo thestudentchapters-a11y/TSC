@@ -42,6 +42,7 @@ export function CampaignsAdmin() {
   // Campaign Modal State
   const [isCampaignModalOpen, setIsCampaignModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [savingCampaign, setSavingCampaign] = useState(false);
   const [campaignForm, setCampaignForm] = useState<{
     id?: string;
     title: string;
@@ -74,6 +75,7 @@ export function CampaignsAdmin() {
   // Episode Modal State
   const [isEpisodeModalOpen, setIsEpisodeModalOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<CampaignEpisode | null>(null);
+  const [savingEpisode, setSavingEpisode] = useState(false);
   const [episodeForm, setEpisodeForm] = useState<{
     id?: string;
     campaignSlug: string;
@@ -230,94 +232,104 @@ export function CampaignsAdmin() {
     e.preventDefault();
     if (!campaignForm.title.trim()) {
       push('Please provide a campaign title', 'error');
+      const el = document.getElementById('camp-title');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+      }
       return;
     }
 
-    const slug = campaignForm.slug.trim() || slugify(campaignForm.title);
-    const categories = campaignForm.categories
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
-    const locations = campaignForm.locations
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
+    setSavingCampaign(true);
+    try {
+      const slug = campaignForm.slug.trim() || slugify(campaignForm.title);
+      const categories = campaignForm.categories
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const locations = campaignForm.locations
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
+      const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
 
-    if (editingCampaign) {
-      // Update existing
-      const updatedCampaign: Campaign = {
-        ...editingCampaign,
-        title: campaignForm.title,
-        slug,
-        eyebrow: campaignForm.eyebrow,
-        headline: campaignForm.headline,
-        description: campaignForm.description,
-        categories,
-        locations,
-        stills: campaignForm.stills,
-        status: campaignForm.status,
-        featured: campaignForm.featured,
-      };
+      if (editingCampaign) {
+        // Update existing
+        const updatedCampaign: Campaign = {
+          ...editingCampaign,
+          title: campaignForm.title,
+          slug,
+          eyebrow: campaignForm.eyebrow,
+          headline: campaignForm.headline,
+          description: campaignForm.description,
+          categories,
+          locations,
+          stills: campaignForm.stills,
+          status: campaignForm.status,
+          featured: campaignForm.featured,
+        };
 
-      const next = campaigns.map((c) => (c.slug === editingCampaign.slug ? updatedCampaign : c));
-      await persistCampaigns(next);
+        const next = campaigns.map((c) => (c.slug === editingCampaign.slug ? updatedCampaign : c));
+        await persistCampaigns(next);
 
-      // Sync to API
-      if (api && token) {
-        try {
-          await fetch(`${api}/api/campaigns/${editingCampaign.id || editingCampaign.slug}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(updatedCampaign),
-          });
-        } catch {}
+        // Sync to API
+        if (api && token) {
+          try {
+            await fetch(`${api}/api/campaigns/${editingCampaign.id || editingCampaign.slug}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(updatedCampaign),
+            });
+          } catch {}
+        }
+
+        push(`Campaign "${campaignForm.title}" updated successfully!`, 'success');
+      } else {
+        // Create new
+        const newCampaign: Campaign = {
+          id: `camp_${Date.now()}`,
+          title: campaignForm.title,
+          slug,
+          eyebrow: campaignForm.eyebrow,
+          headline: campaignForm.headline,
+          description: campaignForm.description,
+          categories,
+          locations,
+          stills: campaignForm.stills,
+          episodes: [],
+          status: campaignForm.status,
+          featured: campaignForm.featured,
+        };
+
+        const next = [...campaigns, newCampaign];
+        await persistCampaigns(next);
+        setSelectedCampaignSlug(slug);
+
+        // Sync to API
+        if (api && token) {
+          try {
+            await fetch(`${api}/api/campaigns`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(newCampaign),
+            });
+          } catch {}
+        }
+
+        push(`Campaign "${campaignForm.title}" created successfully!`, 'success');
       }
 
-      push(`Campaign "${campaignForm.title}" updated successfully!`, 'success');
-    } else {
-      // Create new
-      const newCampaign: Campaign = {
-        id: `camp_${Date.now()}`,
-        title: campaignForm.title,
-        slug,
-        eyebrow: campaignForm.eyebrow,
-        headline: campaignForm.headline,
-        description: campaignForm.description,
-        categories,
-        locations,
-        stills: campaignForm.stills,
-        episodes: [],
-        status: campaignForm.status,
-        featured: campaignForm.featured,
-      };
-
-      const next = [...campaigns, newCampaign];
-      await persistCampaigns(next);
-      setSelectedCampaignSlug(slug);
-
-      // Sync to API
-      if (api && token) {
-        try {
-          await fetch(`${api}/api/campaigns`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(newCampaign),
-          });
-        } catch {}
-      }
-
-      push(`Campaign "${campaignForm.title}" created successfully!`, 'success');
+      setIsCampaignModalOpen(false);
+    } finally {
+      setSavingCampaign(false);
     }
-
-    setIsCampaignModalOpen(false);
   };
 
   const handleDeleteCampaign = async (camp: Campaign) => {
@@ -405,91 +417,97 @@ export function CampaignsAdmin() {
       return;
     }
 
-    const slug = episodeForm.slug.trim() || slugify(episodeForm.title);
-    const thumb =
-      episodeForm.image.trim() ||
-      (episodeForm.videoUrl ? getYoutubeThumbnailUrl(episodeForm.videoUrl, 'hq') : null) ||
-      '/images/campaign/campaign-1.jpg';
+    setSavingEpisode(true);
+    try {
+      const slug = episodeForm.slug.trim() || slugify(episodeForm.title);
+      const thumb =
+        episodeForm.image.trim() ||
+        (episodeForm.videoUrl ? getYoutubeThumbnailUrl(episodeForm.videoUrl, 'hq') : null) ||
+        '/images/campaign/campaign-1.jpg';
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
+      const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
 
-    let targetCamp = campaigns.find((c) => c.slug === episodeForm.campaignSlug) || selectedCampaign;
-    let updatedEpisodes: CampaignEpisode[] = [];
+      let targetCamp = campaigns.find((c) => c.slug === episodeForm.campaignSlug) || selectedCampaign;
+      let updatedEpisodes: CampaignEpisode[] = [];
 
-    if (editingEpisode) {
-      const updated: CampaignEpisode = {
-        ...editingEpisode,
-        title: episodeForm.title,
-        slug,
-        episodeNumber: Number(episodeForm.episodeNumber) || 1,
-        professional: episodeForm.professional,
-        profession: episodeForm.profession,
-        location: episodeForm.location,
-        description: episodeForm.description,
-        videoUrl: episodeForm.videoUrl.trim() || null,
-        image: thumb,
-        imageAlt: `${episodeForm.title} (documentary still)`,
-        durationLabel: episodeForm.durationLabel,
-        status: episodeForm.status,
-      };
+      if (editingEpisode) {
+        const updated: CampaignEpisode = {
+          ...editingEpisode,
+          title: episodeForm.title,
+          slug,
+          episodeNumber: Number(episodeForm.episodeNumber) || 1,
+          professional: episodeForm.professional,
+          profession: episodeForm.profession,
+          location: episodeForm.location,
+          description: episodeForm.description,
+          videoUrl: episodeForm.videoUrl.trim() || null,
+          image: thumb,
+          imageAlt: `${episodeForm.title} (documentary still)`,
+          durationLabel: episodeForm.durationLabel,
+          status: episodeForm.status,
+        };
 
-      updatedEpisodes = (targetCamp.episodes || []).map((e) =>
-        e.id === editingEpisode.id ? updated : e
+        updatedEpisodes = (targetCamp.episodes || []).map((e) =>
+          e.id === editingEpisode.id ? updated : e
+        );
+
+        if (api && token) {
+          try {
+            await fetch(`${api}/api/campaign-episodes/${editingEpisode.id || editingEpisode.slug}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ ...updated, campaign: targetCamp.id }),
+            });
+          } catch {}
+        }
+
+        push(`Episode "${episodeForm.title}" updated successfully!`, 'success');
+      } else {
+        const newEpisode: CampaignEpisode = {
+          id: `ep_${Date.now()}`,
+          title: episodeForm.title,
+          slug,
+          episodeNumber: Number(episodeForm.episodeNumber) || 1,
+          professional: episodeForm.professional,
+          profession: episodeForm.profession,
+          location: episodeForm.location,
+          description: episodeForm.description,
+          videoUrl: episodeForm.videoUrl.trim() || null,
+          image: thumb,
+          imageAlt: `${episodeForm.title} (documentary still)`,
+          durationLabel: episodeForm.durationLabel,
+          status: episodeForm.status,
+        };
+
+        updatedEpisodes = [...(targetCamp.episodes || []), newEpisode];
+
+        if (api && token) {
+          try {
+            await fetch(`${api}/api/campaign-episodes`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ ...newEpisode, campaign: targetCamp.id }),
+            });
+          } catch {}
+        }
+
+        push(`Episode "${episodeForm.title}" added to campaign!`, 'success');
+      }
+
+      const nextCampaigns = campaigns.map((c) =>
+        c.slug === targetCamp.slug ? { ...c, episodes: updatedEpisodes } : c
       );
-
-      if (api && token) {
-        try {
-          await fetch(`${api}/api/campaign-episodes/${editingEpisode.id || editingEpisode.slug}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ ...updated, campaign: targetCamp.id }),
-          });
-        } catch {}
-      }
-      push(`Documentary episode "${episodeForm.title}" updated!`, 'success');
-    } else {
-      const newEp: CampaignEpisode = {
-        id: `ep_${Date.now()}`,
-        campaign: targetCamp.id,
-        title: episodeForm.title,
-        slug,
-        episodeNumber: Number(episodeForm.episodeNumber) || (targetCamp.episodes?.length || 0) + 1,
-        professional: episodeForm.professional,
-        profession: episodeForm.profession,
-        location: episodeForm.location,
-        description: episodeForm.description,
-        videoUrl: episodeForm.videoUrl.trim() || null,
-        image: thumb,
-        imageAlt: `${episodeForm.title} (documentary still)`,
-        durationLabel: episodeForm.durationLabel,
-        status: episodeForm.status,
-      };
-
-      updatedEpisodes = [...(targetCamp.episodes || []), newEp];
-
-      if (api && token) {
-        try {
-          await fetch(`${api}/api/campaign-episodes`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ ...newEp, campaign: targetCamp.id }),
-          });
-        } catch {}
-      }
-      push(`Documentary episode "${episodeForm.title}" published!`, 'success');
+      await persistCampaigns(nextCampaigns);
+      setIsEpisodeModalOpen(false);
+    } finally {
+      setSavingEpisode(false);
     }
-
-    const nextCampaigns = campaigns.map((c) =>
-      c.slug === targetCamp.slug ? { ...c, episodes: updatedEpisodes } : c
-    );
-    await persistCampaigns(nextCampaigns);
-    setIsEpisodeModalOpen(false);
   };
 
   const handleDeleteEpisode = async (ep: CampaignEpisode) => {
@@ -918,11 +936,17 @@ export function CampaignsAdmin() {
             </div>
 
             <div className="flex justify-end gap-2.5 border-t border-hairline pt-4">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setIsCampaignModalOpen(false)}>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setIsCampaignModalOpen(false)} disabled={savingCampaign}>
                 Cancel
               </Button>
-              <Button type="submit" size="sm">
-                {editingCampaign ? 'Save Changes' : 'Create Campaign'}
+              <Button type="submit" size="sm" disabled={savingCampaign}>
+                {savingCampaign ? (
+                  <span className="flex items-center gap-1.5">
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Saving…
+                  </span>
+                ) : (
+                  editingCampaign ? 'Save Changes' : 'Create Campaign'
+                )}
               </Button>
             </div>
           </form>
@@ -1139,11 +1163,17 @@ export function CampaignsAdmin() {
             </div>
 
             <div className="flex justify-end gap-2.5 border-t border-hairline pt-4">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setIsEpisodeModalOpen(false)}>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setIsEpisodeModalOpen(false)} disabled={savingEpisode}>
                 Cancel
               </Button>
-              <Button type="submit" size="sm">
-                {editingEpisode ? 'Save Episode Changes' : 'Publish Documentary Episode'}
+              <Button type="submit" size="sm" disabled={savingEpisode}>
+                {savingEpisode ? (
+                  <span className="flex items-center gap-1.5">
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Saving…
+                  </span>
+                ) : (
+                  editingEpisode ? 'Save Episode Changes' : 'Publish Documentary Episode'
+                )}
               </Button>
             </div>
           </form>

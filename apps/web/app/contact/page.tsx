@@ -25,13 +25,33 @@ export default function ContactPage() {
     if (form.message.trim().length < 20) e.message = 'Your message should be at least 20 characters.';
     if (!form.consent) e.consent = 'Please confirm you are happy for us to reply by email.';
     setErrors(e);
-    return Object.keys(e).length === 0;
+    if (Object.keys(e).length > 0) {
+      const fieldIdMap: Record<string, string> = {
+        name: 'ct-name',
+        email: 'ct-email',
+        subject: 'ct-subject',
+        message: 'ct-message',
+        consent: 'ct-consent',
+      };
+      const firstKey = Object.keys(e)[0];
+      const targetId = fieldIdMap[firstKey] || `ct-${firstKey}`;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+      }
+      return false;
+    }
+    return true;
   };
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     if (honey) return;
-    if (!validate()) return;
+    if (!validate()) {
+      push('Please fix the highlighted required fields before submitting.', 'error');
+      return;
+    }
     setBusy(true);
     try {
       const api = process.env.NEXT_PUBLIC_API_URL;

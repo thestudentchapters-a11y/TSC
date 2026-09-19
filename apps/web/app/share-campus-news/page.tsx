@@ -37,13 +37,39 @@ export default function ShareCampusNewsPage() {
     }
     if (!form.consent) e.consent = 'Please confirm consent so we can review your submission.';
     setErrors(e);
-    return Object.keys(e).length === 0;
+    if (Object.keys(e).length > 0) {
+      const fieldIdMap: Record<string, string> = {
+        name: 'c-name',
+        email: 'c-email',
+        college: 'c-college',
+        campus: 'c-campus',
+        city: 'c-city',
+        state: 'c-state',
+        title: 'c-title',
+        category: 'c-cat',
+        description: 'c-desc',
+        links: 'c-links',
+        consent: 'c-consent',
+      };
+      const firstKey = Object.keys(e)[0];
+      const targetId = fieldIdMap[firstKey] || `c-${firstKey}`;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+      }
+      return false;
+    }
+    return true;
   };
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     if (honey) return;
-    if (!validate()) return;
+    if (!validate()) {
+      push('Please fix the highlighted required fields before submitting.', 'error');
+      return;
+    }
     setBusy(true);
     try {
       const api = process.env.NEXT_PUBLIC_API_URL;

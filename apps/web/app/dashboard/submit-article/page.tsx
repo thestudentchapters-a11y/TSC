@@ -49,13 +49,29 @@ export default function SubmitArticlePage() {
       errs.videoUrl = 'Video URL must start with http:// or https://.';
     }
     setErrors(errs);
-    return Object.keys(errs).length === 0;
+    if (Object.keys(errs).length > 0) {
+      const fieldIdMap: Record<string, string> = {
+        title: 'art-title',
+        content: 'art-content',
+        image: 'art-img',
+        videoUrl: 'art-video',
+      };
+      const firstKey = Object.keys(errs)[0];
+      const targetId = fieldIdMap[firstKey] || `art-${firstKey}`;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+      }
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
-      push('Please fix the highlighted errors before submitting.', 'error');
+      push('Please fix the highlighted required fields before submitting.', 'error');
       return;
     }
 
