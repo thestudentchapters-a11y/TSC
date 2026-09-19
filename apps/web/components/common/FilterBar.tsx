@@ -24,16 +24,30 @@ export function FilterBar({
   const params = useSearchParams();
   const [pending, startTransition] = useTransition();
 
+  const normalizeValue = (str?: string) => {
+    if (!str) return '';
+    try {
+      return decodeURIComponent(str.replace(/\+/g, ' ')).trim().toLowerCase();
+    } catch {
+      return str.trim().toLowerCase();
+    }
+  };
+
   const apply = (key: string, value: string) => {
     const next = new URLSearchParams(params.toString());
-    if (!value || next.get(key) === value) {
+    const normCur = normalizeValue(params.get(key) ?? '');
+    const normVal = normalizeValue(value);
+    if (!value || normCur === normVal) {
       next.delete(key);
     } else {
       next.set(key, value);
     }
     next.delete('page');
     const qs = next.toString();
-    startTransition(() => router.push(qs ? `${basePath}?${qs}` : basePath, { scroll: false }));
+    startTransition(() => {
+      router.push(qs ? `${basePath}?${qs}` : basePath, { scroll: false });
+      router.refresh();
+    });
   };
 
   return (
@@ -63,7 +77,7 @@ export function FilterBar({
         return (
           <div key={f.key} className="flex flex-wrap items-center gap-2" role="group" aria-label={f.label}>
             {f.options.map((o) => {
-              const active = current === o.value;
+              const active = normalizeValue(current) === normalizeValue(o.value);
               return (
                 <button
                   key={o.value}
@@ -71,9 +85,9 @@ export function FilterBar({
                   aria-pressed={active}
                   onClick={() => apply(f.key, active ? '' : o.value)}
                   className={cn(
-                    'rounded-full border px-4 py-2 font-display text-[11px] font-bold uppercase tracking-[0.12em] transition-all',
+                    'rounded-full border px-4 py-2 font-display text-[11px] font-bold uppercase tracking-[0.12em] transition-all cursor-pointer select-none',
                     active
-                      ? 'border-brand bg-brand text-white shadow-card'
+                      ? 'border-brand bg-brand text-white shadow-card ring-1 ring-brand'
                       : 'border-hairline bg-white text-ink/70 hover:border-brand hover:text-brand'
                   )}
                 >

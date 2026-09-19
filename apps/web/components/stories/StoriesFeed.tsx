@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { StoryCard } from '@/components/cards/StoryCard';
 import { EmptyState } from '@/components/common/States';
 import { StaggerGrid, StaggerItem } from '@/components/common/Reveal';
@@ -17,9 +18,14 @@ export function StoriesFeed({
   category,
   query = '',
 }: StoriesFeedProps) {
+  const searchParamsHook = useSearchParams();
   const [stories, setStories] = useState<Story[]>(initialStories);
 
   useEffect(() => {
+    setStories(initialStories);
+  }, [initialStories]);
+
+  const loadLocal = () => {
     try {
       const stored: Story[] = JSON.parse(
         window.localStorage.getItem('tsc.custom.stories') || '[]'
@@ -34,14 +40,40 @@ export function StoriesFeed({
     } catch {
       /* noop */
     }
+  };
+
+  useEffect(() => {
+    loadLocal();
+    window.addEventListener('storage', loadLocal);
+    window.addEventListener('focus', loadLocal);
+    window.addEventListener('pageshow', loadLocal);
+    return () => {
+      window.removeEventListener('storage', loadLocal);
+      window.removeEventListener('focus', loadLocal);
+      window.removeEventListener('pageshow', loadLocal);
+    };
   }, []);
 
+  const activeCategory = searchParamsHook?.get('category') ?? category ?? '';
+  const activeQuery = searchParamsHook?.get('q') ?? query ?? '';
+
+  const normalize = (str?: string) => {
+    if (!str) return '';
+    try {
+      return decodeURIComponent(str.replace(/\+/g, ' ')).trim().toLowerCase();
+    } catch {
+      return str.trim().toLowerCase();
+    }
+  };
+
+  const normCat = normalize(activeCategory);
+
   const published = stories.filter((s) => !s.status || s.status.toLowerCase() === 'published');
-  let filtered = category
-    ? published.filter((s) => s.category?.toLowerCase() === category.toLowerCase())
+  let filtered = normCat
+    ? published.filter((s) => normalize(s.category) === normCat)
     : published;
 
-  const q = query.trim().toLowerCase();
+  const q = activeQuery.trim().toLowerCase();
   if (q) {
     filtered = filtered.filter((s) =>
       [s.title, s.dek, s.author, s.campus].some((f) => f?.toLowerCase().includes(q))

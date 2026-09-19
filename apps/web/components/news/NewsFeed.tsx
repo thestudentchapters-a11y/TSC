@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ArticleCard } from '@/components/cards/ArticleCard';
 import { Pagination } from '@/components/common/Pagination';
 import { EmptyState } from '@/components/common/States';
@@ -22,9 +23,14 @@ export function NewsFeed({
   perPage = 6,
   searchParams,
 }: NewsFeedProps) {
+  const searchParamsHook = useSearchParams();
   const [articles, setArticles] = useState<Article[]>(initialArticles);
 
   useEffect(() => {
+    setArticles(initialArticles);
+  }, [initialArticles]);
+
+  const loadLocal = () => {
     try {
       const storedNews: Article[] = JSON.parse(
         window.localStorage.getItem('tsc.custom.news') || '[]'
@@ -43,21 +49,43 @@ export function NewsFeed({
     } catch {
       /* noop */
     }
+  };
+
+  useEffect(() => {
+    loadLocal();
+    window.addEventListener('storage', loadLocal);
+    window.addEventListener('focus', loadLocal);
+    window.addEventListener('pageshow', loadLocal);
+    return () => {
+      window.removeEventListener('storage', loadLocal);
+      window.removeEventListener('focus', loadLocal);
+      window.removeEventListener('pageshow', loadLocal);
+    };
   }, []);
+
+  const normalize = (str?: string) => {
+    if (!str) return '';
+    try {
+      return decodeURIComponent(str.replace(/\+/g, ' ')).trim().toLowerCase();
+    } catch {
+      return str.trim().toLowerCase();
+    }
+  };
+
+  const activeCategory = searchParamsHook?.get('category') ?? currentCategory ?? '';
+  const activePage = Number(searchParamsHook?.get('page')) || currentPage || 1;
+  const normCategory = normalize(activeCategory);
 
   const published = articles.filter(
     (a) => !a.status || a.status.toLowerCase() === 'published'
   );
-  const filtered = currentCategory
-    ? published.filter(
-        (a) =>
-          a.category &&
-          a.category.trim().toLowerCase() === currentCategory.trim().toLowerCase()
-      )
+  
+  const filtered = normCategory
+    ? published.filter((a) => normalize(a.category) === normCategory)
     : published;
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  const page = Math.min(currentPage, totalPages);
+  const page = Math.min(activePage, totalPages);
   const items = filtered.slice((page - 1) * perPage, page * perPage);
 
   if (items.length === 0) {

@@ -111,24 +111,47 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
   const [dispatching, setDispatching] = useState(false);
   const [generatingDraft, setGeneratingDraft] = useState(false);
 
+  const reloadRows = useCallback(() => {
+    if (!def) return;
+    setRows(loadRows(def));
+    if (api) {
+      fetch(`${api}/api/${def.key}?_t=${Date.now()}&limit=100`, {
+        cache: 'no-store',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data)) {
+            setRows(
+              json.data.map((item: any) => ({
+                ...item,
+                id: item.id || item._id?.toString() || item.slug,
+              }))
+            );
+          }
+        })
+        .catch(() => {
+          // Keep local rows fallback
+        });
+    }
+  }, [def, api, token]);
+
   useEffect(() => {
     if (def) {
-      setRows(loadRows(def));
-      if (api) {
-        fetch(`${api}/api/${def.key}`)
-          .then((res) => res.ok ? res.json() : null)
-          .then((json) => {
-            if (json && Array.isArray(json.data)) {
-              setRows(json.data.map((item: any) => ({ ...item, id: item.id || item._id?.toString() || item.slug })));
-            }
-          })
-          .catch(() => {
-            // Keep local rows fallback
-          });
-      }
+      reloadRows();
+      setReady(true);
     }
-    setReady(true);
-  }, [def, api]);
+    window.addEventListener('focus', reloadRows);
+    window.addEventListener('pageshow', reloadRows);
+    window.addEventListener('storage', reloadRows);
+    return () => {
+      window.removeEventListener('focus', reloadRows);
+      window.removeEventListener('pageshow', reloadRows);
+      window.removeEventListener('storage', reloadRows);
+    };
+  }, [def, reloadRows]);
 
   const save = useCallback(
     (updated: Row[]) => {
