@@ -1,7 +1,9 @@
 /** Shared content types for TSC — mirror the Mongoose models in apps/api. */
 
-export type ContentStatus = 'draft' | 'published' | 'archived';
-export type SubmissionStatus = 'pending' | 'under review' | 'approved' | 'rejected';
+export type ContentStatus = 'draft' | 'published' | 'archived' | string;
+export type SubmissionStatus = 'pending' | 'under review' | 'approved' | 'rejected' | string;
+export type WorkMode = 'Remote' | 'Hybrid' | 'On-site' | string;
+export type EventStatus = 'upcoming' | 'ongoing' | 'past' | 'cancelled' | string;
 
 export type NewsCategory =
   | 'Student News'
@@ -32,10 +34,6 @@ export type OpportunityType =
   | 'Scholarship'
   | 'Career Awareness'
   | string;
-
-export type WorkMode = 'Remote' | 'Hybrid' | 'On-site';
-
-export type EventStatus = 'upcoming' | 'ongoing' | 'past' | 'cancelled';
 
 export interface Article {
   id: string;

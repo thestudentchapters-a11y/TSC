@@ -17,7 +17,16 @@ export const revalidate = 0;
 
 type Props = { params: { slug: string } };
 
-const CATEGORY_LABEL = { student: 'Student', startup: 'Startup', campus: 'Campus' } as const;
+const CATEGORY_LABEL: Record<string, string> = {
+  student: 'Student',
+  startup: 'Startup',
+  campus: 'Campus',
+};
+
+const getCategoryLabel = (cat?: string) => {
+  if (!cat) return 'Story';
+  return CATEGORY_LABEL[cat.toLowerCase()] || (cat.charAt(0).toUpperCase() + cat.slice(1));
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const story = await getStoryBySlug(params.slug);
@@ -42,13 +51,14 @@ export default async function StoryDetailPage({ params }: Props) {
 
   const all = await getStories();
   const related = all.filter((s) => s.id !== story.id && s.category === story.category).slice(0, 3);
+  const categoryLabel = getCategoryLabel(story.category);
 
   return (
     <>
-      <PageHeader eyebrow={`Stories / ${CATEGORY_LABEL[story.category]}`} title={story.title}>
+      <PageHeader eyebrow={`Stories / ${categoryLabel}`} title={story.title}>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium uppercase tracking-wider text-muted">
           <CategoryPill variant={story.category === 'startup' ? 'gold' : story.category === 'campus' ? 'ink' : 'brand'}>
-            {CATEGORY_LABEL[story.category]}
+            {categoryLabel}
           </CategoryPill>
           <span>{story.author}</span>
           <span>{formatDate(story.date)}</span>
@@ -63,7 +73,7 @@ export default async function StoryDetailPage({ params }: Props) {
             <li aria-hidden><ChevronRight className="h-3 w-3" /></li>
             <li><Link href="/stories" className="hover:text-brand">Stories</Link></li>
             <li aria-hidden><ChevronRight className="h-3 w-3" /></li>
-            <li><Link href={`/stories/${story.category}`} className="hover:text-brand">{CATEGORY_LABEL[story.category]}</Link></li>
+            <li><Link href={`/stories/${story.category}`} className="hover:text-brand">{categoryLabel}</Link></li>
           </ol>
         </nav>
       </PageHeader>
@@ -119,7 +129,7 @@ export default async function StoryDetailPage({ params }: Props) {
         <section className="border-t border-hairline bg-white section-pad">
           <div className="container-tsc">
             <h2 className="font-display text-xl font-bold tracking-tight sm:text-2xl">
-              More {CATEGORY_LABEL[story.category]} stories
+              More {categoryLabel} stories
             </h2>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((s) => (
