@@ -101,7 +101,7 @@ export default async function SearchPage({
                     <Link href={r.href} className="card-base card-hover group flex gap-5 p-4 sm:p-5">
                       {r.image && (
                         <div className="relative hidden w-40 shrink-0 overflow-hidden rounded-sm sm:block">
-                          <Image src={r.image} alt="" fill sizes="180px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                          <Image src={r.image} alt="" fill sizes="180px" className="object-cover object-top transition-transform duration-500 group-hover:scale-105" />
                         </div>
                       )}
                       <div className="min-w-0 flex-1 space-y-2 py-1">

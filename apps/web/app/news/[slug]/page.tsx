@@ -88,7 +88,7 @@ export default async function ArticlePage({ params }: Props) {
         <div className="container-tsc max-w-6xl">
           <Reveal>
             <div className="relative aspect-[16/8] overflow-hidden rounded-md">
-              <Image src={article.image} alt={article.imageAlt} fill priority sizes="(max-width: 1024px) 100vw, 66vw" className="object-cover" />
+              <Image src={article.image} alt={article.imageAlt} fill priority sizes="(max-width: 1024px) 100vw, 66vw" className="object-cover object-top" />
             </div>
           </Reveal>
 
