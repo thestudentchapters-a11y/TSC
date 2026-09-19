@@ -10,6 +10,7 @@ import { useToast } from '@/components/common/Toast';
 import { collections, type CollectionDef, type FieldDef } from '@/lib/admin-collections';
 import { cn, formatDate, slugify, getYoutubeThumbnailUrl } from '@/lib/utils';
 import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
+import { RichTextEditor } from '@/components/forms/RichTextEditor';
 
 /* Demo datasets used as the base layer (replaced by API when connected). */
 import {
@@ -804,6 +805,18 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
     const v = values[f.name];
     const id = `f-${f.name}`;
     switch (f.type) {
+      case 'richtext': {
+        const rawContent = Array.isArray(v)
+          ? v.map((p) => (typeof p === 'string' && /<[a-z][\s\S]*>/i.test(p) ? p : `<p>${p}</p>`)).join('')
+          : String(v ?? '');
+        return (
+          <RichTextEditor
+            id={id}
+            value={rawContent}
+            onChange={(html) => setField(f.name, html)}
+          />
+        );
+      }
       case 'textarea':
         return <Textarea id={id} value={String(v ?? '')} onChange={(e) => setField(f.name, e.target.value)} />;
       case 'select':

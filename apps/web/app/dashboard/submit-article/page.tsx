@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle2, FileText, Info, Send, Sparkles } from 'lucide-react';
 import { Field, Input, Select, Textarea } from '@/components/forms/Form';
+import { RichTextEditor } from '@/components/forms/RichTextEditor';
 import { Button } from '@/components/common/Button';
 import { useToast } from '@/components/common/Toast';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -222,13 +223,12 @@ export default function SubmitArticlePage() {
             />
           </Field>
 
-          <Field label="Article Content" htmlFor="art-content" required error={errors.content} hint="Share your full story, lessons, and takeaways (minimum 80 characters)">
-            <Textarea
+          <Field label="Article Content" htmlFor="art-content" required error={errors.content} hint="Format your story with headings, bold, colors, hyperlinks and inline photos">
+            <RichTextEditor
               id="art-content"
-              rows={10}
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Write your article here..."
+              onChange={(html) => setContent(html)}
+              placeholder="Write your story here with full formatting…"
             />
           </Field>
 

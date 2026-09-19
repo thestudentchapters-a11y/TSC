@@ -28,7 +28,7 @@ function normalizeArticle(raw: any): Article {
     content: Array.isArray(raw.content)
       ? raw.content
       : typeof raw.content === 'string'
-        ? raw.content.split('\n\n').filter(Boolean)
+        ? (/<[a-z][\s\S]*>/i.test(raw.content) ? [raw.content] : raw.content.split('\n\n').filter(Boolean))
         : [],
     category:
       (typeof raw.category === 'object' && raw.category?.name ? raw.category.name : raw.category) ||
@@ -72,7 +72,7 @@ function normalizeStory(raw: any): Story {
     content: Array.isArray(raw.content)
       ? raw.content
       : typeof raw.content === 'string'
-        ? raw.content.split('\n\n').filter(Boolean)
+        ? (/<[a-z][\s\S]*>/i.test(raw.content) ? [raw.content] : raw.content.split('\n\n').filter(Boolean))
         : [],
     quote: raw.quote,
     featured: Boolean(raw.featured),
@@ -235,7 +235,7 @@ function normalizeLegal(raw: any): LegalArticle {
     content: Array.isArray(raw.content)
       ? raw.content
       : typeof raw.content === 'string'
-        ? raw.content.split('\n\n').filter(Boolean)
+        ? (/<[a-z][\s\S]*>/i.test(raw.content) ? [raw.content] : raw.content.split('\n\n').filter(Boolean))
         : [],
     keyPoints: Array.isArray(raw.keyPoints) ? raw.keyPoints : [],
     readingTime: raw.readingTime || 4,

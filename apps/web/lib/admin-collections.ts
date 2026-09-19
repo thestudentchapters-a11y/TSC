@@ -7,7 +7,7 @@ import {
   Mail, Megaphone, Mic, Newspaper, Rocket, School, Settings, Share2, Users, ShieldCheck,
 } from 'lucide-react';
 
-export type FieldType = 'text' | 'textarea' | 'select' | 'checkbox' | 'date' | 'number' | 'image' | 'tags';
+export type FieldType = 'text' | 'textarea' | 'richtext' | 'select' | 'checkbox' | 'date' | 'number' | 'image' | 'tags';
 
 export interface FieldDef {
   name: string;
@@ -56,7 +56,7 @@ const coreFields: FieldDef[] = [
   { name: 'author', label: 'Author', type: 'text', width: 'half' },
   { name: 'campus', label: 'Associated Campus', type: 'text', width: 'half' },
   { name: 'excerpt', label: 'Excerpt / Dek', type: 'textarea' },
-  { name: 'content', label: 'Content', type: 'textarea', hint: 'Separate paragraphs with a blank line' },
+  { name: 'content', label: 'Content', type: 'richtext', hint: 'Format text with bold, italic, colors, links and inline images' },
   { name: 'image', label: 'Featured image URL', type: 'image', width: 'half' },
   { name: 'tags', label: 'Tags', type: 'tags', width: 'half' },
   { name: 'category', label: 'Category', type: 'text', width: 'half' },
@@ -238,7 +238,7 @@ export const collections: Record<string, CollectionDef> = {
       { name: 'slug', label: 'Slug', type: 'text', width: 'half' },
       { name: 'topic', label: 'Topic', type: 'select', options: ['Student Rights', 'Cyber Safety', 'Digital Rights', 'Education Laws'], required: true, width: 'half' },
       { name: 'summary', label: 'Summary', type: 'textarea' },
-      { name: 'content', label: 'Content', type: 'textarea' },
+      { name: 'content', label: 'Content', type: 'richtext', hint: 'Format explainers with bold, italic, colors, links and inline images' },
       { name: 'date', label: 'Date', type: 'date', width: 'half' },
       statusField,
     ],
