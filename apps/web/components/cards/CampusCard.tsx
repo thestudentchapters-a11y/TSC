@@ -19,7 +19,7 @@ export function CampusCard({ campus, priority = false }: { campus: Campus; prior
           fill
           priority={priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-fill transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" aria-hidden />
         <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-2 min-w-0">

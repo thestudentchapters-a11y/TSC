@@ -22,7 +22,7 @@ export function EventCard({ event, priority = false }: { event: TscEvent; priori
           fill
           priority={priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className={cn('object-cover transition-transform duration-500 group-hover:scale-105', past && 'grayscale-[40%]')}
+          className={cn('object-fill transition-transform duration-500 group-hover:scale-105', past && 'grayscale-[40%]')}
         />
         {/* date badge */}
         <div

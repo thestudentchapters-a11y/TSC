@@ -32,7 +32,7 @@ export function PodcastCard({ episode, priority = false }: { episode: PodcastEpi
           fill
           priority={priority}
           sizes="300px"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-fill transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-ink/25 transition-colors duration-300 group-hover:bg-ink/10" aria-hidden />
         <span className="absolute left-3 top-3 rounded-[4px] bg-brand-dark/95 px-2 py-1 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-gold">
