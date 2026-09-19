@@ -28,7 +28,7 @@ const StorySchema = new Schema(
     slug: { type: String, required: true, unique: true, index: true },
     dek: { type: String, default: '' },
     category: { type: String, default: 'student', index: true },
-    content: { type: String, required: true },
+    content: { type: Schema.Types.Mixed, default: '' },
     image: { type: String },
     imageAlt: { type: String },
     author: { type: Schema.Types.Mixed },

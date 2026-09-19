@@ -26,7 +26,7 @@ export interface IStorySubmission {
 
 const StorySubmissionSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    user: { type: Schema.Types.Mixed },
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
     phone: { type: String },
@@ -41,7 +41,7 @@ const StorySubmissionSchema = new Schema(
     socialLinks: { type: String },
     consent: { type: Boolean, default: false },
     status: { type: String, enum: ['pending', 'under review', 'approved', 'rejected'], default: 'pending', index: true },
-    reviewedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    reviewedBy: { type: Schema.Types.Mixed },
     reviewNote: { type: String },
   },
   { timestamps: true }
@@ -77,7 +77,7 @@ export interface ICampusSubmission {
 
 const CampusSubmissionSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    user: { type: Schema.Types.Mixed },
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
     college: { type: String },
@@ -92,7 +92,7 @@ const CampusSubmissionSchema = new Schema(
     supportingLinks: { type: String },
     consent: { type: Boolean, default: false },
     status: { type: String, enum: ['pending', 'under review', 'approved', 'rejected'], default: 'pending', index: true },
-    reviewedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    reviewedBy: { type: Schema.Types.Mixed },
     reviewNote: { type: String },
   },
   { timestamps: true }
@@ -124,7 +124,7 @@ export interface ICareerSubmission {
 
 const CareerSubmissionSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    user: { type: Schema.Types.Mixed },
     opportunityId: { type: String },
     opportunityTitle: { type: String, required: true },
     organization: { type: String, required: true },

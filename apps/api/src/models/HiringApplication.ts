@@ -48,7 +48,7 @@ const hiringApplicationSchema = new Schema<IHiringApplication>(
       index: true,
     },
     adminNotes: { type: String, trim: true },
-    reviewedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    reviewedBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

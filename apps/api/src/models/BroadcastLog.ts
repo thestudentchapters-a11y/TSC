@@ -32,7 +32,7 @@ const broadcastLogSchema = new Schema<IBroadcastLog>(
     recipientCount: { type: Number, default: 0 },
     sentCount: { type: Number, default: 0 },
     failedCount: { type: Number, default: 0 },
-    sentBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    sentBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

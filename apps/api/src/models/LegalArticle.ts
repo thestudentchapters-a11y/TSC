@@ -28,7 +28,7 @@ const LegalArticleSchema = new Schema(
       index: true,
     },
     summary: { type: String, default: '' },
-    content: { type: String, required: true },
+    content: { type: Schema.Types.Mixed, default: '' },
     keyPoints: [{ type: String }],
     readingTime: { type: Number, default: 4 },
     author: { type: Schema.Types.Mixed },

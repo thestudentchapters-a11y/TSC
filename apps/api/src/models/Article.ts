@@ -29,8 +29,8 @@ const ArticleSchema = new Schema(
   {
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, index: true },
-    excerpt: { type: String, required: true },
-    content: { type: String, required: true },
+    excerpt: { type: String, default: '' },
+    content: { type: Schema.Types.Mixed, default: '' },
     category: { type: Schema.Types.Mixed, index: true },
     tags: [{ type: Schema.Types.Mixed }],
     author: { type: Schema.Types.Mixed, default: 'TSC Editorial Team', index: true },

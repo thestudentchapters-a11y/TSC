@@ -29,7 +29,7 @@ const MediaSchema = new Schema(
     type: { type: String, enum: ['image', 'audio', 'video', 'document'], default: 'image' },
     dimensions: { width: Number, height: Number },
     sizeBytes: { type: Number },
-    uploadedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    uploadedBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );
