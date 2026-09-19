@@ -753,8 +753,20 @@ function CellRender({ row, col, onToggle }: { row: Row; col: { name: string; lab
 }
 
 function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; initial: Row | null; onSubmit: (row: Row) => void; onCancel: () => void }) {
-  const [values, setValues] = useState<Record<string, unknown>>(() => ({ ...(initial ?? {}) }));
+  const { push } = useToast();
+  const [values, setValues] = useState<Record<string, unknown>>(() => {
+    if (initial) return { ...(initial ?? {}) };
+    const defaults: Record<string, unknown> = {
+      status: 'published',
+      date: new Date().toISOString().slice(0, 10),
+    };
+    if (def.key === 'news' || def.key === 'articles') {
+      defaults.category = 'Student News';
+    }
+    return defaults;
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const setField = (name: string, value: unknown) => {
     setValues((v) => {
@@ -791,7 +803,7 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs: Record<string, string> = {};
     for (const f of def.fields) {
@@ -811,17 +823,34 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
     }
 
     setErrors(errs);
-    if (Object.keys(errs).length) return;
+    if (Object.keys(errs).length) {
+      const missingLabels = Object.keys(errs)
+        .map((k) => def.fields.find((f) => f.name === k)?.label || k)
+        .join(', ');
+      push(`Please fill in required fields: ${missingLabels}`, 'error');
+      const firstField = Object.keys(errs)[0];
+      const el = document.getElementById(`f-${firstField}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
+      }
+      return;
+    }
 
-    const title = String(values.title ?? values.name ?? '');
-    const row: Row = {
-      ...values,
-      id: initial?.id ?? `new-${Date.now()}`,
-      slug: values.slug ? String(values.slug) : slugify(title || 'item'),
-      createdAt: initial?.createdAt ?? new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    } as Row;
-    onSubmit(row);
+    setIsSubmitting(true);
+    try {
+      const title = String(values.title ?? values.name ?? '');
+      const row: Row = {
+        ...values,
+        id: initial?.id ?? `new-${Date.now()}`,
+        slug: values.slug ? String(values.slug) : slugify(title || 'item'),
+        createdAt: initial?.createdAt ?? new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      } as Row;
+      await onSubmit(row);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderField = (f: FieldDef) => {
@@ -943,11 +972,17 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
       )}
 
       <div className="flex items-center justify-end gap-3 border-t border-hairline pt-4">
-        <Button variant="ghost" size="sm" onClick={onCancel}>
+        <Button variant="ghost" size="sm" onClick={onCancel} disabled={isSubmitting}>
           <X aria-hidden className="h-4 w-4" /> Cancel
         </Button>
-        <Button type="submit" size="sm" arrow>
-          {initial ? 'Save Changes' : `Create ${def.singular}`}
+        <Button type="submit" size="sm" arrow disabled={isSubmitting}>
+          {isSubmitting ? (
+            <span className="flex items-center gap-1.5">
+              <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Saving…
+            </span>
+          ) : (
+            initial ? 'Save Changes' : `Create ${def.singular}`
+          )}
         </Button>
       </div>
     </form>
