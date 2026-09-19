@@ -52,7 +52,7 @@ export function ArticleCard({
             alt={imageAlt}
             fill
             sizes="200px"
-            className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
         <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
@@ -89,7 +89,7 @@ export function ArticleCard({
             fill
             priority={priority}
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <span className="absolute left-4 top-4">
             <CategoryPill variant="ink">Featured</CategoryPill>
@@ -126,7 +126,7 @@ export function ArticleCard({
           alt={imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
       <div className="flex flex-1 min-w-0 flex-col gap-3 p-5">

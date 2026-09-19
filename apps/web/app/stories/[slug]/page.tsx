@@ -82,7 +82,7 @@ export default async function StoryDetailPage({ params }: Props) {
         <div className="container-tsc max-w-5xl">
           <Reveal>
             <div className="relative aspect-[16/8] overflow-hidden rounded-md">
-              <Image src={story.image} alt={story.imageAlt} fill priority sizes="(max-width: 1024px) 100vw, 66vw" className="object-cover object-top" />
+              <Image src={story.image} alt={story.imageAlt} fill priority sizes="(max-width: 1024px) 100vw, 66vw" className="object-cover" />
             </div>
           </Reveal>
 
