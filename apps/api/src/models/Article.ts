@@ -6,17 +6,21 @@ export interface IArticle {
   slug: string;
   excerpt: string;
   content: string;
-  category: mongoose.Types.ObjectId | string;
-  tags: mongoose.Types.ObjectId[] | string[];
-  author: mongoose.Types.ObjectId | string;
-  featuredImage: string;
-  gallery: string[];
+  category?: mongoose.Types.ObjectId | string;
+  tags?: mongoose.Types.ObjectId[] | string[];
+  author?: mongoose.Types.ObjectId | string;
+  campus?: string;
+  date?: string;
+  image?: string;
+  featuredImage?: string;
+  gallery?: string[];
   status: 'draft' | 'published' | 'archived';
   featured: boolean;
-  publishAt: Date;
-  readingTime: number;
+  publishAt?: Date;
+  readingTime?: number;
   seoTitle?: string;
   seoDescription?: string;
+  createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,9 +31,12 @@ const ArticleSchema = new Schema(
     slug: { type: String, required: true, unique: true, index: true },
     excerpt: { type: String, required: true },
     content: { type: String, required: true },
-    category: { type: Schema.Types.ObjectId, ref: 'Category', index: true },
-    tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
-    author: { type: Schema.Types.ObjectId, ref: 'User', index: true },
+    category: { type: Schema.Types.Mixed, index: true },
+    tags: [{ type: Schema.Types.Mixed }],
+    author: { type: Schema.Types.Mixed, default: 'TSC Editorial Team', index: true },
+    campus: { type: String },
+    date: { type: String },
+    image: { type: String },
     featuredImage: { type: String },
     gallery: [{ type: String }],
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft', index: true },
@@ -38,6 +45,7 @@ const ArticleSchema = new Schema(
     readingTime: { type: Number, default: 3 },
     seoTitle: { type: String },
     seoDescription: { type: String },
+    createdBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

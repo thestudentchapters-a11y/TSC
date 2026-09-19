@@ -6,17 +6,18 @@ export interface IOpportunity {
   slug: string;
   organization: string;
   organizationLogo?: string;
-  type: 'Job' | 'Internship' | 'Fellowship' | 'Scholarship' | 'Career Awareness';
-  mode: 'Remote' | 'Hybrid' | 'On-site';
-  location: string;
-  eligibility: string;
-  deadline: Date;
+  type: 'Job' | 'Internship' | 'Fellowship' | 'Scholarship' | 'Career Awareness' | string;
+  mode?: 'Remote' | 'Hybrid' | 'On-site' | string;
+  location?: string;
+  eligibility?: string;
+  deadline: Date | string;
   description: string;
-  skills: string[];
+  skills?: string[];
   stipend?: string;
   applicationUrl?: string;
-  status: 'active' | 'expired' | 'archived';
-  featured: boolean;
+  status?: 'active' | 'expired' | 'archived';
+  featured?: boolean;
+  active?: boolean;
   createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
   updatedAt: Date;
@@ -30,21 +31,21 @@ const OpportunitySchema = new Schema(
     organizationLogo: { type: String },
     type: {
       type: String,
-      enum: ['Job', 'Internship', 'Fellowship', 'Scholarship', 'Career Awareness'],
       required: true,
       index: true,
     },
-    mode: { type: String, enum: ['Remote', 'Hybrid', 'On-site'], default: 'On-site', index: true },
+    mode: { type: String, default: 'On-site', index: true },
     location: { type: String, index: true },
     eligibility: { type: String },
-    deadline: { type: Date, required: true, index: true },
+    deadline: { type: Schema.Types.Mixed, required: true, index: true },
     description: { type: String, required: true },
     skills: [{ type: String }],
     stipend: { type: String },
     applicationUrl: { type: String },
     status: { type: String, enum: ['active', 'expired', 'archived'], default: 'active', index: true },
     featured: { type: Boolean, default: false },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    active: { type: Boolean, default: true },
+    createdBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

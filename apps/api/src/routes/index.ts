@@ -91,7 +91,8 @@ export function registerRoutes(app: Router) {
       requireAuth,
       requireEditor,
       asyncHandler(async (req: AuthRequest, res: Response) => {
-        const doc = await service.create({ ...req.body, createdBy: req.user!._id, author: req.body.author ?? req.user!._id });
+        const author = req.body.author || req.user?.name || 'TSC Editorial Team';
+        const doc = await service.create({ ...req.body, createdBy: req.user?._id, author });
         res.status(201).json({ success: true, data: doc });
       })
     );

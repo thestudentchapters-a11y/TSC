@@ -4,14 +4,16 @@ export interface ILegalArticle {
   _id: mongoose.Types.ObjectId;
   title: string;
   slug: string;
-  topic: 'Student Rights' | 'Cyber Safety' | 'Digital Rights' | 'Education Laws';
-  summary: string;
+  topic?: 'Student Rights' | 'Cyber Safety' | 'Digital Rights' | 'Education Laws' | string;
+  summary?: string;
   content: string;
-  keyPoints: string[];
-  readingTime: number;
+  keyPoints?: string[];
+  readingTime?: number;
   author?: mongoose.Types.ObjectId | string;
+  date?: string;
   status: 'draft' | 'published' | 'archived';
-  disclaimerAccepted: boolean;
+  disclaimerAccepted?: boolean;
+  createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,17 +24,18 @@ const LegalArticleSchema = new Schema(
     slug: { type: String, required: true, unique: true, index: true },
     topic: {
       type: String,
-      enum: ['Student Rights', 'Cyber Safety', 'Digital Rights', 'Education Laws'],
-      required: true,
+      default: 'Student Rights',
       index: true,
     },
-    summary: { type: String, required: true },
+    summary: { type: String, default: '' },
     content: { type: String, required: true },
     keyPoints: [{ type: String }],
     readingTime: { type: Number, default: 4 },
-    author: { type: Schema.Types.ObjectId, ref: 'User' },
+    author: { type: Schema.Types.Mixed },
+    date: { type: String },
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft', index: true },
     disclaimerAccepted: { type: Boolean, default: true },
+    createdBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

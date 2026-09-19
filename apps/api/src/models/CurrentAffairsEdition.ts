@@ -6,11 +6,11 @@ export interface ICurrentAffairsEdition {
   year: number;
   title: string;
   slug: string;
-  intro: string;
-  cover: string;
-  coverAlt: string;
-  topics: Array<'India' | 'World' | 'Economy' | 'Science & Technology' | 'Education'>;
-  articles: Array<{
+  intro?: string;
+  cover?: string;
+  coverAlt?: string;
+  topics?: Array<'India' | 'World' | 'Economy' | 'Science & Technology' | 'Education' | string>;
+  articles?: Array<{
     title: string;
     category: string;
     summary: string;
@@ -21,6 +21,7 @@ export interface ICurrentAffairsEdition {
   pdfUrl?: string;
   author?: mongoose.Types.ObjectId | string;
   status: 'draft' | 'published' | 'archived';
+  createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,8 +47,9 @@ const EditionSchema = new Schema(
       },
     ],
     pdfUrl: { type: String },
-    author: { type: Schema.Types.ObjectId, ref: 'User' },
+    author: { type: Schema.Types.Mixed },
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft', index: true },
+    createdBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

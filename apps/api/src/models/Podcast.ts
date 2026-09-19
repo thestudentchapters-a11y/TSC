@@ -8,7 +8,8 @@ export interface IPodcast {
   description: string;
   coverImage: string;
   platforms: { youtube?: string; spotify?: string; apple?: string };
-  host: mongoose.Types.ObjectId | string;
+  host?: mongoose.Types.ObjectId | string;
+  createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,7 +21,8 @@ const PodcastSchema = new Schema(
     description: { type: String },
     coverImage: { type: String },
     platforms: { youtube: String, spotify: String, apple: String },
-    host: { type: Schema.Types.ObjectId, ref: 'User' },
+    host: { type: Schema.Types.Mixed },
+    createdBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

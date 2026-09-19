@@ -2,16 +2,16 @@ import mongoose, { Schema, type Model } from 'mongoose';
 
 export interface ICampaign {
   _id: mongoose.Types.ObjectId;
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   slug: string;
-  headline: string;
-  description: string;
-  stills: Array<{ image: string; alt: string }>;
-  categories: string[];
-  locations: string[];
-  status: 'draft' | 'published' | 'archived';
-  featured: boolean;
+  headline?: string;
+  description?: string;
+  stills?: Array<{ image: string; alt: string }>;
+  categories?: string[];
+  locations?: string[];
+  status?: 'draft' | 'published' | 'archived';
+  featured?: boolean;
   createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
   updatedAt: Date;
@@ -29,7 +29,7 @@ const CampaignSchema = new Schema(
     locations: [{ type: String }],
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft', index: true },
     featured: { type: Boolean, default: true },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    createdBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );
