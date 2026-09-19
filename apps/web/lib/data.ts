@@ -20,6 +20,7 @@ const isObjectId = (v: any) => typeof v === 'string' && /^[a-f\d]{24}$/i.test(v)
 
 function normalizeArticle(raw: any): Article {
   if (!raw) return demoArticles[0];
+  const cat = typeof raw.category === 'object' && raw.category?.name ? raw.category.name : raw.category;
   return {
     id: raw.id || raw._id?.toString() || raw.slug,
     slug: raw.slug || '',
@@ -30,9 +31,7 @@ function normalizeArticle(raw: any): Article {
       : typeof raw.content === 'string'
         ? (/<[a-z][\s\S]*>/i.test(raw.content) ? [raw.content] : raw.content.split('\n\n').filter(Boolean))
         : [],
-    category:
-      (typeof raw.category === 'object' && raw.category?.name ? raw.category.name : raw.category) ||
-      'Student News',
+    category: (cat && String(cat).trim()) ? String(cat).trim() : 'Student News',
     tags: Array.isArray(raw.tags)
       ? raw.tags.map((t: any) => (typeof t === 'string' ? t : t?.name || '')).filter(Boolean)
       : [],
@@ -46,7 +45,7 @@ function normalizeArticle(raw: any): Article {
     image: raw.image || raw.featuredImage || '/images/news/news-1.jpg',
     imageAlt: raw.imageAlt || raw.title || 'News image',
     featured: Boolean(raw.featured),
-    status: raw.status || 'published',
+    status: raw.status ? String(raw.status).toLowerCase() : 'published',
     demo: raw.demo,
   };
 }
@@ -295,7 +294,7 @@ async function withApi<T>(path: string, fallback: T, transform?: (data: any) => 
   if (!API) return fallback;
   try {
     const res = await fetch(`${API}${path}`, {
-      next: { revalidate: 60 },
+      cache: 'no-store',
       headers: { Accept: 'application/json' },
     });
     if (!res.ok) throw new Error(`API responded ${res.status}`);
@@ -313,7 +312,7 @@ async function withApi<T>(path: string, fallback: T, transform?: (data: any) => 
 
 /* News */
 export const getArticles = () =>
-  withApi<Article[]>('/api/news?limit=24', demoArticles, (data) =>
+  withApi<Article[]>('/api/news?limit=100', demoArticles, (data) =>
     Array.isArray(data) ? data.map(normalizeArticle) : demoArticles
   );
 export async function getArticleBySlug(slug: string): Promise<Article | undefined> {

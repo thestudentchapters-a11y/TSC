@@ -12,17 +12,36 @@ export const metadata: Metadata = {
   alternates: { canonical: '/news' },
 };
 
-export const revalidate = 120; // Dynamic feed cache revalidation interval Developed by Ayush
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const PER_PAGE = 6;
+
+const STANDARD_CATEGORIES = [
+  'Student News',
+  'Campus News',
+  'Education',
+  'Technology & Innovation',
+  'Youth & Society',
+  'Achievements',
+];
 
 export default async function NewsPage({
   searchParams,
 }: {
   searchParams: { page?: string; category?: string };
 }) {
-  const all = (await getArticles()).filter((a) => a.status === 'published');
-  const categories = Array.from(new Set(all.map((a) => a.category)));
+  const articles = await getArticles();
+  const all = articles.filter(
+    (a) => !a.status || a.status.toLowerCase() === 'published'
+  );
+  
+  // Combine all preset categories + any dynamic categories from DB
+  const dynamicCategories = all.map((a) => a.category).filter(Boolean);
+  const categories = Array.from(
+    new Set([...STANDARD_CATEGORIES, ...dynamicCategories])
+  );
+  
   const page = Math.max(1, Number(searchParams.page ?? '1') || 1);
 
   return (

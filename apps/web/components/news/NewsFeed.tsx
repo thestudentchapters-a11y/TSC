@@ -26,13 +26,17 @@ export function NewsFeed({
 
   useEffect(() => {
     try {
-      const stored: Article[] = JSON.parse(
+      const storedNews: Article[] = JSON.parse(
+        window.localStorage.getItem('tsc.custom.news') || '[]'
+      );
+      const storedArticles: Article[] = JSON.parse(
         window.localStorage.getItem('tsc.custom.articles') || '[]'
       );
-      if (stored.length > 0) {
+      const combined = [...storedNews, ...storedArticles];
+      if (combined.length > 0) {
         setArticles((prev) => {
           const ids = new Set(prev.map((a) => a.id));
-          const newItems = stored.filter((s) => !ids.has(s.id));
+          const newItems = combined.filter((s) => !ids.has(s.id));
           return [...newItems, ...prev];
         });
       }
@@ -41,9 +45,15 @@ export function NewsFeed({
     }
   }, []);
 
-  const published = articles.filter((a) => a.status === 'published');
+  const published = articles.filter(
+    (a) => !a.status || a.status.toLowerCase() === 'published'
+  );
   const filtered = currentCategory
-    ? published.filter((a) => a.category === currentCategory)
+    ? published.filter(
+        (a) =>
+          a.category &&
+          a.category.trim().toLowerCase() === currentCategory.trim().toLowerCase()
+      )
     : published;
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
