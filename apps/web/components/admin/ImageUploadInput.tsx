@@ -68,7 +68,8 @@ export function ImageUploadInput({
             onChange(data.url);
             push('Image uploaded to cloud CDN successfully!', 'success');
           } else {
-            push('Image loaded locally for edition.', 'info');
+            const msg = data.error || data.message || 'Cloudinary may not be configured';
+            push(`Cloud upload notice (${res.status}): ${msg}.`, 'error');
           }
         } catch {
           // Keep base64 data URL as reliable offline/local fallback

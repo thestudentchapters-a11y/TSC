@@ -55,23 +55,47 @@ function loadRows(def: CollectionDef): Row[] {
   return rows.filter((r) => !(overlay.deleted ?? []).includes(r.id));
 }
 
+function cleanRowForLocalStorage(row: Row): Row {
+  const cleaned: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(row)) {
+    if (typeof v === 'string') {
+      // Avoid storing multi-megabyte base64 data URIs in browser localStorage
+      if (v.startsWith('data:image/') || (v.length > 5000 && v.includes('base64,'))) {
+        cleaned[k] = '';
+      } else if (v.length > 30000 && v.includes('data:image/')) {
+        // Strip embedded base64 images from rich text HTML in localStorage cache
+        cleaned[k] = v.replace(/src="data:image\/[^;]+;base64,[^"]+"/gi, 'src=""');
+      } else {
+        cleaned[k] = v;
+      }
+    } else {
+      cleaned[k] = v;
+    }
+  }
+  return cleaned as Row;
+}
+
 function persist(def: CollectionDef, rows: Row[], originalIds: Set<string>) {
-  const added = rows.filter((r) => !originalIds.has(r.id));
-  const edits: Record<string, Row> = {};
-  const deleted: string[] = [];
-  // store diffs simply: added rows + edited seeds; deleted = seeds missing from rows
-  const overlay = {
-    added: added.map((r) => ({ ...r })),
-    edits,
-    deleted,
-  };
-  // For simplicity in demo mode we persist the full list under `added` when seeds were edited
-  const seedIds = Array.from(originalIds);
-  const keptSeedIds = rows.map((r) => r.id).filter((id) => originalIds.has(id));
-  overlay.deleted = seedIds.filter((id) => !keptSeedIds.includes(id));
-  const editedSeeds = rows.filter((r) => originalIds.has(r.id) && SEEDS[def.seedKey]?.find((s) => (s as Row).id === r.id && JSON.stringify(s) !== JSON.stringify(r)));
-  overlay.edits = Object.fromEntries(editedSeeds.map((r) => [r.id, r]));
-  window.localStorage.setItem(`tsc.admin.${def.key}`, JSON.stringify(overlay));
+  try {
+    const added = rows.filter((r) => !originalIds.has(r.id)).map(cleanRowForLocalStorage);
+    const edits: Record<string, Row> = {};
+    const deleted: string[] = [];
+    // store diffs simply: added rows + edited seeds; deleted = seeds missing from rows
+    const overlay = {
+      added,
+      edits,
+      deleted,
+    };
+    // For simplicity in demo mode we persist the full list under `added` when seeds were edited
+    const seedIds = Array.from(originalIds);
+    const keptSeedIds = rows.map((r) => r.id).filter((id) => originalIds.has(id));
+    overlay.deleted = seedIds.filter((id) => !keptSeedIds.includes(id));
+    const editedSeeds = rows.filter((r) => originalIds.has(r.id) && SEEDS[def.seedKey]?.find((s) => (s as Row).id === r.id && JSON.stringify(s) !== JSON.stringify(r)));
+    overlay.edits = Object.fromEntries(editedSeeds.map((r) => [r.id, cleanRowForLocalStorage(r)]));
+    window.localStorage.setItem(`tsc.admin.${def.key}`, JSON.stringify(overlay));
+  } catch (err) {
+    console.warn(`[TSC Admin] LocalStorage quota reached for ${def.key}, skipped local backup:`, err);
+  }
 }
 
 import { useAuth } from '@/components/providers/AuthProvider';
