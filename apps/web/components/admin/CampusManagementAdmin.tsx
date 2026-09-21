@@ -525,7 +525,11 @@ export function CampusManagementAdmin() {
         s.id === cs.id ? { ...s, status: 'approved' as const } : s
       );
       setCampusSubs(updatedSubs);
-      window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updatedSubs));
+      try {
+        window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updatedSubs));
+      } catch {
+        /* ignore */
+      }
 
       push(`Approved and published "${cs.title}" to ${cs.campus} newsroom!`, 'success');
     } else {
@@ -556,7 +560,11 @@ export function CampusManagementAdmin() {
         s.id === ss.id ? { ...s, status: 'approved' as const } : s
       );
       setStorySubs(updatedSubs);
-      window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updatedSubs));
+      try {
+        window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updatedSubs));
+      } catch {
+        /* ignore */
+      }
 
       push(`Approved and published "${ss.title}" to campus stories!`, 'success');
     }
@@ -571,11 +579,19 @@ export function CampusManagementAdmin() {
     if (type === 'campus') {
       const updated = campusSubs.map((s) => (s.id === id ? { ...s, status: 'rejected' as const } : s));
       setCampusSubs(updated);
-      window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updated));
+      try {
+        window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updated));
+      } catch {
+        /* ignore */
+      }
     } else {
       const updated = storySubs.map((s) => (s.id === id ? { ...s, status: 'rejected' as const } : s));
       setStorySubs(updated);
-      window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updated));
+      try {
+        window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updated));
+      } catch {
+        /* ignore */
+      }
     }
     push('Submission marked as rejected.', 'success');
     setReviewingSubmission(null);

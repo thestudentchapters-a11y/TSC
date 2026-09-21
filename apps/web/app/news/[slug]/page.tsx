@@ -12,8 +12,12 @@ import { getArticleBySlug, getArticles } from '@/lib/data';
 import { formatDate, readingTimeFromContent } from '@/lib/utils';
 import { site } from '@/lib/site';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const articles = await getArticles();
+  return articles.slice(0, 30).map((a) => ({ slug: a.slug }));
+}
 
 type Props = { params: { slug: string } };
 

@@ -555,7 +555,11 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
       saveArticlesToLocal([newArticle, ...articles]);
       const updatedSubs = campusSubs.map((s) => (s.id === cs.id ? { ...s, status: 'approved' as const } : s));
       setCampusSubs(updatedSubs);
-      window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updatedSubs));
+      try {
+        window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updatedSubs));
+      } catch {
+        /* ignore */
+      }
       push(`Approved and published submission to news!`, 'success');
     } else {
       const ss = raw as StorySubmissionRecord;
@@ -579,7 +583,11 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
       saveStoriesToLocal([newStory, ...stories]);
       const updatedSubs = storySubs.map((s) => (s.id === ss.id ? { ...s, status: 'approved' as const } : s));
       setStorySubs(updatedSubs);
-      window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updatedSubs));
+      try {
+        window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updatedSubs));
+      } catch {
+        /* ignore */
+      }
       push(`Approved and published submission to stories!`, 'success');
     }
     setReviewingSubmission(null);
@@ -589,11 +597,19 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
     if (type === 'campus') {
       const updated = campusSubs.map((s) => (s.id === id ? { ...s, status: 'rejected' as const } : s));
       setCampusSubs(updated);
-      window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updated));
+      try {
+        window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updated));
+      } catch {
+        /* ignore */
+      }
     } else {
       const updated = storySubs.map((s) => (s.id === id ? { ...s, status: 'rejected' as const } : s));
       setStorySubs(updated);
-      window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updated));
+      try {
+        window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updated));
+      } catch {
+        /* ignore */
+      }
     }
     push('Submission marked as rejected.', 'success');
     setReviewingSubmission(null);

@@ -8,8 +8,12 @@ import { Reveal } from '@/components/common/Reveal';
 import { getLegalBySlug, getLegalArticles } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const articles = await getLegalArticles();
+  return articles.slice(0, 30).map((a) => ({ slug: a.slug }));
+}
 
 type Props = { params: { slug: string } };
 

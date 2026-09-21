@@ -14,8 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/events' },
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 const STANDARD_EVENT_CATEGORIES = [
   'Workshop',

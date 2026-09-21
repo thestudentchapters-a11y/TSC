@@ -12,7 +12,12 @@ import { CampusNewsAndStoriesHub } from '@/components/campus/CampusNewsAndStorie
 import { getCampusBySlug, getCampuses, getStories, getEvents, getArticles } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
-export const revalidate = 300;
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const campuses = await getCampuses();
+  return campuses.slice(0, 30).map((c) => ({ slug: c.slug }));
+}
 
 type Props = { params: { slug: string } };
 

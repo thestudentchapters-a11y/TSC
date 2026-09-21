@@ -18,8 +18,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/podcast' },
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 const STANDARD_PODCAST_CATEGORIES = [
   'Student Voices',

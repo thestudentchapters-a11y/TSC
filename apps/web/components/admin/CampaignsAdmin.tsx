@@ -168,7 +168,11 @@ export function CampaignsAdmin() {
   const persistCampaigns = async (nextCampaigns: Campaign[]) => {
     setCampaigns(nextCampaigns);
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem('tsc_admin_campaigns', JSON.stringify(nextCampaigns));
+      try {
+        window.localStorage.setItem('tsc_admin_campaigns', JSON.stringify(nextCampaigns));
+      } catch {
+        /* ignore */
+      }
     }
   };
 

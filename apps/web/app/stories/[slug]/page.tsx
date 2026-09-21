@@ -12,8 +12,12 @@ import { Button } from '@/components/common/Button';
 import { getStoryBySlug, getStories } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const stories = await getStories();
+  return stories.slice(0, 30).map((s) => ({ slug: s.slug }));
+}
 
 type Props = { params: { slug: string } };
 

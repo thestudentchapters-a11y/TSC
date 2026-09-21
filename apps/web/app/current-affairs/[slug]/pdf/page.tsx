@@ -5,8 +5,7 @@ import { notFound } from 'next/navigation';
 import { getEditionBySlug } from '@/lib/data';
 import { PdfActionBar } from '@/components/current-affairs/PdfActionBar';
 
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 type Props = { params: { slug: string }; searchParams?: { download?: string; print?: string } };
 

@@ -13,8 +13,12 @@ import { getEpisodeBySlug, getEpisodes } from '@/lib/data';
 import { formatDate, formatDuration, getPodcastThumbnail } from '@/lib/utils';
 import { site } from '@/lib/site';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const episodes = await getEpisodes();
+  return episodes.slice(0, 30).map((e) => ({ slug: e.slug }));
+}
 
 type Props = { params: { slug: string } };
 

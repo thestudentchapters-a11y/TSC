@@ -10,8 +10,12 @@ import { InteractiveEditionReader } from '@/components/current-affairs/Interacti
 import { getEditionBySlug, getEditions } from '@/lib/data';
 import { slugify } from '@/lib/utils';
 
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const editions = await getEditions();
+  return editions.slice(0, 30).map((e) => ({ slug: e.slug }));
+}
 
 type Props = { params: { slug: string } };
 

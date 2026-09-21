@@ -50,7 +50,9 @@ export default function AdminMediaPage() {
   const saveImages = (newList: string[]) => {
     setImages(newList);
     try {
-      localStorage.setItem('tsc.admin.media', JSON.stringify(newList));
+      // Store only actual CDN / static image URLs in localStorage to avoid hitting storage quotas
+      const cleanUrls = newList.filter((url) => typeof url === 'string' && !url.startsWith('data:image/'));
+      localStorage.setItem('tsc.admin.media', JSON.stringify(cleanUrls.slice(0, 100)));
     } catch {}
   };
 

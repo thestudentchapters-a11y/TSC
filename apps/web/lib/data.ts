@@ -4,6 +4,7 @@
  * - Otherwise (and on any API failure) it falls back to bundled demo content,
  *   so the platform always renders — with graceful loading/error states upstream Developed by Ayush.
  */
+import { cache } from 'react';
 import type {
   Article, Story, Campus, PodcastEpisode, TscEvent, Opportunity,
   CurrentAffairsEdition, LegalArticle, Campaign, CampaignEpisode, SearchHit,
@@ -293,10 +294,15 @@ function normalizeCampaign(raw: any): Campaign {
 async function withApi<T>(path: string, fallback: T, transform?: (data: any) => T): Promise<T> {
   if (!API) return fallback;
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
     const res = await fetch(`${API}${path}`, {
-      cache: 'no-store',
+      next: { revalidate: 30 },
       headers: { Accept: 'application/json' },
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
+
     if (!res.ok) throw new Error(`API responded ${res.status}`);
     const json = (await res.json()) as { data?: any };
     const rawData = json.data ?? json;
@@ -305,59 +311,63 @@ async function withApi<T>(path: string, fallback: T, transform?: (data: any) => 
     }
     return (rawData as T) ?? fallback;
   } catch (err) {
-    console.warn(`[TSC] API unavailable for ${path}; serving demo content.`, err);
+    console.warn(`[TSC] API unavailable for ${path}; serving fallback content.`);
     return fallback;
   }
 }
 
 /* News */
-export const getArticles = () =>
+export const getArticles = cache(() =>
   withApi<Article[]>('/api/news?limit=100', demoArticles, (data) =>
     Array.isArray(data) ? data.map(normalizeArticle) : demoArticles
-  );
-export async function getArticleBySlug(slug: string): Promise<Article | undefined> {
+  )
+);
+export const getArticleBySlug = cache(async function (slug: string): Promise<Article | undefined> {
   const item = await withApi<Article | null>(`/api/news/${slug}`, null, (data) =>
     data ? normalizeArticle(data) : null
   );
   if (item) return item;
   const items = await getArticles();
   return items.find((a) => a.slug === slug);
-}
+});
 
 /* Stories */
-export const getStories = () =>
+export const getStories = cache(() =>
   withApi<Story[]>('/api/stories', demoStories, (data) =>
     Array.isArray(data) ? data.map(normalizeStory) : demoStories
-  );
-export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
+  )
+);
+export const getStoryBySlug = cache(async function (slug: string): Promise<Story | undefined> {
   const item = await withApi<Story | null>(`/api/stories/${slug}`, null, (data) =>
     data ? normalizeStory(data) : null
   );
   if (item) return item;
   const items = await getStories();
   return items.find((s) => s.slug === slug);
-}
+});
 
 /* Campuses */
-export const getCampuses = () =>
+export const getCampuses = cache(() =>
   withApi<Campus[]>('/api/campuses', demoCampuses, (data) =>
     Array.isArray(data) ? data.map(normalizeCampus) : demoCampuses
-  );
-export async function getCampusBySlug(slug: string): Promise<Campus | undefined> {
+  )
+);
+export const getCampusBySlug = cache(async function (slug: string): Promise<Campus | undefined> {
   const item = await withApi<Campus | null>(`/api/campuses/${slug}`, null, (data) =>
     data ? normalizeCampus(data) : null
   );
   if (item) return item;
   const items = await getCampuses();
   return items.find((c) => c.slug === slug);
-}
+});
 
 /* Podcast */
-export const getEpisodes = () =>
+export const getEpisodes = cache(() =>
   withApi<PodcastEpisode[]>('/api/podcasts', demoEpisodes, (data) =>
     Array.isArray(data) ? data.map(normalizeEpisode) : demoEpisodes
-  );
-export async function getEpisodeBySlug(slug: string): Promise<PodcastEpisode | undefined> {
+  )
+);
+export const getEpisodeBySlug = cache(async function (slug: string): Promise<PodcastEpisode | undefined> {
   const items = await getEpisodes();
   const directMatch = items.find((e) => e.slug === slug);
   if (directMatch) return directMatch;
@@ -372,68 +382,74 @@ export async function getEpisodeBySlug(slug: string): Promise<PodcastEpisode | u
     (slug === 'what-nobody-tells-you-about-your-first-startup' ? items[0] : undefined) ||
     items[0]
   );
-}
+});
 
 /* Events */
-export const getEvents = () =>
+export const getEvents = cache(() =>
   withApi<TscEvent[]>('/api/events', demoEvents, (data) =>
     Array.isArray(data) ? data.map(normalizeEvent) : demoEvents
-  );
-export async function getEventBySlug(slug: string): Promise<TscEvent | undefined> {
+  )
+);
+export const getEventBySlug = cache(async function (slug: string): Promise<TscEvent | undefined> {
   const item = await withApi<TscEvent | null>(`/api/events/${slug}`, null, (data) =>
     data ? normalizeEvent(data) : null
   );
   if (item) return item;
   const items = await getEvents();
   return items.find((e) => e.slug === slug);
-}
+});
 
 /* Opportunities */
-export const getOpportunities = () =>
+export const getOpportunities = cache(() =>
   withApi<Opportunity[]>('/api/opportunities', demoOpportunities, (data) =>
     Array.isArray(data) ? data.map(normalizeOpportunity) : demoOpportunities
-  );
+  )
+);
 
 /* Current Affairs */
-export const getEditions = () =>
+export const getEditions = cache(() =>
   withApi<CurrentAffairsEdition[]>('/api/current-affairs', demoEditions, (data) =>
     Array.isArray(data) ? data.map(normalizeEdition) : demoEditions
-  );
-export async function getEditionBySlug(slug: string): Promise<CurrentAffairsEdition | undefined> {
+  )
+);
+export const getEditionBySlug = cache(async function (slug: string): Promise<CurrentAffairsEdition | undefined> {
   const item = await withApi<CurrentAffairsEdition | null>(`/api/current-affairs/${slug}`, null, (data) =>
     data ? normalizeEdition(data) : null
   );
   if (item) return item;
   const items = await getEditions();
   return items.find((e) => e.slug === slug);
-}
+});
 
 /* Legal Awareness */
-export const getLegalArticles = () =>
+export const getLegalArticles = cache(() =>
   withApi<LegalArticle[]>('/api/legal-awareness', demoLegalArticles, (data) =>
     Array.isArray(data) ? data.map(normalizeLegal) : demoLegalArticles
-  );
-export async function getLegalBySlug(slug: string): Promise<LegalArticle | undefined> {
+  )
+);
+export const getLegalBySlug = cache(async function (slug: string): Promise<LegalArticle | undefined> {
   const item = await withApi<LegalArticle | null>(`/api/legal-awareness/${slug}`, null, (data) =>
     data ? normalizeLegal(data) : null
   );
   if (item) return item;
   const items = await getLegalArticles();
   return items.find((l) => l.slug === slug);
-}
+});
 
 /* Campaigns */
-export const getCampaigns = () =>
+export const getCampaigns = cache(() =>
   withApi<Campaign[]>('/api/campaigns', [flagshipCampaign], (data) =>
     Array.isArray(data) ? data.map(normalizeCampaign) : [flagshipCampaign]
-  );
+  )
+);
 
-export const getCampaign = () =>
+export const getCampaign = cache(() =>
   withApi<Campaign>('/api/campaigns/all-india-career-awareness', flagshipCampaign, (data) =>
     data ? normalizeCampaign(data) : flagshipCampaign
-  );
+  )
+);
 
-export async function getCampaignBySlug(slug: string): Promise<Campaign | undefined> {
+export const getCampaignBySlug = cache(async function (slug: string): Promise<Campaign | undefined> {
   const item = await withApi<Campaign | null>(`/api/campaigns/${slug}`, null, (data) =>
     data ? normalizeCampaign(data) : null
   );
@@ -443,7 +459,7 @@ export async function getCampaignBySlug(slug: string): Promise<Campaign | undefi
   if (match) return match;
   if (slug === 'all-india-career-awareness') return flagshipCampaign;
   return undefined;
-}
+});
 
 /* Site Settings */
 export interface SiteSettingsData {
