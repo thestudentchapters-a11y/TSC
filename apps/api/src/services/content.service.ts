@@ -46,8 +46,22 @@ export function createContentService<T = Record<string, unknown>>(
       const data = { ...payload } as Record<string, unknown>;
       delete data.id;
       if (data._id && !/^[a-f\d]{24}$/i.test(String(data._id))) delete data._id;
-      if (!data.slug && typeof data.title === 'string') data.slug = slugify(data.title);
-      if (!data.slug && typeof data.name === 'string') data.slug = slugify(data.name);
+
+      // Validate required primary title or name
+      const primaryTitle =
+        typeof data.title === 'string'
+          ? data.title.trim()
+          : typeof data.name === 'string'
+            ? data.name.trim()
+            : '';
+      if (!primaryTitle && ['Event', 'Article', 'Story', 'Campus', 'Opportunity', 'PodcastEpisode', 'LegalArticle'].includes(model.modelName)) {
+        throw ApiError.badRequest(`Title or Name is required to create a new ${model.modelName}.`);
+      }
+
+      if (!data.slug && typeof data.title === 'string' && data.title.trim()) data.slug = slugify(data.title);
+      if (!data.slug && typeof data.name === 'string' && data.name.trim()) data.slug = slugify(data.name);
+      if (!data.slug) data.slug = `item-${Date.now().toString(36)}`;
+
       // ensure slug uniqueness
       const existing = await model.exists({ slug: data.slug });
       if (existing) data.slug = `${data.slug}-${Date.now().toString(36)}`;

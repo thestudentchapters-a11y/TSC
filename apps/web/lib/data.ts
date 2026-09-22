@@ -387,12 +387,14 @@ export const getEpisodeBySlug = cache(async function (slug: string): Promise<Pod
 /* Events */
 export const getEvents = cache(() =>
   withApi<TscEvent[]>('/api/events', demoEvents, (data) =>
-    Array.isArray(data) ? data.map(normalizeEvent) : demoEvents
+    Array.isArray(data)
+      ? data.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeEvent)
+      : demoEvents
   )
 );
 export const getEventBySlug = cache(async function (slug: string): Promise<TscEvent | undefined> {
   const item = await withApi<TscEvent | null>(`/api/events/${slug}`, null, (data) =>
-    data ? normalizeEvent(data) : null
+    data && (data.title?.trim() || data.name?.trim()) ? normalizeEvent(data) : null
   );
   if (item) return item;
   const items = await getEvents();
@@ -402,14 +404,18 @@ export const getEventBySlug = cache(async function (slug: string): Promise<TscEv
 /* Opportunities */
 export const getOpportunities = cache(() =>
   withApi<Opportunity[]>('/api/opportunities', demoOpportunities, (data) =>
-    Array.isArray(data) ? data.map(normalizeOpportunity) : demoOpportunities
+    Array.isArray(data)
+      ? data.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeOpportunity)
+      : demoOpportunities
   )
 );
 
 /* Current Affairs */
 export const getEditions = cache(() =>
   withApi<CurrentAffairsEdition[]>('/api/current-affairs', demoEditions, (data) =>
-    Array.isArray(data) ? data.map(normalizeEdition) : demoEditions
+    Array.isArray(data)
+      ? data.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeEdition)
+      : demoEditions
   )
 );
 export const getEditionBySlug = cache(async function (slug: string): Promise<CurrentAffairsEdition | undefined> {

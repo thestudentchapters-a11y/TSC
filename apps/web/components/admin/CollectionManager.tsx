@@ -52,7 +52,9 @@ function loadRows(def: CollectionDef): Row[] {
     ...(overlay.added ?? []),
     ...base.map((r) => ({ ...r, ...(overlay.edits?.[r.id] ?? {}) })),
   ];
-  return rows.filter((r) => !(overlay.deleted ?? []).includes(r.id));
+  return rows
+    .filter((r) => !(overlay.deleted ?? []).includes(r.id))
+    .filter((r) => Boolean((r.title && String(r.title).trim()) || (r.name && String(r.name).trim())));
 }
 
 function cleanRowForLocalStorage(row: Row): Row {
@@ -77,7 +79,8 @@ function cleanRowForLocalStorage(row: Row): Row {
 
 function persist(def: CollectionDef, rows: Row[], originalIds: Set<string>) {
   try {
-    const added = rows.filter((r) => !originalIds.has(r.id)).map(cleanRowForLocalStorage);
+    const validRows = rows.filter((r) => Boolean((r.title && String(r.title).trim()) || (r.name && String(r.name).trim())));
+    const added = validRows.filter((r) => !originalIds.has(r.id)).map(cleanRowForLocalStorage);
     const edits: Record<string, Row> = {};
     const deleted: string[] = [];
     // store diffs simply: added rows + edited seeds; deleted = seeds missing from rows
@@ -88,9 +91,9 @@ function persist(def: CollectionDef, rows: Row[], originalIds: Set<string>) {
     };
     // For simplicity in demo mode we persist the full list under `added` when seeds were edited
     const seedIds = Array.from(originalIds);
-    const keptSeedIds = rows.map((r) => r.id).filter((id) => originalIds.has(id));
+    const keptSeedIds = validRows.map((r) => r.id).filter((id) => originalIds.has(id));
     overlay.deleted = seedIds.filter((id) => !keptSeedIds.includes(id));
-    const editedSeeds = rows.filter((r) => originalIds.has(r.id) && SEEDS[def.seedKey]?.find((s) => (s as Row).id === r.id && JSON.stringify(s) !== JSON.stringify(r)));
+    const editedSeeds = validRows.filter((r) => originalIds.has(r.id) && SEEDS[def.seedKey]?.find((s) => (s as Row).id === r.id && JSON.stringify(s) !== JSON.stringify(r)));
     overlay.edits = Object.fromEntries(editedSeeds.map((r) => [r.id, cleanRowForLocalStorage(r)]));
     window.localStorage.setItem(`tsc.admin.${def.key}`, JSON.stringify(overlay));
   } catch (err) {
@@ -148,12 +151,13 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
           if (json && Array.isArray(json.data)) {
-            setRows(
-              json.data.map((item: any) => ({
+            const valid = json.data
+              .filter((item: any) => Boolean((item.title && String(item.title).trim()) || (item.name && String(item.name).trim())))
+              .map((item: any) => ({
                 ...item,
                 id: item.id || item._id?.toString() || item.slug,
-              }))
-            );
+              }));
+            setRows(valid);
           }
         })
         .catch(() => {
@@ -271,9 +275,12 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
   };
 
   const upsert = async (row: Row) => {
-    const exists = rows.some((r) => r.id === row.id);
-    const updated = exists ? rows.map((r) => (r.id === row.id ? row : r)) : [row, ...rows];
-    save(updated);
+    const primaryTitle = String(row.title ?? row.name ?? '').trim();
+    if (!primaryTitle) {
+      push('Title or Name is required.', 'error');
+      return;
+    }
+
     setEditing(null);
     setCreating(false);
 
@@ -286,7 +293,9 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
         }
 
         const endpointId = row.id && /^[a-f\d]{24}$/i.test(row.id) ? row.id : (row.slug || row.id);
-        const res = exists && endpointId && !String(endpointId).startsWith('new-')
+        const isEditingExisting = endpointId && !String(endpointId).startsWith('new-');
+
+        const res = isEditingExisting
           ? await fetch(`${api}/api/${def.key}/${endpointId}`, {
               method: 'PUT',
               headers: {
@@ -309,13 +318,34 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
           push(`Database sync warning: ${errData.error || errData.message || res.statusText}. Please make sure you are logged in as admin.`, 'error');
           return;
         }
+
+        const json = await res.json().catch(() => ({}));
+        if (json && json.data) {
+          const savedRow = {
+            ...json.data,
+            id: json.data.id || json.data._id?.toString() || row.slug,
+          };
+          const updated = isEditingExisting
+            ? rows.map((r) => (r.id === row.id || r.slug === row.slug ? savedRow : r))
+            : [savedRow, ...rows.filter((r) => r.id !== row.id && r.slug !== row.slug)];
+          save(updated);
+        } else {
+          reloadRows();
+        }
       } catch (err: any) {
         push(`Could not reach backend API at ${api}: ${err.message}`, 'error');
+        const exists = rows.some((r) => r.id === row.id);
+        const updated = exists ? rows.map((r) => (r.id === row.id ? row : r)) : [row, ...rows];
+        save(updated);
         return;
       }
+    } else {
+      const exists = rows.some((r) => r.id === row.id);
+      const updated = exists ? rows.map((r) => (r.id === row.id ? row : r)) : [row, ...rows];
+      save(updated);
     }
 
-    push(exists ? 'Item updated.' : 'Item created.', 'success');
+    push('Item saved successfully.', 'success');
   };
 
   const handleOpenRowBroadcast = async (row: Row) => {
@@ -856,7 +886,9 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
     e.preventDefault();
     const errs: Record<string, string> = {};
     for (const f of def.fields) {
-      if (f.required && (values[f.name] === undefined || values[f.name] === null || values[f.name] === '')) {
+      const val = values[f.name];
+      const strVal = typeof val === 'string' ? val.trim() : val;
+      if (f.required && (strVal === undefined || strVal === null || strVal === '')) {
         errs[f.name] = `${f.label} is required.`;
       }
     }
