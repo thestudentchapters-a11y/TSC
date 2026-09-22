@@ -38,7 +38,9 @@ export function NewsFeed({
       const storedArticles: Article[] = JSON.parse(
         window.localStorage.getItem('tsc.custom.articles') || '[]'
       );
-      const combined = [...storedNews, ...storedArticles];
+      const combined = [...storedNews, ...storedArticles].filter(
+        (a) => a && (a.status === 'published' || !a.status)
+      );
       if (combined.length > 0) {
         setArticles((prev) => {
           const ids = new Set(prev.map((a) => a.id));

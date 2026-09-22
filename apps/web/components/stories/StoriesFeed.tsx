@@ -30,10 +30,11 @@ export function StoriesFeed({
       const stored: Story[] = JSON.parse(
         window.localStorage.getItem('tsc.custom.stories') || '[]'
       );
-      if (stored.length > 0) {
+      const valid = stored.filter((s) => s && (s.status === 'published' || !s.status));
+      if (valid.length > 0) {
         setStories((prev) => {
           const ids = new Set(prev.map((s) => s.id));
-          const newItems = stored.filter((s) => !ids.has(s.id));
+          const newItems = valid.filter((s) => !ids.has(s.id));
           return [...newItems, ...prev];
         });
       }
