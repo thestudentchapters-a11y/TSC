@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Briefcase, CalendarDays, FileText, Globe2, Images, Mail, Mic, Newspaper, School, Share2, TrendingUp, Users } from 'lucide-react';
 import {
@@ -29,19 +30,82 @@ function StatCard({ label, value, sub, icon: Icon, href }: { label: string; valu
 }
 
 export default function AdminDashboardPage() {
-  const { user } = useAuth();
+  const { user, getToken } = useAuth();
   const perms = getUserPermissions(user);
-  const pending = [...demoStorySubmissions, ...demoCampusSubmissions].filter((s) => s.status === 'pending').length;
-  const newMembers = demoMembers.filter((m) => m.joinedOn >= '2026-08-01').length;
+  const api = process.env.NEXT_PUBLIC_API_URL;
+  const token = getToken() || (typeof window !== 'undefined' ? (localStorage.getItem('tsc_token') || localStorage.getItem('tsc.token')) : null);
+
+  const [storySubs, setStorySubs] = useState<any[]>(demoStorySubmissions);
+  const [campusSubs, setCampusSubs] = useState<any[]>(demoCampusSubmissions);
+  const [messages, setMessages] = useState<any[]>(demoContactMessages);
+  const [hiringCount, setHiringCount] = useState<number>(12);
+  const [articlesCount, setArticlesCount] = useState<number>(demoArticles.filter((a) => a.status === 'published').length);
+  const [isLive, setIsLive] = useState(false);
+
+  useEffect(() => {
+    if (!api) return;
+
+    const headers: Record<string, string> = {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    Promise.allSettled([
+      fetch(`${api}/api/story-submissions?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
+      fetch(`${api}/api/campus-submissions?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
+      fetch(`${api}/api/contact-messages?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
+      fetch(`${api}/api/hiring-applications?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
+      fetch(`${api}/api/news?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
+    ]).then(([resStories, resCampus, resMessages, resHiring, resNews]) => {
+      let live = false;
+      if (resStories.status === 'fulfilled' && resStories.value?.data) {
+        setStorySubs(resStories.value.data.map((s: any) => ({
+          ...s,
+          id: s._id || s.id,
+          title: s.storyTitle || s.title,
+          submittedOn: s.createdAt || s.submittedOn,
+        })));
+        live = true;
+      }
+      if (resCampus.status === 'fulfilled' && resCampus.value?.data) {
+        setCampusSubs(resCampus.value.data.map((c: any) => ({
+          ...c,
+          id: c._id || c.id,
+          title: c.newsTitle || c.title,
+          submittedOn: c.createdAt || c.submittedOn,
+        })));
+        live = true;
+      }
+      if (resMessages.status === 'fulfilled' && resMessages.value?.data) {
+        setMessages(resMessages.value.data.map((m: any) => ({
+          ...m,
+          id: m._id || m.id,
+          receivedOn: m.createdAt || m.receivedOn,
+        })));
+        live = true;
+      }
+      if (resHiring.status === 'fulfilled' && resHiring.value?.data) {
+        setHiringCount(resHiring.value.data.length);
+        live = true;
+      }
+      if (resNews.status === 'fulfilled' && resNews.value?.data) {
+        setArticlesCount(resNews.value.data.filter((a: any) => a.status === 'published').length);
+        live = true;
+      }
+      setIsLive(live);
+    });
+  }, [api, token]);
+
+  const allSubmissions = [...storySubs, ...campusSubs];
+  const pending = allSubmissions.filter((s) => s.status === 'pending').length;
   const upcoming = demoEvents.filter((e) => e.status === 'upcoming').length;
   const activeOpps = demoOpportunities.filter((o) => o.active).length;
-  const unread = demoContactMessages.filter((m) => m.status === 'new').length;
+  const unread = messages.filter((m) => m.status === 'new').length;
 
   const statCards = [
-    { label: 'Hiring applications', value: '12', sub: 'Jobs & Internships', icon: Briefcase, href: '/admin/hiring' },
+    { label: 'Hiring applications', value: hiringCount, sub: 'Jobs & Internships', icon: Briefcase, href: '/admin/hiring' },
     { label: 'Team & Staff', value: demoMembers.filter((m) => m.role === 'admin' || m.role === 'editor').length, sub: 'Admins & Editors', icon: Users, href: '/admin/team' },
     { label: 'Pending submissions', value: pending, sub: 'Awaiting review', icon: Share2, href: '/admin/story-submissions' },
-    { label: 'Published articles', value: demoArticles.filter((a) => a.status === 'published').length, sub: 'News section', icon: Newspaper, href: '/admin/news' },
+    { label: 'Published articles', value: articlesCount, sub: 'News section', icon: Newspaper, href: '/admin/news' },
     { label: 'Upcoming events', value: upcoming, icon: CalendarDays, href: '/admin/events' },
     { label: 'Active opportunities', value: activeOpps, sub: 'Jobs · Internships · Fellowships', icon: TrendingUp, href: '/admin/opportunities' },
     { label: 'Podcast episodes', value: demoEpisodes.length, icon: Mic, href: '/admin/podcasts' },
@@ -55,8 +119,9 @@ export default function AdminDashboardPage() {
           <p className="eyebrow">Overview</p>
           <h1 className="mt-2 font-display text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="mt-1 text-sm text-muted">
-            Live figures populate from MongoDB when the API is connected — counts below reflect the current
-            demo dataset.
+            {isLive
+              ? 'Real-time overview connected to live database.'
+              : 'Live figures populate from MongoDB when the API is connected.'}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -65,8 +130,8 @@ export default function AdminDashboardPage() {
               Editor Mode ({perms.length} active permissions)
             </span>
           )}
-          <span className="rounded-full border border-gold/50 bg-gold-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gold-deep">
-            Demo data
+          <span className={`rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider ${isLive ? 'border-emerald-500/40 bg-emerald-50 text-emerald-700' : 'border-gold/50 bg-gold-50 text-gold-deep'}`}>
+            {isLive ? '● Live MongoDB' : 'Demo data'}
           </span>
         </div>
       </div>
@@ -90,11 +155,11 @@ export default function AdminDashboardPage() {
             <Share2 aria-hidden className="h-4 w-4 text-brand" /> Review queue
           </h2>
           <ul className="mt-4 space-y-3">
-            {[...demoStorySubmissions, ...demoCampusSubmissions].slice(0, 4).map((s, idx) => (
-              <li key={`queue-${s.id}-${idx}`} className="flex items-start justify-between gap-3 rounded-md border border-hairline bg-cream p-3.5">
+            {allSubmissions.slice(0, 5).map((s, idx) => (
+              <li key={`queue-${s.id || s._id}-${idx}`} className="flex items-start justify-between gap-3 rounded-md border border-hairline bg-cream p-3.5">
                 <div>
-                  <p className="font-display text-[13.5px] font-bold leading-snug">{s.title}</p>
-                  <p className="mt-0.5 text-[11.5px] text-muted">{s.name} • {formatDate(s.submittedOn)}</p>
+                  <p className="font-display text-[13.5px] font-bold leading-snug">{s.title || s.storyTitle || s.newsTitle}</p>
+                  <p className="mt-0.5 text-[11.5px] text-muted">{s.name} • {formatDate(s.submittedOn || s.createdAt)}</p>
                 </div>
                 <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider ${s.status === 'pending' ? 'border-gold/40 bg-gold-50 text-gold-deep' : 'border-brand/25 bg-brand-50 text-brand'}`}>
                   {s.status}
@@ -117,10 +182,10 @@ export default function AdminDashboardPage() {
             <Mail aria-hidden className="h-4 w-4 text-brand" /> Inbox &amp; quick links
           </h2>
           <ul className="mt-4 space-y-3">
-            {demoContactMessages.slice(0, 3).map((m) => (
-              <li key={`inbox-msg-${m.id}`} className="rounded-md border border-hairline bg-cream p-3.5">
+            {messages.slice(0, 4).map((m) => (
+              <li key={`inbox-msg-${m.id || m._id}`} className="rounded-md border border-hairline bg-cream p-3.5">
                 <p className="font-display text-[13.5px] font-bold leading-snug">{m.subject}</p>
-                <p className="mt-0.5 text-[11.5px] text-muted">{m.name} • {formatDate(m.receivedOn)}</p>
+                <p className="mt-0.5 text-[11.5px] text-muted">{m.name} • {formatDate(m.receivedOn || m.createdAt)}</p>
               </li>
             ))}
           </ul>

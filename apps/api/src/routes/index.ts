@@ -165,11 +165,20 @@ export function registerRoutes(app: Router) {
               ? await Article.findById(idOrSlug)
               : await Article.findOne({ slug: idOrSlug });
 
-            if (article && article.title) {
-              await CampusSubmission.updateMany(
-                { newsTitle: article.title },
-                { status: 'pending', reviewNote: 'Returned to pending queue after published news was deleted.' }
-              );
+            if (article) {
+              const query: Record<string, any>[] = [];
+              if ((article as any).submissionId) {
+                query.push({ _id: (article as any).submissionId });
+              }
+              if (article.title) {
+                query.push({ newsTitle: article.title });
+              }
+              if (query.length > 0) {
+                await CampusSubmission.updateMany(
+                  { $or: query },
+                  { status: 'pending', reviewNote: 'Returned to pending queue after published news was deleted.' }
+                );
+              }
             }
           } catch (err) {
             console.error('[News Delete Hook Error]:', err);

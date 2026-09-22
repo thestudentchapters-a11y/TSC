@@ -23,37 +23,37 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({ email, password: z.string().min(1, 'Password is required') });
 
 export const storySubmissionSchema = z.object({
-  name: z.string().trim().min(3),
+  name: z.string().trim().min(2, 'Please enter your name'),
   email,
   phone,
   college: z.string().trim().optional(),
-  city: z.string().trim().min(2),
-  state: z.string().trim().min(2),
-  title: z.string().trim().min(6),
-  category: z.string().trim().min(2),
-  content: z.string().trim().min(100, 'Please tell the story in at least 100 characters'),
+  city: z.string().trim().optional(),
+  state: z.string().trim().optional(),
+  title: z.string().trim().min(3, 'Story title must be at least 3 characters'),
+  category: z.string().trim().optional(),
+  content: z.string().trim().min(10, 'Please share your story in at least 10 characters'),
   image: z.string().optional(),
   images: z.array(z.string()).optional(),
-  videoUrl: z.string().trim().url().optional().or(z.literal('')),
+  videoUrl: z.string().trim().optional(),
   social: z.string().trim().optional(),
-  consent: z.literal(true, { message: 'Consent is required' }),
+  consent: z.boolean().optional().or(z.literal(true)),
 });
 
 export const campusSubmissionSchema = z.object({
-  name: z.string().trim().min(3),
+  name: z.string().trim().min(2, 'Please enter your name'),
   email,
   college: z.string().trim().optional(),
-  campus: z.string().trim().min(2),
-  city: z.string().trim().min(2),
-  state: z.string().trim().min(2),
-  title: z.string().trim().min(6),
-  category: z.string().trim().min(2),
-  description: z.string().trim().min(80, 'Please describe the news in at least 80 characters'),
+  campus: z.string().trim().optional(),
+  city: z.string().trim().optional(),
+  state: z.string().trim().optional(),
+  title: z.string().trim().min(3, 'News headline must be at least 3 characters'),
+  category: z.string().trim().optional(),
+  description: z.string().trim().min(10, 'Please describe the campus news in at least 10 characters'),
   eventDate: z.string().optional(),
   image: z.string().optional(),
   images: z.array(z.string()).optional(),
   links: z.string().trim().optional(),
-  consent: z.literal(true, { message: 'Consent is required' }),
+  consent: z.boolean().optional().or(z.literal(true)),
 });
 
 export const memberItemSchema = z.object({

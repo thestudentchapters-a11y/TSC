@@ -20,6 +20,8 @@ export interface IArticle {
   readingTime?: number;
   seoTitle?: string;
   seoDescription?: string;
+  submittedBy?: string;
+  submissionId?: mongoose.Types.ObjectId | string;
   createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
   updatedAt: Date;
@@ -45,6 +47,8 @@ const ArticleSchema = new Schema(
     readingTime: { type: Number, default: 3 },
     seoTitle: { type: String },
     seoDescription: { type: String },
+    submittedBy: { type: String },
+    submissionId: { type: Schema.Types.Mixed },
     createdBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
