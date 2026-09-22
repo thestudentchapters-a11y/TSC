@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/common/Toast';
 import { Button } from '@/components/common/Button';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 export type HiringType = 'Internship' | 'Job';
 export type HiringStatus = 'pending' | 'reviewed' | 'shortlisted' | 'interviewing' | 'rejected' | 'hired';
@@ -134,6 +135,7 @@ const DEMO_APPLICATIONS: HiringAppItem[] = [
 
 export default function AdminHiringPage() {
   const { push } = useToast();
+  const { getToken } = useAuth();
   const [applications, setApplications] = useState<HiringAppItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState<'all' | 'Internship' | 'Job'>('all');
@@ -145,12 +147,16 @@ export default function AdminHiringPage() {
 
   const fetchApplications = async () => {
     setLoading(true);
-    const api = process.env.NEXT_PUBLIC_API_URL;
+    const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const token = getToken();
     let loaded = false;
 
     if (api) {
       try {
         const res = await fetch(`${api}/api/hiring`, {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           credentials: 'include',
         });
         if (res.ok) {
@@ -192,14 +198,18 @@ export default function AdminHiringPage() {
   const handleUpdateStatus = async (newStatus: HiringStatus) => {
     if (!selectedApp) return;
     setUpdatingStatus(true);
-    const api = process.env.NEXT_PUBLIC_API_URL;
+    const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const token = getToken();
     let updated = false;
 
     if (api) {
       try {
         const res = await fetch(`${api}/api/hiring/${selectedApp._id}/status`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           credentials: 'include',
           body: JSON.stringify({ status: newStatus, adminNotes: notesInput }),
         });
@@ -239,6 +249,39 @@ export default function AdminHiringPage() {
 
     push(`Applicant status updated to "${newStatus}".`, 'success');
     setUpdatingStatus(false);
+  };
+
+  const handleDeleteApplication = async (appId: string) => {
+    if (!window.confirm('Are you sure you want to delete this applicant record?')) return;
+    const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const token = getToken();
+
+    if (api) {
+      try {
+        await fetch(`${api}/api/hiring/${appId}`, {
+          method: 'DELETE',
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: 'include',
+        });
+      } catch {
+        /* noop */
+      }
+    }
+
+    setApplications((prev) => prev.filter((a) => a._id !== appId));
+    if (selectedApp?._id === appId) setSelectedApp(null);
+    try {
+      const local = JSON.parse(
+        window.localStorage.getItem('tsc.admin.hiringApplications') || '[]'
+      );
+      const nextLocal = local.filter((a: HiringAppItem) => a._id !== appId);
+      window.localStorage.setItem('tsc.admin.hiringApplications', JSON.stringify(nextLocal));
+    } catch {
+      /* noop */
+    }
+    push('Application removed.', 'info');
   };
 
   const filtered = applications.filter((app) => {
@@ -485,13 +528,23 @@ export default function AdminHiringPage() {
                   <h2 className="mt-2 font-display text-xl font-bold text-ink">{selectedApp.fullName}</h2>
                   <p className="text-xs font-medium text-brand">{selectedApp.department}</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedApp(null)}
-                  className="text-muted hover:text-ink text-sm"
-                >
-                  ✕
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteApplication(selectedApp._id)}
+                    className="flex items-center gap-1 rounded border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-700 hover:bg-red-100"
+                    title="Delete Application"
+                  >
+                    <Trash2 className="h-3 w-3" /> Delete
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedApp(null)}
+                    className="text-muted hover:text-ink text-sm font-bold px-1"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
 
               {/* Contact Information */}

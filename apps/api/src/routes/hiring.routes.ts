@@ -5,6 +5,7 @@ import { requireAuth, requireEditor, requireAdmin, type AuthRequest } from '../m
 import { validate } from '../middleware/validate';
 import { hiringApplicationSchema } from '../validators';
 import { ApiError } from '../utils/apiError';
+import { emailService } from '../services/email.service';
 
 export const hiringRouter = Router();
 
@@ -14,11 +15,25 @@ hiringRouter.post(
   validate(hiringApplicationSchema),
   asyncHandler(async (req: Request, res: Response) => {
     const application = await HiringApplication.create(req.body);
+    const refId = String(application._id).slice(-6).toUpperCase();
+
+    // Dispatch automated confirmation receipt email to applicant
+    emailService.sendHiringApplicationReceipt(
+      application.email,
+      application.fullName,
+      application.type,
+      application.department,
+      refId
+    ).catch((err) => {
+      console.error('[Hiring Application Email Notification Error]:', err);
+    });
+
     res.status(201).json({
       success: true,
       message: 'Your application has been received successfully! Our editorial and recruitment team will review it shortly.',
       data: {
         id: application._id,
+        refId,
         type: application.type,
         fullName: application.fullName,
         email: application.email,

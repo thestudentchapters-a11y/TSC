@@ -225,23 +225,23 @@ function HiringContent() {
     };
 
     try {
-      const api = process.env.NEXT_PUBLIC_API_URL;
+      const api = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
       let refId = 'TSC-APP-' + Math.floor(100000 + Math.random() * 900000);
 
-      if (api) {
-        const res = await fetch(`${api}/api/hiring`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+      const res = await fetch(`${api}/api/hiring`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message || 'Failed to submit application');
-        }
-        if (data?.data?.id) {
-          refId = String(data.data.id).slice(-6).toUpperCase();
-        }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || data.error || 'Failed to submit application to database.');
+      }
+      if (data?.data?.refId) {
+        refId = data.data.refId;
+      } else if (data?.data?.id) {
+        refId = String(data.data.id).slice(-6).toUpperCase();
       }
 
       // Also persist locally as backup / demo storage
