@@ -35,6 +35,7 @@ const SEEDS: Record<string, any[]> = {
   storySubmissions: demoStorySubmissions,
   campusSubmissions: demoCampusSubmissions,
   contactMessages: demoContactMessages,
+  subscribers: [],
 };
 
 type Row = Record<string, unknown> & { id: string };
@@ -320,7 +321,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
             window.localStorage.setItem('tsc.admin.story-submissions', JSON.stringify(subData));
           }
         }
-      } catch {}
+      } catch { }
     } else if (def.key === 'news') {
       try {
         const subRaw = window.localStorage.getItem('tsc.admin.campus-submissions');
@@ -348,7 +349,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
             window.localStorage.setItem('tsc.admin.campus-submissions', JSON.stringify(subData));
           }
         }
-      } catch {}
+      } catch { }
     }
 
     push('Deleted.', 'info');
@@ -385,21 +386,21 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 
         const res = isEditingExisting
           ? await fetch(`${api}/api/${def.key}/${endpointId}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-              },
-              body: JSON.stringify(payload),
-            })
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(payload),
+          })
           : await fetch(`${api}/api/${def.key}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-              },
-              body: JSON.stringify(payload),
-            });
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(payload),
+          });
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
@@ -474,7 +475,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
           return;
         }
       }
-    } catch {}
+    } catch { }
 
     // Fallback draft
     setBroadcastSubject(`📢 New on TSC: ${title}`);
@@ -721,33 +722,30 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
                     <button
                       type="button"
                       onClick={() => setBroadcastAudience('all')}
-                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
-                        broadcastAudience === 'all'
+                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${broadcastAudience === 'all'
                           ? 'border-brand bg-brand text-white shadow-sm'
                           : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
-                      }`}
+                        }`}
                     >
                       All Combined Reach
                     </button>
                     <button
                       type="button"
                       onClick={() => setBroadcastAudience('subscribers')}
-                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
-                        broadcastAudience === 'subscribers'
+                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${broadcastAudience === 'subscribers'
                           ? 'border-brand bg-brand text-white shadow-sm'
                           : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
-                      }`}
+                        }`}
                     >
                       Subscribers
                     </button>
                     <button
                       type="button"
                       onClick={() => setBroadcastAudience('members')}
-                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${
-                        broadcastAudience === 'members'
+                      className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all text-center border ${broadcastAudience === 'members'
                           ? 'border-brand bg-brand text-white shadow-sm'
                           : 'border-hairline bg-cream/40 text-ink/80 hover:bg-cream'
-                      }`}
+                        }`}
                     >
                       Members
                     </button>

@@ -53,7 +53,7 @@ export default function AdminDashboardPage() {
       fetch(`${api}/api/story-submissions?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
       fetch(`${api}/api/campus-submissions?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
       fetch(`${api}/api/contact-messages?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
-      fetch(`${api}/api/hiring-applications?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
+      fetch(`${api}/api/hiring?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
       fetch(`${api}/api/news?_t=${Date.now()}&limit=50`, { headers }).then((r) => r.ok ? r.json() : null),
     ]).then(([resStories, resCampus, resMessages, resHiring, resNews]) => {
       let live = false;
