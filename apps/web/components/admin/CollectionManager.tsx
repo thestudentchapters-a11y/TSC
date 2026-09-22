@@ -39,6 +39,17 @@ const SEEDS: Record<string, any[]> = {
 
 type Row = Record<string, unknown> & { id: string };
 
+function isValidRow(r: any): boolean {
+  if (!r || typeof r !== 'object') return false;
+  return Boolean(
+    (r.title && String(r.title).trim()) ||
+    (r.name && String(r.name).trim()) ||
+    (r.email && String(r.email).trim()) ||
+    (r.subject && String(r.subject).trim()) ||
+    (r.slug && String(r.slug).trim())
+  );
+}
+
 function loadRows(def: CollectionDef): Row[] {
   const overlay = (() => {
     try {
@@ -54,7 +65,7 @@ function loadRows(def: CollectionDef): Row[] {
   ];
   return rows
     .filter((r) => !(overlay.deleted ?? []).includes(r.id))
-    .filter((r) => Boolean((r.title && String(r.title).trim()) || (r.name && String(r.name).trim())));
+    .filter(isValidRow);
 }
 
 function cleanRowForLocalStorage(row: Row): Row {
@@ -79,7 +90,7 @@ function cleanRowForLocalStorage(row: Row): Row {
 
 function persist(def: CollectionDef, rows: Row[], originalIds: Set<string>) {
   try {
-    const validRows = rows.filter((r) => Boolean((r.title && String(r.title).trim()) || (r.name && String(r.name).trim())));
+    const validRows = rows.filter(isValidRow);
     const added = validRows.filter((r) => !originalIds.has(r.id)).map(cleanRowForLocalStorage);
     const edits: Record<string, Row> = {};
     const deleted: string[] = [];
@@ -152,10 +163,10 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
         .then((json) => {
           if (json && Array.isArray(json.data)) {
             const valid = json.data
-              .filter((item: any) => Boolean((item.title && String(item.title).trim()) || (item.name && String(item.name).trim())))
+              .filter(isValidRow)
               .map((item: any) => ({
                 ...item,
-                id: item.id || item._id?.toString() || item.slug,
+                id: item.id || item._id?.toString() || item.email || item.slug,
               }));
             setRows(valid);
           }
@@ -241,7 +252,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
       }
     }
 
-    const itemLabel = String(row.title ?? row.name ?? def.singular);
+    const itemLabel = String(row.title ?? row.name ?? row.email ?? row.subject ?? def.singular);
     if (field === 'featured') {
       push(nextVal ? `“${itemLabel}” is now the featured spotlight.` : `“${itemLabel}” unfeatured.`, 'success');
     } else {
@@ -250,7 +261,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
   };
 
   const remove = async (row: Row) => {
-    if (!window.confirm(`Delete “${String(row.title ?? row.name ?? row.id)}”?`)) return;
+    if (!window.confirm(`Delete “${String(row.title ?? row.name ?? row.email ?? row.subject ?? row.id)}”?`)) return;
     const updated = rows.filter((r) => r.id !== row.id);
     save(updated);
 
@@ -275,9 +286,9 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
   };
 
   const upsert = async (row: Row) => {
-    const primaryTitle = String(row.title ?? row.name ?? '').trim();
+    const primaryTitle = String(row.title ?? row.name ?? row.email ?? row.subject ?? '').trim();
     if (!primaryTitle) {
-      push('Title or Name is required.', 'error');
+      push('Title, Name, or Email is required.', 'error');
       return;
     }
 
