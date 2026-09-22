@@ -184,13 +184,17 @@ export const submissionService = {
       }
 
       if (targetUserId) {
-        await Notification.create({
-          user: targetUserId,
-          title: `🎉 Story Approved & Published!`,
-          body: `Your story "${title}" has been approved by our editorial team and is now live on THE STUDENT CHAPTERS™!`,
-          type: 'submission',
-          link: `/stories/${uniqueSlug}`,
-        });
+        try {
+          await Notification.create({
+            user: targetUserId,
+            title: `🎉 Story Approved & Published!`,
+            body: `Your story "${title}" has been approved by our editorial team and is now live on THE STUDENT CHAPTERS™!`,
+            type: 'submission',
+            link: `/stories/${uniqueSlug}`,
+          });
+        } catch (err) {
+          console.error('[Notification Error]:', err);
+        }
       }
     } else if (kind === 'story' && status !== 'approved') {
       // If status moved back to pending, under review, or rejected, remove from live published stories
@@ -256,13 +260,17 @@ export const submissionService = {
       }
 
       if (targetUserId) {
-        await Notification.create({
-          user: targetUserId,
-          title: `🎉 Campus News Approved & Published!`,
-          body: `Your campus news "${title}" has been approved by our editorial team and is now live on THE STUDENT CHAPTERS™!`,
-          type: 'submission',
-          link: `/news/${uniqueSlug}`,
-        });
+        try {
+          await Notification.create({
+            user: targetUserId,
+            title: `🎉 Campus News Approved & Published!`,
+            body: `Your campus news "${title}" has been approved by our editorial team and is now live on THE STUDENT CHAPTERS™!`,
+            type: 'submission',
+            link: `/news/${uniqueSlug}`,
+          });
+        } catch (err) {
+          console.error('[Notification Error]:', err);
+        }
       }
     } else if (kind === 'campus' && status !== 'approved') {
       // If status moved back to pending, under review, or rejected, remove from live published articles
