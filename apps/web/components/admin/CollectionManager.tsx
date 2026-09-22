@@ -290,6 +290,36 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
       }
     }
 
+    if (def.key === 'stories') {
+      try {
+        const subRaw = window.localStorage.getItem('tsc.admin.story-submissions');
+        if (subRaw) {
+          const subData = JSON.parse(subRaw);
+          let changed = false;
+          if (Array.isArray(subData.added)) {
+            subData.added = subData.added.map((item: any) => {
+              if (item.title === row.title || item.storyTitle === row.title) {
+                changed = true;
+                return { ...item, status: 'pending' };
+              }
+              return item;
+            });
+          }
+          if (subData.edits) {
+            for (const k of Object.keys(subData.edits)) {
+              if (subData.edits[k].title === row.title || subData.edits[k].storyTitle === row.title) {
+                subData.edits[k].status = 'pending';
+                changed = true;
+              }
+            }
+          }
+          if (changed) {
+            window.localStorage.setItem('tsc.admin.story-submissions', JSON.stringify(subData));
+          }
+        }
+      } catch {}
+    }
+
     push('Deleted.', 'info');
   };
 

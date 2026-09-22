@@ -8,6 +8,7 @@ import SavedItem from '../models/SavedItem';
 import { ApiError } from '../utils/apiError';
 
 import Story from '../models/Story';
+import Article from '../models/Article';
 import User from '../models/User';
 import { slugify } from '../utils/slugify';
 import { emailService } from './email.service';
@@ -145,20 +146,42 @@ export const submissionService = {
       const rawCategory = (doc.storyCategory || 'student').toLowerCase();
       const storyCat = validCategories.includes(rawCategory as any) ? (rawCategory as 'student' | 'startup' | 'campus') : 'student';
 
-      await Story.create({
-        title: doc.storyTitle,
-        slug: uniqueSlug,
-        dek: doc.storyContent ? doc.storyContent.slice(0, 160).trim() + '…' : 'Student submission on TSC',
-        category: storyCat,
-        content: doc.storyContent,
-        image: doc.images && doc.images.length > 0 ? doc.images[0] : '/images/hero/hero-collab.jpg',
-        imageAlt: doc.storyTitle,
-        author: doc.user || reviewer,
-        readingTime: Math.max(1, Math.ceil((doc.storyContent?.split(' ').length || 100) / 200)),
-        status: 'published',
-        featured: false,
-        submittedBy: doc.name,
+      const existingStory = await Story.findOne({
+        $or: [
+          { submissionId: doc._id },
+          { title: doc.storyTitle },
+        ],
       });
+
+      if (existingStory) {
+        existingStory.title = doc.storyTitle;
+        existingStory.content = doc.storyContent;
+        existingStory.dek = doc.storyContent ? doc.storyContent.slice(0, 160).trim() + '…' : 'Student submission on TSC';
+        existingStory.category = storyCat;
+        if (doc.images && doc.images.length > 0) {
+          existingStory.image = doc.images[0];
+        }
+        existingStory.status = 'published';
+        existingStory.submissionId = doc._id;
+        existingStory.submittedBy = doc.name;
+        await existingStory.save();
+      } else {
+        await Story.create({
+          title: doc.storyTitle,
+          slug: uniqueSlug,
+          dek: doc.storyContent ? doc.storyContent.slice(0, 160).trim() + '…' : 'Student submission on TSC',
+          category: storyCat,
+          content: doc.storyContent,
+          image: doc.images && doc.images.length > 0 ? doc.images[0] : '/images/hero/hero-collab.jpg',
+          imageAlt: doc.storyTitle,
+          author: doc.user || reviewer,
+          readingTime: Math.max(1, Math.ceil((doc.storyContent?.split(' ').length || 100) / 200)),
+          status: 'published',
+          featured: false,
+          submittedBy: doc.name,
+          submissionId: doc._id,
+        });
+      }
 
       if (targetUserId) {
         await Notification.create({
@@ -169,7 +192,17 @@ export const submissionService = {
           link: `/stories/${uniqueSlug}`,
         });
       }
-    } else if (targetUserId) {
+    } else if (kind === 'story' && status !== 'approved') {
+      // If status moved back to pending, under review, or rejected, remove from live published stories
+      await Story.deleteMany({
+        $or: [
+          { submissionId: doc._id },
+          { title: doc.storyTitle },
+        ],
+      });
+    }
+
+    if (targetUserId && status !== 'approved') {
       if (status === 'rejected') {
         await Notification.create({
           user: targetUserId,

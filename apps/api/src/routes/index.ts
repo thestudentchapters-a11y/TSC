@@ -131,6 +131,49 @@ export function registerRoutes(app: Router) {
       requireAuth,
       requireEditor,
       asyncHandler(async (req: Request, res: Response) => {
+        const idOrSlug = req.params.id;
+
+        if (basePath === '/api/stories') {
+          try {
+            const story = isObjectId(idOrSlug)
+              ? await Story.findById(idOrSlug)
+              : await Story.findOne({ slug: idOrSlug });
+
+            if (story) {
+              const query: Record<string, any>[] = [];
+              if ((story as any).submissionId) {
+                query.push({ _id: (story as any).submissionId });
+              }
+              if (story.title) {
+                query.push({ storyTitle: story.title });
+              }
+              if (query.length > 0) {
+                await StorySubmission.updateMany(
+                  { $or: query },
+                  { status: 'pending', reviewNote: 'Returned to pending queue after published story was deleted from admin stories.' }
+                );
+              }
+            }
+          } catch (err) {
+            console.error('[Story Delete Hook Error]:', err);
+          }
+        } else if (basePath === '/api/news') {
+          try {
+            const article = isObjectId(idOrSlug)
+              ? await Article.findById(idOrSlug)
+              : await Article.findOne({ slug: idOrSlug });
+
+            if (article && article.title) {
+              await CampusSubmission.updateMany(
+                { newsTitle: article.title },
+                { status: 'pending', reviewNote: 'Returned to pending queue after published news was deleted.' }
+              );
+            }
+          } catch (err) {
+            console.error('[News Delete Hook Error]:', err);
+          }
+        }
+
         await service.remove(req.params.id);
         res.json({ success: true, data: null });
       })

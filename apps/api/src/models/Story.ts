@@ -17,6 +17,7 @@ export interface IStory {
   status: 'draft' | 'published' | 'archived';
   featured: boolean;
   submittedBy?: string;
+  submissionId?: mongoose.Types.ObjectId | string;
   createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
   updatedAt: Date;
@@ -39,6 +40,7 @@ const StorySchema = new Schema(
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft', index: true },
     featured: { type: Boolean, default: false },
     submittedBy: { type: String },
+    submissionId: { type: Schema.Types.Mixed },
     createdBy: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
