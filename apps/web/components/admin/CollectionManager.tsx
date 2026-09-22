@@ -292,6 +292,14 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
           delete payload._id;
         }
 
+        if (def.key === 'opportunities') {
+          if (payload.status === 'published' || !payload.status) payload.status = 'active';
+        } else if (def.key === 'events') {
+          if (payload.status === 'published' || !payload.status) payload.status = 'upcoming';
+        } else if (def.key === 'campuses') {
+          delete payload.status;
+        }
+
         const endpointId = row.id && /^[a-f\d]{24}$/i.test(row.id) ? row.id : (row.slug || row.id);
         const isEditingExisting = endpointId && !String(endpointId).startsWith('new-');
 
@@ -594,7 +602,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 
       {/* editor modal */}
       <Modal open={!!editing || creating} onClose={() => { setEditing(null); setCreating(false); }} title={editing ? `Edit ${def.singular}` : `New ${def.singular}`} wide>
-        <ItemForm def={def} initial={editing} onSubmit={upsert} onCancel={() => { setEditing(null); setCreating(false); }} />
+        <ItemForm def={def} initial={editing} presetFilter={presetFilter} onSubmit={upsert} onCancel={() => { setEditing(null); setCreating(false); }} />
       </Modal>
 
       {/* broadcast review modal */}
@@ -806,23 +814,25 @@ function CellRender({ row, col, onToggle }: { row: Row; col: { name: string; lab
   return <span className="line-clamp-1 max-w-[280px]">{text}</span>;
 }
 
-function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; initial: Row | null; onSubmit: (row: Row) => void; onCancel: () => void }) {
+function ItemForm({ def, initial, presetFilter, onSubmit, onCancel }: { def: CollectionDef; initial: Row | null; presetFilter?: Record<string, string>; onSubmit: (row: Row) => void; onCancel: () => void }) {
   const { push } = useToast();
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     if (initial) return { ...(initial ?? {}) };
     const today = new Date().toISOString().slice(0, 10);
     const defaults: Record<string, unknown> = {
-      status: 'published',
       date: today,
     };
     if (def.key === 'news' || def.key === 'articles') {
+      defaults.status = 'published';
       defaults.category = 'Student News';
     } else if (def.key === 'stories') {
+      defaults.status = 'published';
       defaults.category = 'student';
     } else if (def.key === 'campuses') {
       defaults.state = 'Bihar';
       defaults.type = 'University';
     } else if (def.key === 'podcasts') {
+      defaults.status = 'published';
       defaults.category = 'Student Voices';
       defaults.durationLabel = '25:00';
       defaults.episodeNumber = 1;
@@ -830,17 +840,25 @@ function ItemForm({ def, initial, onSubmit, onCancel }: { def: CollectionDef; in
       defaults.status = 'upcoming';
       defaults.category = 'Summit';
       defaults.registrationDeadline = today;
-    } else if (def.key === 'opportunities') {
-      defaults.type = 'Job';
+    } else if (def.key === 'opportunities' || def.key === 'jobs' || def.key === 'internships' || def.key === 'fellowships') {
+      defaults.status = 'active';
+      defaults.type = (presetFilter?.type as string) || 'Job';
       defaults.mode = 'Remote';
       defaults.active = true;
       defaults.deadline = today;
+    } else if (def.key === 'campaigns' || def.key === 'campaign-episodes') {
+      defaults.status = 'Coming Soon';
+      defaults.episodeNumber = 1;
     } else if (def.key === 'current-affairs') {
+      defaults.status = 'published';
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       defaults.month = months[new Date().getMonth()];
       defaults.year = new Date().getFullYear();
     } else if (def.key === 'legal-awareness' || def.key === 'legal') {
-      defaults.topic = 'Fundamental Rights';
+      defaults.status = 'published';
+      defaults.topic = 'Student Rights';
+    } else {
+      defaults.status = 'published';
     }
     return defaults;
   });

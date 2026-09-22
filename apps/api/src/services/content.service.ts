@@ -58,6 +58,13 @@ export function createContentService<T = Record<string, unknown>>(
         throw ApiError.badRequest(`Title or Name is required to create a new ${model.modelName}.`);
       }
 
+      // Map incompatible status enum defaults
+      if (model.modelName === 'Opportunity') {
+        if (data.status === 'published' || !data.status) data.status = 'active';
+      } else if (model.modelName === 'Event') {
+        if (data.status === 'published' || !data.status) data.status = 'upcoming';
+      }
+
       if (!data.slug && typeof data.title === 'string' && data.title.trim()) data.slug = slugify(data.title);
       if (!data.slug && typeof data.name === 'string' && data.name.trim()) data.slug = slugify(data.name);
       if (!data.slug) data.slug = `item-${Date.now().toString(36)}`;
@@ -75,6 +82,13 @@ export function createContentService<T = Record<string, unknown>>(
       const isOid = /^[a-f\d]{24}$/i.test(id);
       if (data._id && (!isOid || !/^[a-f\d]{24}$/i.test(String(data._id)))) delete data._id;
       if (data.slug === '') delete data.slug;
+
+      // Map incompatible status enum updates
+      if (model.modelName === 'Opportunity' && data.status === 'published') {
+        data.status = 'active';
+      } else if (model.modelName === 'Event' && data.status === 'published') {
+        data.status = 'upcoming';
+      }
       let updated;
       if (isOid) {
         updated = await model.findByIdAndUpdate(id, data, { new: true, runValidators: true }).lean();

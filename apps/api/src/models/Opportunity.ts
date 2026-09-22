@@ -15,7 +15,7 @@ export interface IOpportunity {
   skills?: string[];
   stipend?: string;
   applicationUrl?: string;
-  status?: 'active' | 'expired' | 'archived';
+  status?: 'active' | 'expired' | 'archived' | 'published' | 'draft';
   featured?: boolean;
   active?: boolean;
   createdBy?: mongoose.Types.ObjectId | string;
@@ -42,7 +42,7 @@ const OpportunitySchema = new Schema(
     skills: [{ type: String }],
     stipend: { type: String },
     applicationUrl: { type: String },
-    status: { type: String, enum: ['active', 'expired', 'archived'], default: 'active', index: true },
+    status: { type: String, enum: ['active', 'expired', 'archived', 'published', 'draft'], default: 'active', index: true },
     featured: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
     createdBy: { type: Schema.Types.Mixed },

@@ -21,7 +21,7 @@ export interface IEvent {
   image?: string;
   imageAlt?: string;
   capacity?: number;
-  status?: 'upcoming' | 'ongoing' | 'past' | 'cancelled';
+  status?: 'upcoming' | 'ongoing' | 'past' | 'cancelled' | 'published' | 'draft' | 'active';
   featured?: boolean;
   createdBy?: mongoose.Types.ObjectId | string;
   createdAt: Date;
@@ -49,7 +49,7 @@ const EventSchema = new Schema(
     image: { type: String },
     imageAlt: { type: String },
     capacity: { type: Number },
-    status: { type: String, enum: ['upcoming', 'ongoing', 'past', 'cancelled'], default: 'upcoming', index: true },
+    status: { type: String, enum: ['upcoming', 'ongoing', 'past', 'cancelled', 'published', 'draft', 'active'], default: 'upcoming', index: true },
     featured: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.Mixed },
   },
