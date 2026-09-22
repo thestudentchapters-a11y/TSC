@@ -11,6 +11,7 @@ export interface AuthUser {
   customPermissions?: string[];
   college?: string;
   city?: string;
+  state?: string;
   phone?: string;
 }
 

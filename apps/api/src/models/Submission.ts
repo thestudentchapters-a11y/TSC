@@ -30,9 +30,9 @@ const StorySubmissionSchema = new Schema(
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
     phone: { type: String },
-    college: { type: String },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
+    college: { type: String, default: '' },
+    city: { type: String, default: '' },
+    state: { type: String, default: '' },
     storyTitle: { type: String, required: true },
     storyCategory: { type: String, required: true },
     storyContent: { type: String, required: true },
@@ -57,10 +57,10 @@ export interface ICampusSubmission {
   user?: mongoose.Types.ObjectId | string;
   name: string;
   email: string;
-  college: string;
-  campus: string;
-  city: string;
-  state: string;
+  college?: string;
+  campus?: string;
+  city?: string;
+  state?: string;
   newsTitle: string;
   category: string;
   description: string;
@@ -80,10 +80,10 @@ const CampusSubmissionSchema = new Schema(
     user: { type: Schema.Types.Mixed },
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
-    college: { type: String },
-    campus: { type: String, required: true },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
+    college: { type: String, default: '' },
+    campus: { type: String, default: '' },
+    city: { type: String, default: '' },
+    state: { type: String, default: '' },
     newsTitle: { type: String, required: true },
     category: { type: String, required: true },
     description: { type: String, required: true },

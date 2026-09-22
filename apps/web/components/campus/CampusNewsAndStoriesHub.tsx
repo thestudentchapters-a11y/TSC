@@ -137,6 +137,8 @@ export function CampusNewsAndStoriesHub({
       email: user?.email || 'contributor@campus.tsc',
       college: campus.name,
       campus: campus.name,
+      city: campus.city || user?.city || 'All India',
+      state: campus.state || user?.state || 'All India',
       title: newsTitle.trim(),
       category: newsCategory || 'Campus News',
       description: newsContent.trim() ? `${newsExcerpt.trim()}\n\n${newsContent.trim()}` : newsExcerpt.trim(),
@@ -145,6 +147,7 @@ export function CampusNewsAndStoriesHub({
     };
 
     const api = process.env.NEXT_PUBLIC_API_URL;
+    let success = false;
     if (api) {
       try {
         const token = window.localStorage.getItem('tsc_token');
@@ -156,29 +159,36 @@ export function CampusNewsAndStoriesHub({
           },
           body: JSON.stringify(payload),
         });
+        const errJson = await res.json().catch(() => ({}));
         if (!res.ok) {
-          const errJson = await res.json().catch(() => ({}));
-          throw new Error(errJson.message || errJson.error || 'Submission failed');
+          throw new Error(errJson.error || errJson.message || 'Submission failed');
         }
+        success = true;
       } catch (err: any) {
-        push(err.message || 'Could not reach server. Saved locally for review.', 'info');
+        push(err.message || 'Failed to submit campus news. Please try again.', 'error');
+        setSubmittingNews(false);
+        return;
       }
+    } else {
+      success = true;
     }
 
-    setSubmittingNews(false);
-    setIsNewsModalOpen(false);
+    if (success) {
+      setSubmittingNews(false);
+      setIsNewsModalOpen(false);
 
-    // Reset Form
-    setNewsTitle('');
-    setNewsExcerpt('');
-    setNewsContent('');
-    setNewsAuthor('');
-    setNewsImage('');
+      // Reset Form
+      setNewsTitle('');
+      setNewsExcerpt('');
+      setNewsContent('');
+      setNewsAuthor('');
+      setNewsImage('');
 
-    push(
-      `Campus News submitted for ${campus.name}! It is now in the Admin review queue and will be published once approved by editors.`,
-      'success'
-    );
+      push(
+        `Campus News submitted for ${campus.name}! It is now in the Admin review queue and will be published once approved by editors.`,
+        'success'
+      );
+    }
   };
 
   // Submit Story for Admin Review
@@ -195,6 +205,8 @@ export function CampusNewsAndStoriesHub({
       name: storyAuthor.trim() || user?.name || 'Campus Contributor',
       email: user?.email || 'contributor@campus.tsc',
       college: campus.name,
+      city: campus.city || user?.city || 'All India',
+      state: campus.state || user?.state || 'All India',
       title: storyTitle.trim(),
       category: storyCategory || 'campus',
       content: storyContent.trim() ? `${storyDek.trim()}\n\n${storyContent.trim()}` : storyDek.trim(),
@@ -203,6 +215,7 @@ export function CampusNewsAndStoriesHub({
     };
 
     const api = process.env.NEXT_PUBLIC_API_URL;
+    let success = false;
     if (api) {
       try {
         const token = window.localStorage.getItem('tsc_token');
@@ -214,29 +227,36 @@ export function CampusNewsAndStoriesHub({
           },
           body: JSON.stringify(payload),
         });
+        const errJson = await res.json().catch(() => ({}));
         if (!res.ok) {
-          const errJson = await res.json().catch(() => ({}));
-          throw new Error(errJson.message || errJson.error || 'Submission failed');
+          throw new Error(errJson.error || errJson.message || 'Submission failed');
         }
+        success = true;
       } catch (err: any) {
-        push(err.message || 'Could not reach server. Saved locally for review.', 'info');
+        push(err.message || 'Failed to submit story. Please try again.', 'error');
+        setSubmittingStory(false);
+        return;
       }
+    } else {
+      success = true;
     }
 
-    setSubmittingStory(false);
-    setIsStoryModalOpen(false);
+    if (success) {
+      setSubmittingStory(false);
+      setIsStoryModalOpen(false);
 
-    // Reset Form
-    setStoryTitle('');
-    setStoryDek('');
-    setStoryContent('');
-    setStoryAuthor('');
-    setStoryImage('');
+      // Reset Form
+      setStoryTitle('');
+      setStoryDek('');
+      setStoryContent('');
+      setStoryAuthor('');
+      setStoryImage('');
 
-    push(
-      `Campus Story submitted for ${campus.name}! It is now in the Admin review queue and will be published once approved by editors.`,
-      'success'
-    );
+      push(
+        `Campus Story submitted for ${campus.name}! It is now in the Admin review queue and will be published once approved by editors.`,
+        'success'
+      );
+    }
   };
 
   return (
