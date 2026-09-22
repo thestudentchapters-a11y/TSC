@@ -23,6 +23,7 @@ import ContactMessage from '../models/ContactMessage';
 
 import { createContentService } from '../services/content.service';
 import { submissionService } from '../services/engagement.service';
+import { emailService } from '../services/email.service';
 import { asyncHandler } from '../utils/asyncHandler';
 import { requireAuth, requireEditor, requireAdmin, type AuthRequest } from '../middleware/auth';
 import { authRouter } from './auth.routes';
@@ -288,6 +289,61 @@ export function registerRoutes(app: Router) {
   contentRoutes('/api/story-submissions', StorySubmission, ['status', 'category'], false);
   contentRoutes('/api/campus-submissions', CampusSubmission, ['status', 'category'], false);
   contentRoutes('/api/contact-messages', ContactMessage, ['status'], false);
+
+  /* ── Contact Message Admin Reply ────────────────────────────────────── */
+  app.post(
+    '/api/contact-messages/:id/reply',
+    requireAuth,
+    requireEditor,
+    asyncHandler(async (req: AuthRequest, res) => {
+      const { replyMessage, subject } = req.body;
+      if (!replyMessage || typeof replyMessage !== 'string' || !replyMessage.trim()) {
+        throw ApiError.badRequest('Reply message is required');
+      }
+
+      const msg = await ContactMessage.findById(req.params.id);
+      if (!msg) throw ApiError.notFound('Contact message not found');
+
+      // Send email to the student/user
+      await emailService.sendContactReply(
+        msg.email,
+        msg.name,
+        subject || msg.subject,
+        replyMessage.trim()
+      );
+
+      // Automatically update status to replied
+      msg.status = 'replied';
+      await msg.save();
+
+      res.json({
+        success: true,
+        message: `Reply sent successfully to ${msg.email}`,
+        data: msg,
+      });
+    })
+  );
+
+  app.put(
+    '/api/contact-messages/:id/status',
+    requireAuth,
+    requireEditor,
+    asyncHandler(async (req: AuthRequest, res) => {
+      const { status } = req.body;
+      if (!['new', 'read', 'replied'].includes(status)) {
+        throw ApiError.badRequest('Status must be new, read, or replied');
+      }
+
+      const msg = await ContactMessage.findByIdAndUpdate(
+        req.params.id,
+        { status },
+        { new: true }
+      );
+      if (!msg) throw ApiError.notFound('Contact message not found');
+
+      res.json({ success: true, data: msg });
+    })
+  );
 
   /* ── Cloudinary Media Upload (admin/editor) ─────────────────────────── */
   app.post(

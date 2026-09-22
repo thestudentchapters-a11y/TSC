@@ -232,8 +232,41 @@ export const emailService = {
 
     return this.send({
       to: email,
-      subject: `Application Received: ${type} (${department}) — Ref #${refId}`,
-      html: wrapBrandTemplate(htmlContent, `Your application for ${type} in ${department} has been received.`),
+      subject: `Application Confirmation: ${department} (${type}) — THE STUDENT CHAPTERS`,
+      html: wrapBrandTemplate(htmlContent, `Your application for ${department} at TSC has been received.`),
+    });
+  },
+
+  /**
+   * Send Contact Query Reply from Admin to User
+   */
+  async sendContactReply(
+    to: string,
+    name: string,
+    originalSubject: string,
+    replyMessage: string
+  ) {
+    const formattedSubject = originalSubject.startsWith('Re:') ? originalSubject : `Re: ${originalSubject}`;
+    const htmlContent = `
+      <h2 style="margin-top: 0; color: #111827; font-size: 20px;">Hello ${name},</h2>
+      <p style="font-size: 15px; line-height: 1.6; color: #374151; margin: 0 0 16px;">
+        Thank you for contacting <strong>THE STUDENT CHAPTERS™</strong> regarding <em>"${originalSubject}"</em>.
+      </p>
+      <div style="background-color: #F9FAFB; border-left: 4px solid #1457A2; padding: 16px 20px; border-radius: 6px; margin: 20px 0; font-size: 14.5px; line-height: 1.65; color: #1F2937; white-space: pre-wrap;">${replyMessage}</div>
+      <p style="font-size: 14px; line-height: 1.6; color: #4B5563; margin: 16px 0 12px;">
+        If you have any further questions or follow-ups, you can reply directly to this email or visit our website.
+      </p>
+      <p style="font-size: 14px; color: #111827; margin: 24px 0 0;">
+        Warm regards,<br>
+        <strong>TSC Support &amp; Editorial Team</strong><br>
+        <a href="${env.clientUrl}" style="color: #1457A2; text-decoration: none;">thestudentchapters.com</a>
+      </p>
+    `;
+
+    return this.send({
+      to,
+      subject: formattedSubject,
+      html: wrapBrandTemplate(htmlContent, `Response regarding: ${originalSubject}`),
     });
   },
 
