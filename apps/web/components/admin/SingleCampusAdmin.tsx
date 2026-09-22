@@ -31,6 +31,7 @@ import { Modal } from '@/components/common/Modal';
 import { Field, Input, Textarea, Select, Checkbox } from '@/components/forms/Form';
 import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
 import { useToast } from '@/components/common/Toast';
+import { useAuth } from '@/components/providers/AuthProvider';
 import {
   type Campus,
   type Article,
@@ -67,6 +68,15 @@ const STORY_CATEGORIES: { value: StoryCategory; label: string }[] = [
 
 export function SingleCampusAdmin({ slug }: { slug: string }) {
   const { push } = useToast();
+  const { getToken } = useAuth();
+  const api = process.env.NEXT_PUBLIC_API_URL || '';
+  const token =
+    getToken() ||
+    (typeof window !== 'undefined'
+      ? localStorage.getItem('tsc_token') ||
+        localStorage.getItem('tsc.token') ||
+        localStorage.getItem('token')
+      : null);
 
   const [activeTab, setActiveTab] = useState<SubTabType>('news');
   const [searchQuery, setSearchQuery] = useState('');
@@ -161,7 +171,66 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
     } catch {
       /* ignore */
     }
-  }, []);
+
+    if (api) {
+      fetch(`${api}/api/campuses?_t=${Date.now()}&limit=100`, {
+        cache: 'no-store',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data)) {
+            const mapped = json.data.map((item: any) => ({
+              ...item,
+              id: item.id || item._id?.toString() || item.slug,
+            }));
+            setCampuses(mapped);
+            try {
+              window.localStorage.setItem('tsc.admin.campuses', JSON.stringify({ added: mapped }));
+            } catch {}
+          }
+        })
+        .catch(() => {});
+
+      fetch(`${api}/api/news?_t=${Date.now()}&limit=100`, {
+        cache: 'no-store',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data)) {
+            const mapped = json.data.map((item: any) => ({
+              ...item,
+              id: item.id || item._id?.toString() || item.slug,
+            }));
+            setArticles(mapped);
+          }
+        })
+        .catch(() => {});
+
+      fetch(`${api}/api/stories?_t=${Date.now()}&limit=100`, {
+        cache: 'no-store',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data)) {
+            const mapped = json.data.map((item: any) => ({
+              ...item,
+              id: item.id || item._id?.toString() || item.slug,
+            }));
+            setStories(mapped);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [api, token]);
 
   // Match current campus
   const campus = useMemo(() => {
@@ -335,7 +404,7 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
     setIsNewsModalOpen(true);
   };
 
-  const handleSaveNews = (e: React.FormEvent) => {
+  const handleSaveNews = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newsForm.title.trim()) {
       push('Please enter a headline.', 'error');
@@ -343,55 +412,113 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
     }
     if (!campus) return;
 
+    const payload = {
+      title: newsForm.title.trim(),
+      slug: editingNews?.slug || slugify(newsForm.title),
+      campus: campus.name,
+      category: newsForm.category,
+      author: newsForm.author || 'Campus Correspondent',
+      excerpt: newsForm.excerpt || newsForm.content.slice(0, 140) + '…',
+      content: newsForm.content.split('\n\n').filter(Boolean),
+      image: newsForm.image,
+      tags: newsForm.tags.split(',').map((t) => t.trim()).filter(Boolean),
+      featured: newsForm.featured,
+      status: newsForm.status as ContentStatus,
+    };
+
     if (editingNews) {
+      const endpointId = (editingNews as any)._id || editingNews.id || editingNews.slug;
+      let savedArticle: Article = {
+        ...editingNews,
+        ...payload,
+      };
+
+      if (api) {
+        try {
+          const res = await fetch(`${api}/api/news/${endpointId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(payload),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.data) {
+            savedArticle = {
+              ...json.data,
+              id: json.data.id || json.data._id?.toString() || savedArticle.id,
+            };
+          }
+        } catch (err) {
+          console.error('Update news API error:', err);
+        }
+      }
+
       const updated = articles.map((a) =>
-        a.id === editingNews.id
-          ? {
-              ...a,
-              title: newsForm.title,
-              category: newsForm.category,
-              author: newsForm.author,
-              excerpt: newsForm.excerpt || newsForm.content.slice(0, 140) + '…',
-              content: newsForm.content.split('\n\n').filter(Boolean),
-              image: newsForm.image,
-              tags: newsForm.tags.split(',').map((t) => t.trim()).filter(Boolean),
-              featured: newsForm.featured,
-              status: newsForm.status as ContentStatus,
-            }
-          : a
+        a.id === editingNews.id || a.slug === editingNews.slug ? savedArticle : a
       );
       saveArticlesToLocal(updated);
       push('News article updated successfully.', 'success');
     } else {
-      const newArticle: Article = {
+      let newArticle: Article = {
         id: `news-${Date.now()}`,
-        slug: slugify(newsForm.title),
-        title: newsForm.title,
-        campus: campus.name,
-        category: newsForm.category,
-        author: newsForm.author || 'Campus Correspondent',
-        excerpt: newsForm.excerpt || newsForm.content.slice(0, 140) + '…',
-        content: newsForm.content.split('\n\n').filter(Boolean),
         date: new Date().toISOString(),
         readingTime: Math.max(1, Math.round(newsForm.content.split(/\s+/).length / 200)),
-        image: newsForm.image,
         imageAlt: newsForm.title,
-        tags: newsForm.tags.split(',').map((t) => t.trim()).filter(Boolean),
-        featured: newsForm.featured,
-        status: newsForm.status as ContentStatus,
+        ...payload,
       };
+
+      if (api) {
+        try {
+          const res = await fetch(`${api}/api/news`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(payload),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.data) {
+            newArticle = {
+              ...json.data,
+              id: json.data.id || json.data._id?.toString() || newArticle.id,
+            };
+          }
+        } catch (err) {
+          console.error('Create news API error:', err);
+        }
+      }
+
       saveArticlesToLocal([newArticle, ...articles]);
       push(`Posted campus news for ${campus.name}!`, 'success');
     }
     setIsNewsModalOpen(false);
   };
 
-  const handleDeleteNews = (id: string) => {
-    if (confirm('Delete this campus news article? This cannot be undone.')) {
-      const updated = articles.filter((a) => a.id !== id);
-      saveArticlesToLocal(updated);
-      push('News article deleted.', 'success');
+  const handleDeleteNews = async (id: string) => {
+    if (!confirm('Delete this campus news article? This cannot be undone.')) return;
+
+    const target = articles.find((a) => a.id === id || a.slug === id);
+    const endpointId = (target as any)?._id || target?.id || target?.slug || id;
+
+    if (api) {
+      try {
+        await fetch(`${api}/api/news/${endpointId}`, {
+          method: 'DELETE',
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+      } catch (err) {
+        console.error('Delete news API error:', err);
+      }
     }
+
+    const updated = articles.filter((a) => a.id !== id && a.slug !== id);
+    saveArticlesToLocal(updated);
+    push('News article deleted.', 'success');
   };
 
   const handleOpenStoryModal = (story?: Story) => {
@@ -427,7 +554,7 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
     setIsStoryModalOpen(true);
   };
 
-  const handleSaveStory = (e: React.FormEvent) => {
+  const handleSaveStory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!storyForm.title.trim()) {
       push('Please enter a story headline.', 'error');
@@ -435,56 +562,113 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
     }
     if (!campus) return;
 
+    const payload = {
+      title: storyForm.title.trim(),
+      slug: editingStory?.slug || slugify(storyForm.title),
+      campus: campus.name,
+      category: storyForm.category,
+      author: storyForm.author || 'Student Contributor',
+      authorRole: storyForm.authorRole || 'Student',
+      dek: storyForm.dek || storyForm.content.slice(0, 120) + '…',
+      content: storyForm.content.split('\n\n').filter(Boolean),
+      image: storyForm.image,
+      featured: storyForm.featured,
+      status: storyForm.status as ContentStatus,
+    };
+
     if (editingStory) {
+      const endpointId = (editingStory as any)._id || editingStory.id || editingStory.slug;
+      let savedStory: Story = {
+        ...editingStory,
+        ...payload,
+      };
+
+      if (api) {
+        try {
+          const res = await fetch(`${api}/api/stories/${endpointId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(payload),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.data) {
+            savedStory = {
+              ...json.data,
+              id: json.data.id || json.data._id?.toString() || savedStory.id,
+            };
+          }
+        } catch (err) {
+          console.error('Update story API error:', err);
+        }
+      }
+
       const updated = stories.map((s) =>
-        s.id === editingStory.id
-          ? {
-              ...s,
-              title: storyForm.title,
-              campus: campus.name,
-              category: storyForm.category,
-              author: storyForm.author,
-              authorRole: storyForm.authorRole,
-              dek: storyForm.dek,
-              content: storyForm.content.split('\n\n').filter(Boolean),
-              image: storyForm.image,
-              status: storyForm.status as ContentStatus,
-              featured: storyForm.featured,
-            }
-          : s
+        s.id === editingStory.id || s.slug === editingStory.slug ? savedStory : s
       );
       saveStoriesToLocal(updated);
       push('Campus story updated successfully.', 'success');
     } else {
-      const newStory: Story = {
+      let newStory: Story = {
         id: `story-${Date.now()}`,
-        slug: slugify(storyForm.title),
-        title: storyForm.title,
-        campus: campus.name,
-        category: storyForm.category,
-        author: storyForm.author || 'Student Contributor',
-        authorRole: storyForm.authorRole || 'Student',
-        dek: storyForm.dek || storyForm.content.slice(0, 120) + '…',
-        content: storyForm.content.split('\n\n').filter(Boolean),
         date: new Date().toISOString(),
         readingTime: Math.max(2, Math.round(storyForm.content.split(/\s+/).length / 200)),
-        image: storyForm.image,
         imageAlt: storyForm.title,
-        featured: storyForm.featured,
-        status: storyForm.status as ContentStatus,
+        ...payload,
       };
+
+      if (api) {
+        try {
+          const res = await fetch(`${api}/api/stories`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify(payload),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.data) {
+            newStory = {
+              ...json.data,
+              id: json.data.id || json.data._id?.toString() || newStory.id,
+            };
+          }
+        } catch (err) {
+          console.error('Create story API error:', err);
+        }
+      }
+
       saveStoriesToLocal([newStory, ...stories]);
       push(`Published campus story for ${campus.name}!`, 'success');
     }
     setIsStoryModalOpen(false);
   };
 
-  const handleDeleteStory = (id: string) => {
-    if (confirm('Delete this campus story? This cannot be undone.')) {
-      const updated = stories.filter((s) => s.id !== id);
-      saveStoriesToLocal(updated);
-      push('Campus story deleted.', 'success');
+  const handleDeleteStory = async (id: string) => {
+    if (!confirm('Delete this campus story? This cannot be undone.')) return;
+
+    const target = stories.find((s) => s.id === id || s.slug === id);
+    const endpointId = (target as any)?._id || target?.id || target?.slug || id;
+
+    if (api) {
+      try {
+        await fetch(`${api}/api/stories/${endpointId}`, {
+          method: 'DELETE',
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+      } catch (err) {
+        console.error('Delete story API error:', err);
+      }
     }
+
+    const updated = stories.filter((s) => s.id !== id && s.slug !== id);
+    saveStoriesToLocal(updated);
+    push('Campus story deleted.', 'success');
   };
 
   const handleOpenEditCampus = () => {
@@ -502,33 +686,67 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
     setIsCampusModalOpen(true);
   };
 
-  const handleSaveCampus = (e: React.FormEvent) => {
+  const handleSaveCampus = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!campusForm.name.trim() || !campusForm.city.trim()) {
       push('Name and city are required.', 'error');
       return;
     }
 
+    const payload = {
+      name: campusForm.name.trim(),
+      slug: campus.slug || slugify(campusForm.name),
+      university: campusForm.university.trim() || campusForm.name.trim(),
+      city: campusForm.city.trim(),
+      state: campusForm.state.trim(),
+      type: campusForm.type,
+      description: campusForm.description.trim(),
+      image: campusForm.image,
+      categories: campusForm.categories
+        .split(',')
+        .map((cat) => cat.trim())
+        .filter(Boolean),
+    };
+
+    const endpointId = (campus as any)._id || campus.id || campus.slug;
+    let savedCampus: Campus = {
+      ...campus,
+      ...payload,
+    };
+
+    if (api) {
+      try {
+        const res = await fetch(`${api}/api/campuses/${endpointId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(payload),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(json.error || json.message || 'Failed to update campus on server');
+        }
+        if (json.data) {
+          savedCampus = {
+            ...json.data,
+            id: json.data.id || json.data._id?.toString() || savedCampus.id,
+          };
+        }
+        push(`Updated details for ${campusForm.name}.`, 'success');
+      } catch (err: any) {
+        console.error('Update campus API error:', err);
+        push(err.message || 'Failed to sync with server. Saved locally.', 'error');
+      }
+    } else {
+      push(`Updated details for ${campusForm.name}.`, 'success');
+    }
+
     const updated = campuses.map((c) =>
-      c.id === campus.id
-        ? {
-            ...c,
-            name: campusForm.name,
-            university: campusForm.university,
-            city: campusForm.city,
-            state: campusForm.state,
-            type: campusForm.type,
-            description: campusForm.description,
-            image: campusForm.image,
-            categories: campusForm.categories
-              .split(',')
-              .map((cat) => cat.trim())
-              .filter(Boolean),
-          }
-        : c
+      c.id === campus.id || c.slug === campus.slug ? savedCampus : c
     );
     saveCampusesToLocal(updated);
-    push(`Updated details for ${campusForm.name}.`, 'success');
     setIsCampusModalOpen(false);
   };
 

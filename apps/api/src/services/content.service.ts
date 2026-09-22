@@ -47,6 +47,7 @@ export function createContentService<T = Record<string, unknown>>(
       delete data.id;
       if (data._id && !/^[a-f\d]{24}$/i.test(String(data._id))) delete data._id;
       if (!data.slug && typeof data.title === 'string') data.slug = slugify(data.title);
+      if (!data.slug && typeof data.name === 'string') data.slug = slugify(data.name);
       // ensure slug uniqueness
       const existing = await model.exists({ slug: data.slug });
       if (existing) data.slug = `${data.slug}-${Date.now().toString(36)}`;
