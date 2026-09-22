@@ -101,7 +101,27 @@ export function registerRoutes(app: Router) {
       `${basePath}/:id`,
       requireAuth,
       requireEditor,
-      asyncHandler(async (req: Request, res: Response) => {
+      asyncHandler(async (req: AuthRequest, res: Response) => {
+        if (basePath === '/api/story-submissions' && req.body.status) {
+          const doc = await submissionService.moderate(
+            'story',
+            req.params.id,
+            req.body.status,
+            req.body.reviewNote,
+            String(req.user?._id || '')
+          );
+          return res.json({ success: true, data: doc });
+        }
+        if (basePath === '/api/campus-submissions' && req.body.status) {
+          const doc = await submissionService.moderate(
+            'campus',
+            req.params.id,
+            req.body.status,
+            req.body.reviewNote,
+            String(req.user?._id || '')
+          );
+          return res.json({ success: true, data: doc });
+        }
         res.json({ success: true, data: await service.update(req.params.id, req.body) });
       })
     );
@@ -221,6 +241,8 @@ export function registerRoutes(app: Router) {
   contentRoutes('/api/tags', Tag, undefined, false);
   contentRoutes('/api/media', Media, ['type'], false);
   contentRoutes('/api/subscribers', Subscriber, ['status', 'source'], false);
+  contentRoutes('/api/story-submissions', StorySubmission, ['status', 'category'], false);
+  contentRoutes('/api/campus-submissions', CampusSubmission, ['status', 'category'], false);
 
   /* ── Cloudinary Media Upload (admin/editor) ─────────────────────────── */
   app.post(

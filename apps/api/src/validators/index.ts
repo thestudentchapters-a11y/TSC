@@ -32,6 +32,8 @@ export const storySubmissionSchema = z.object({
   title: z.string().trim().min(6),
   category: z.string().trim().min(2),
   content: z.string().trim().min(100, 'Please tell the story in at least 100 characters'),
+  image: z.string().optional(),
+  images: z.array(z.string()).optional(),
   videoUrl: z.string().trim().url().optional().or(z.literal('')),
   social: z.string().trim().optional(),
   consent: z.literal(true, { message: 'Consent is required' }),
@@ -48,6 +50,8 @@ export const campusSubmissionSchema = z.object({
   category: z.string().trim().min(2),
   description: z.string().trim().min(80, 'Please describe the news in at least 80 characters'),
   eventDate: z.string().optional(),
+  image: z.string().optional(),
+  images: z.array(z.string()).optional(),
   links: z.string().trim().optional(),
   consent: z.literal(true, { message: 'Consent is required' }),
 });

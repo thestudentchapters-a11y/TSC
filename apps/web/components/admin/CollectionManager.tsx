@@ -43,6 +43,8 @@ function isValidRow(r: any): boolean {
   if (!r || typeof r !== 'object') return false;
   return Boolean(
     (r.title && String(r.title).trim()) ||
+    (r.storyTitle && String(r.storyTitle).trim()) ||
+    (r.newsTitle && String(r.newsTitle).trim()) ||
     (r.name && String(r.name).trim()) ||
     (r.email && String(r.email).trim()) ||
     (r.subject && String(r.subject).trim()) ||
@@ -167,6 +169,12 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
               .map((item: any) => ({
                 ...item,
                 id: item.id || item._id?.toString() || item.email || item.slug,
+                title: item.title || item.storyTitle || item.newsTitle || item.name || item.subject,
+                category: item.category || item.storyCategory,
+                summary: item.summary || item.storyContent || item.description || item.content,
+                submittedOn: item.submittedOn || item.createdAt,
+                campus: item.campus || item.college,
+                image: item.image || (Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : undefined),
               }));
             setRows(valid);
           }
