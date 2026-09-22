@@ -183,6 +183,27 @@ export function registerRoutes(app: Router) {
           } catch (err) {
             console.error('[News Delete Hook Error]:', err);
           }
+        } else if (basePath === '/api/media') {
+          try {
+            const isOid = isObjectId(idOrSlug);
+            if (isOid) {
+              await Media.findByIdAndDelete(idOrSlug);
+            } else {
+              const decoded = decodeURIComponent(idOrSlug);
+              await Media.findOneAndDelete({
+                $or: [
+                  { url: decoded },
+                  { url: idOrSlug },
+                  { publicId: decoded },
+                  { publicId: idOrSlug },
+                  { filename: decoded },
+                ],
+              });
+            }
+            return res.json({ success: true, data: null });
+          } catch (err) {
+            console.error('[Media Delete Error]:', err);
+          }
         }
 
         await service.remove(req.params.id);
