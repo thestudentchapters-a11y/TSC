@@ -5,7 +5,7 @@ export interface INotification {
   user: mongoose.Types.ObjectId;
   title: string;
   body: string;
-  type: 'info' | 'opportunity' | 'event' | 'story' | 'moderation';
+  type: 'info' | 'opportunity' | 'event' | 'story' | 'moderation' | 'submission';
   link?: string;
   read: boolean;
   createdAt: Date;
@@ -17,7 +17,7 @@ const NotificationSchema = new Schema(
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     title: { type: String, required: true },
     body: { type: String },
-    type: { type: String, enum: ['info', 'opportunity', 'event', 'story', 'moderation'], default: 'info' },
+    type: { type: String, enum: ['info', 'opportunity', 'event', 'story', 'moderation', 'submission'], default: 'info' },
     link: { type: String },
     read: { type: Boolean, default: false, index: true },
   },
