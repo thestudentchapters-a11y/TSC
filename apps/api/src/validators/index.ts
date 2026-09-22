@@ -80,9 +80,10 @@ export const teamMemberSchema = z.object({
 export const contactSchema = z.object({
   name: z.string().trim().min(2),
   email,
-  subject: z.string().trim().min(3),
-  message: z.string().trim().min(20, 'Message must be at least 20 characters'),
+  subject: z.string().trim().min(2),
+  message: z.string().trim().min(5, 'Message must be at least 5 characters'),
   website: z.string().optional(), // honeypot — bots fill this
+  consent: z.boolean().optional(),
 });
 
 export const eventRegistrationSchema = z.object({

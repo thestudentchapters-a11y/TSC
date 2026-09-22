@@ -169,10 +169,13 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
               .map((item: any) => ({
                 ...item,
                 id: item.id || item._id?.toString() || item.email || item.slug,
-                title: item.title || item.storyTitle || item.newsTitle || item.name || item.subject,
+                title: item.title || item.storyTitle || item.newsTitle || item.subject || item.name,
+                subject: item.subject || item.title,
+                message: item.message || item.summary || item.content,
                 category: item.category || item.storyCategory,
-                summary: item.summary || item.storyContent || item.description || item.content,
+                summary: item.summary || item.message || item.storyContent || item.description || item.content,
                 submittedOn: item.submittedOn || item.createdAt,
+                receivedOn: item.receivedOn || item.createdAt,
                 campus: item.campus || item.college,
                 image: item.image || (Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : undefined),
               }));

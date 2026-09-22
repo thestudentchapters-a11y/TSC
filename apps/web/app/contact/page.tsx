@@ -54,17 +54,15 @@ export default function ContactPage() {
     }
     setBusy(true);
     try {
-      const api = process.env.NEXT_PUBLIC_API_URL;
-      if (api) {
-        const res = await fetch(`${api}/api/contact`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(form),
-        });
-        if (!res.ok) throw new Error((await res.json()).message ?? 'Could not send message');
-      } else {
-        await new Promise((r) => setTimeout(r, 800));
-      }
+      const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${api}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.message || json.error || 'Could not send message');
+
       setDone(true);
       push('Message sent — the TSC team will reply soon.', 'success');
     } catch (err) {

@@ -234,9 +234,22 @@ export const contactService = {
       email: payload.email,
       subject: payload.subject,
       message: payload.message,
+      status: 'new',
       ipAddress: meta?.ip,
       userAgent: meta?.ua,
     });
+
+    if (payload.email && typeof payload.email === 'string') {
+      emailService
+        .sendSubmissionReceipt(
+          payload.email,
+          String(payload.name || 'User'),
+          'Contact Inquiry',
+          String(payload.subject || 'Message to TSC Team')
+        )
+        .catch((e) => console.error('[Email Receipt Error]:', e));
+    }
+
     return { ok: true, stored: true, id: String(doc._id) };
   },
 };
