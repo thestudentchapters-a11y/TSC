@@ -10,7 +10,7 @@ export function createContentController<T>(model: Model<T>, filterKeys?: string[
   return {
     list: async (req: Request, res: Response) => {
       const result = await service.list(req.query as Record<string, unknown>);
-      res.json({ success: true, ...result, data: result.items });
+      res.json({ success: true, ...result, items: result.data });
     },
     getBySlug: async (req: Request, res: Response) => {
       const doc = await service.getBySlug(req.params.slug);

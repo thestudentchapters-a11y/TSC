@@ -8,6 +8,7 @@ export interface ListOptions {
 
 export interface ListResult<T> {
   data: T[];
+  items?: T[];
   pagination: {
     page: number;
     limit: number;
@@ -29,6 +30,7 @@ export function paginatedResult<T>(data: T[], total: number, opts: ListOptions):
   const totalPages = Math.max(1, Math.ceil(total / opts.limit!));
   return {
     data,
+    items: data,
     pagination: {
       page: opts.page!,
       limit: opts.limit!,
