@@ -57,16 +57,16 @@ export function Header() {
           <Logo />
 
           {/* Desktop nav */}
-          <nav aria-label="Primary" className="hidden items-center xl:flex">
+          <nav aria-label="Primary" className="hidden items-center xl:flex whitespace-nowrap shrink-0">
             {mainNav.map((item) => {
               const active = isActive(item.href);
               return (
-                <div key={item.href} className="group relative">
+                <div key={item.href} className="group relative shrink-0">
                   <Link
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'nav-link flex items-center gap-1 px-2.5 py-2 font-display text-[11px] font-bold uppercase tracking-[0.12em] transition-colors',
+                      'nav-link flex items-center gap-1 px-2 2xl:px-2.5 py-2 font-display text-[10.5px] 2xl:text-[11px] font-bold uppercase tracking-[0.09em] 2xl:tracking-[0.12em] whitespace-nowrap transition-colors shrink-0',
                       active ? 'nav-link-active text-brand' : 'text-ink/75 hover:text-brand'
                     )}
                   >
@@ -74,7 +74,7 @@ export function Header() {
                     {item.children && (
                       <ChevronDown
                         aria-hidden
-                        className="h-3 w-3 transition-transform duration-300 group-hover:rotate-180"
+                        className="h-3 w-3 shrink-0 transition-transform duration-300 group-hover:rotate-180"
                       />
                     )}
                   </Link>
@@ -110,22 +110,22 @@ export function Header() {
           </nav>
 
           {/* Right utilities */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5 2xl:gap-3 shrink-0 whitespace-nowrap">
             <Link
               href="/search"
               aria-label="Search the platform"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-brand-50 hover:text-brand"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-brand-50 hover:text-brand shrink-0"
             >
               <Search aria-hidden className="h-[18px] w-[18px]" />
             </Link>
             <Link
               href="/share-your-story"
-              className="hidden items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-ink/70 transition-colors hover:text-brand lg:flex"
+              className="hidden items-center gap-1.5 text-[10.5px] 2xl:text-[11px] font-bold uppercase tracking-[0.09em] 2xl:tracking-[0.12em] text-ink/70 transition-colors hover:text-brand lg:flex whitespace-nowrap shrink-0"
             >
               <PenLine aria-hidden className="h-3.5 w-3.5" />
               Submit Your Story
             </Link>
-            <Button href="/konnectx" variant="accent" size="sm" className="hidden sm:inline-flex">
+            <Button href="/konnectx" variant="accent" size="sm" className="hidden sm:inline-flex whitespace-nowrap shrink-0 font-display">
               KonnectX
             </Button>
             <button

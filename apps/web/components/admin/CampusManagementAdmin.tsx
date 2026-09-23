@@ -1209,20 +1209,20 @@ export function CampusManagementAdmin() {
       </div>
 
       {/* Tabs & Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-hairline pb-4">
+      <div className="flex flex-wrap xl:flex-nowrap items-center justify-between gap-3 border-b border-hairline pb-3.5">
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto rounded-lg bg-cream/70 p-1 border border-hairline/70">
+        <div className="flex items-center gap-1 overflow-x-auto rounded-lg bg-cream/70 p-1 border border-hairline/70 shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('directory')}
             className={cn(
-              'inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all',
+              'inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all shrink-0',
               activeTab === 'directory'
                 ? 'bg-brand text-white shadow-sm'
                 : 'text-muted hover:text-ink'
             )}
           >
-            <School className="h-3.5 w-3.5" />
+            <School className="h-3.5 w-3.5 shrink-0" />
             <span>Campus Directory ({campuses.length})</span>
           </button>
 
@@ -1230,13 +1230,13 @@ export function CampusManagementAdmin() {
             type="button"
             onClick={() => setActiveTab('news')}
             className={cn(
-              'inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all',
+              'inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all shrink-0',
               activeTab === 'news'
                 ? 'bg-brand text-white shadow-sm'
                 : 'text-muted hover:text-ink'
             )}
           >
-            <Newspaper className="h-3.5 w-3.5" />
+            <Newspaper className="h-3.5 w-3.5 shrink-0" />
             <span>Campus News ({campusArticlesCount})</span>
           </button>
 
@@ -1244,13 +1244,13 @@ export function CampusManagementAdmin() {
             type="button"
             onClick={() => setActiveTab('stories')}
             className={cn(
-              'inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all',
+              'inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all shrink-0',
               activeTab === 'stories'
                 ? 'bg-brand text-white shadow-sm'
                 : 'text-muted hover:text-ink'
             )}
           >
-            <BookOpen className="h-3.5 w-3.5" />
+            <BookOpen className="h-3.5 w-3.5 shrink-0" />
             <span>Campus Stories ({campusStoriesCount})</span>
           </button>
 
@@ -1258,21 +1258,21 @@ export function CampusManagementAdmin() {
             type="button"
             onClick={() => setActiveTab('approvals')}
             className={cn(
-              'inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all',
+              'inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all shrink-0',
               activeTab === 'approvals'
                 ? 'bg-gold-deep text-white shadow-sm'
                 : 'text-muted hover:text-ink'
             )}
           >
-            <ShieldCheck className="h-3.5 w-3.5" />
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
             <span>Submissions &amp; Approvals ({pendingSubmissionsCount})</span>
           </button>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
           {/* Search */}
-          <div className="relative flex-1 sm:w-64">
+          <div className="relative w-44 sm:w-56 shrink-0">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted" />
             <input
               type="text"
@@ -1288,7 +1288,7 @@ export function CampusManagementAdmin() {
             <select
               value={selectedCampusFilter}
               onChange={(e) => setSelectedCampusFilter(e.target.value)}
-              className="rounded-md border border-hairline bg-white px-2.5 py-1.5 text-xs text-ink focus:border-brand focus:outline-none"
+              className="rounded-md border border-hairline bg-white px-2.5 py-1.5 text-xs text-ink focus:border-brand focus:outline-none shrink-0 max-w-[150px]"
             >
               <option value="all">All Campuses</option>
               {campuses.map((c) => (
@@ -1304,7 +1304,7 @@ export function CampusManagementAdmin() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-md border border-hairline bg-white px-2.5 py-1.5 text-xs text-ink focus:border-brand focus:outline-none"
+              className="rounded-md border border-hairline bg-white px-2.5 py-1.5 text-xs text-ink focus:border-brand focus:outline-none shrink-0"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -1491,9 +1491,9 @@ export function CampusManagementAdmin() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-1 rounded bg-brand-50 px-2 py-0.5 text-[10.5px] font-bold text-brand border border-brand/20">
-                        <School className="h-3 w-3" /> {article.campus || 'General Campus'}
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 rounded bg-brand-50 px-2.5 py-0.5 text-[10.5px] font-bold text-brand border border-brand/20 whitespace-nowrap shrink-0">
+                        <School className="h-3 w-3 shrink-0" /> {article.campus || 'General Campus'}
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -1590,14 +1590,16 @@ export function CampusManagementAdmin() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-2 py-0.5 text-[10.5px] font-bold text-emerald-800 border border-emerald-200">
-                        <School className="h-3 w-3" /> {story.campus || 'General Campus'}
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-2.5 py-0.5 text-[10.5px] font-bold text-emerald-800 border border-emerald-200 whitespace-nowrap shrink-0">
+                        <School className="h-3 w-3 shrink-0" /> {story.campus || 'General Campus'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted">
-                      <p className="font-semibold text-ink">{story.author}</p>
-                      <p className="text-[10.5px] text-muted">{story.authorRole}</p>
+                      <p className="font-semibold text-ink truncate max-w-[180px]">
+                        {/^[a-f\d]{24}$/i.test(story.author) ? 'Student Contributor' : story.author}
+                      </p>
+                      <p className="text-[10.5px] text-muted">{story.authorRole || 'Contributor'}</p>
                     </td>
                     <td className="px-4 py-3">
                       <span className="rounded-full bg-cream px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted border border-hairline">
