@@ -200,8 +200,9 @@ export function CampusManagementAdmin() {
       })
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
-          if (json && Array.isArray(json.data)) {
-            const mapped = json.data.map((item: any) => ({
+          const list = Array.isArray(json?.items) ? json.items : (Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : null));
+          if (list) {
+            const mapped = list.map((item: any) => ({
               ...item,
               id: item.id || item._id?.toString() || item.slug,
             }));
@@ -221,8 +222,9 @@ export function CampusManagementAdmin() {
       })
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
-          if (json && Array.isArray(json.data)) {
-            const mapped = json.data.map((item: any) => ({
+          const list = Array.isArray(json?.items) ? json.items : (Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : null));
+          if (list) {
+            const mapped = list.map((item: any) => ({
               ...item,
               id: item.id || item._id?.toString() || item.slug,
             }));
@@ -239,8 +241,9 @@ export function CampusManagementAdmin() {
       })
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
-          if (json && Array.isArray(json.data)) {
-            const mapped = json.data.map((item: any) => ({
+          const list = Array.isArray(json?.items) ? json.items : (Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : null));
+          if (list) {
+            const mapped = list.map((item: any) => ({
               ...item,
               id: item.id || item._id?.toString() || item.slug,
             }));

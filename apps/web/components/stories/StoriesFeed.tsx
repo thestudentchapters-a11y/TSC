@@ -82,8 +82,15 @@ export function StoriesFeed({
       fetch(`${api}/api/stories?_t=${Date.now()}&limit=100`, { cache: 'no-store' })
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
-          if (json && Array.isArray(json.data) && json.data.length > 0) {
-            const mapped: Story[] = json.data.map((item: any) => ({
+          const rawItems = Array.isArray(json?.items)
+            ? json.items
+            : Array.isArray(json?.data)
+              ? json.data
+              : Array.isArray(json)
+                ? json
+                : [];
+          if (rawItems.length > 0) {
+            const mapped: Story[] = rawItems.map((item: any) => ({
               id: item.id || item._id?.toString() || item.slug,
               slug: item.slug || '',
               title: item.title || item.storyTitle || 'Untitled Story',

@@ -164,8 +164,15 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
       })
         .then((res) => (res.ok ? res.json() : null))
         .then((json) => {
-          if (json && Array.isArray(json.data)) {
-            const valid = json.data
+          const list = Array.isArray(json?.items)
+            ? json.items
+            : Array.isArray(json?.data)
+              ? json.data
+              : Array.isArray(json)
+                ? json
+                : null;
+          if (list) {
+            const valid = list
               .filter(isValidRow)
               .map((item: any) => ({
                 ...item,
@@ -430,15 +437,19 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
-          push(`Database sync warning: ${errData.error || errData.message || res.statusText}. Please make sure you are logged in as admin.`, 'error');
+          push(`Database sync warning: ${errData.error || errData.message || res.statusText}. Please make sure you are logged in as admin. Saved locally.`, 'error');
+          const exists = rows.some((r) => r.id === row.id);
+          const updated = exists ? rows.map((r) => (r.id === row.id ? row : r)) : [row, ...rows];
+          save(updated);
           return;
         }
 
         const json = await res.json().catch(() => ({}));
-        if (json && json.data) {
+        const savedDoc = json?.data || json?.item || (isValidRow(json) ? json : null);
+        if (savedDoc) {
           const savedRow = {
-            ...json.data,
-            id: json.data.id || json.data._id?.toString() || row.slug,
+            ...savedDoc,
+            id: savedDoc.id || savedDoc._id?.toString() || row.slug,
           };
           const updated = isEditingExisting
             ? rows.map((r) => (r.id === row.id || r.slug === row.slug ? savedRow : r))

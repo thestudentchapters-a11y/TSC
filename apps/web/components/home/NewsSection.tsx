@@ -81,8 +81,15 @@ export function NewsSection({ articles: initialArticles }: { articles: Article[]
         fetch(`${api}/api/news?_t=${Date.now()}&limit=20`, { cache: 'no-store' })
           .then((res) => (res.ok ? res.json() : null))
           .then((json) => {
-            if (json && Array.isArray(json.data) && json.data.length > 0) {
-              const mapped: Article[] = json.data.map((item: any) => ({
+            const rawItems = Array.isArray(json?.items)
+              ? json.items
+              : Array.isArray(json?.data)
+                ? json.data
+                : Array.isArray(json)
+                  ? json
+                  : [];
+            if (rawItems.length > 0) {
+              const mapped: Article[] = rawItems.map((item: any) => ({
                 id: item.id || item._id?.toString() || item.slug,
                 slug: item.slug || '',
                 title: item.title || item.newsTitle || 'Untitled',

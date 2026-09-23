@@ -63,7 +63,7 @@ export function registerRoutes(app: Router) {
       basePath,
       asyncHandler(async (req: Request, res: Response) => {
         const result = await service.list(req.query as Record<string, unknown>);
-        res.json({ success: true, ...result });
+        res.json({ success: true, ...result, data: result.items });
       })
     );
 

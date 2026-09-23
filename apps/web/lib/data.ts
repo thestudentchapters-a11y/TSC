@@ -335,9 +335,9 @@ async function withApi<T>(
     const res = await fetch(`${base}${path}`, fetchInit).finally(() => clearTimeout(timeoutId));
 
     if (!res.ok) throw new Error(`API responded ${res.status}`);
-    const json = (await res.json()) as { data?: any };
-    const rawData = json.data ?? json;
-    if (transform && rawData) {
+    const json = (await res.json()) as { data?: any; items?: any; [key: string]: any };
+    const rawData = json?.items !== undefined ? json.items : (json?.data !== undefined ? json.data : json);
+    if (transform && rawData !== undefined && rawData !== null) {
       return transform(rawData);
     }
     return (rawData as T) ?? fallback;
@@ -350,8 +350,9 @@ async function withApi<T>(
 /* News */
 export const getArticles = cache(() =>
   withApi<Article[]>('/api/news?limit=100', demoArticles, (data) => {
-    if (!Array.isArray(data)) return demoArticles;
-    const mapped = data.map(normalizeArticle);
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    if (!Array.isArray(list) || list.length === 0) return demoArticles;
+    const mapped = list.map(normalizeArticle);
     if (mapped.length === 0) return demoArticles;
     const dbSlugs = new Set(mapped.map((a) => a.slug.toLowerCase().trim()));
     const dbTitles = new Set(mapped.map((a) => a.title.toLowerCase().trim()));
@@ -379,8 +380,9 @@ export const getArticleBySlug = cache(async function (slug: string): Promise<Art
 /* Stories */
 export const getStories = cache(() =>
   withApi<Story[]>('/api/stories?limit=100', demoStories, (data) => {
-    if (!Array.isArray(data)) return demoStories;
-    const mapped = data.map(normalizeStory);
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    if (!Array.isArray(list) || list.length === 0) return demoStories;
+    const mapped = list.map(normalizeStory);
     if (mapped.length === 0) return demoStories;
     const dbSlugs = new Set(mapped.map((s) => s.slug.toLowerCase().trim()));
     const dbTitles = new Set(mapped.map((s) => s.title.toLowerCase().trim()));
@@ -408,8 +410,9 @@ export const getStoryBySlug = cache(async function (slug: string): Promise<Story
 /* Campuses */
 export const getCampuses = cache(() =>
   withApi<Campus[]>('/api/campuses?limit=100', demoCampuses, (data) => {
-    if (!Array.isArray(data)) return demoCampuses;
-    const mapped = data.map(normalizeCampus);
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    if (!Array.isArray(list) || list.length === 0) return demoCampuses;
+    const mapped = list.map(normalizeCampus);
     if (mapped.length === 0) return demoCampuses;
     const dbSlugs = new Set(mapped.map((c) => c.slug.toLowerCase().trim()));
     const extraDemos = demoCampuses.filter(
@@ -433,9 +436,10 @@ export const getCampusBySlug = cache(async function (slug: string): Promise<Camp
 
 /* Podcast */
 export const getEpisodes = cache(() =>
-  withApi<PodcastEpisode[]>('/api/podcasts', demoEpisodes, (data) =>
-    Array.isArray(data) ? data.map(normalizeEpisode) : demoEpisodes
-  )
+  withApi<PodcastEpisode[]>('/api/podcasts', demoEpisodes, (data) => {
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    return Array.isArray(list) && list.length > 0 ? list.map(normalizeEpisode) : demoEpisodes;
+  })
 );
 export const getEpisodeBySlug = cache(async function (slug: string): Promise<PodcastEpisode | undefined> {
   const items = await getEpisodes();
@@ -456,11 +460,12 @@ export const getEpisodeBySlug = cache(async function (slug: string): Promise<Pod
 
 /* Events */
 export const getEvents = cache(() =>
-  withApi<TscEvent[]>('/api/events', demoEvents, (data) =>
-    Array.isArray(data)
-      ? data.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeEvent)
-      : demoEvents
-  )
+  withApi<TscEvent[]>('/api/events', demoEvents, (data) => {
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    return Array.isArray(list) && list.length > 0
+      ? list.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeEvent)
+      : demoEvents;
+  })
 );
 export const getEventBySlug = cache(async function (slug: string): Promise<TscEvent | undefined> {
   const items = await getEvents();
@@ -477,20 +482,22 @@ export const getEventBySlug = cache(async function (slug: string): Promise<TscEv
 
 /* Opportunities */
 export const getOpportunities = cache(() =>
-  withApi<Opportunity[]>('/api/opportunities', demoOpportunities, (data) =>
-    Array.isArray(data)
-      ? data.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeOpportunity)
-      : demoOpportunities
-  )
+  withApi<Opportunity[]>('/api/opportunities', demoOpportunities, (data) => {
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    return Array.isArray(list) && list.length > 0
+      ? list.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeOpportunity)
+      : demoOpportunities;
+  })
 );
 
 /* Current Affairs */
 export const getEditions = cache(() =>
-  withApi<CurrentAffairsEdition[]>('/api/current-affairs', demoEditions, (data) =>
-    Array.isArray(data)
-      ? data.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeEdition)
-      : demoEditions
-  )
+  withApi<CurrentAffairsEdition[]>('/api/current-affairs', demoEditions, (data) => {
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    return Array.isArray(list) && list.length > 0
+      ? list.filter((d: any) => Boolean(d && (d.title?.trim() || d.name?.trim()))).map(normalizeEdition)
+      : demoEditions;
+  })
 );
 export const getEditionBySlug = cache(async function (slug: string): Promise<CurrentAffairsEdition | undefined> {
   const items = await getEditions();
@@ -507,9 +514,10 @@ export const getEditionBySlug = cache(async function (slug: string): Promise<Cur
 
 /* Legal Awareness */
 export const getLegalArticles = cache(() =>
-  withApi<LegalArticle[]>('/api/legal-awareness', demoLegalArticles, (data) =>
-    Array.isArray(data) ? data.map(normalizeLegal) : demoLegalArticles
-  )
+  withApi<LegalArticle[]>('/api/legal-awareness', demoLegalArticles, (data) => {
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    return Array.isArray(list) && list.length > 0 ? list.map(normalizeLegal) : demoLegalArticles;
+  })
 );
 export const getLegalBySlug = cache(async function (slug: string): Promise<LegalArticle | undefined> {
   const items = await getLegalArticles();
@@ -526,9 +534,10 @@ export const getLegalBySlug = cache(async function (slug: string): Promise<Legal
 
 /* Campaigns */
 export const getCampaigns = cache(() =>
-  withApi<Campaign[]>('/api/campaigns', [flagshipCampaign], (data) =>
-    Array.isArray(data) ? data.map(normalizeCampaign) : [flagshipCampaign]
-  )
+  withApi<Campaign[]>('/api/campaigns', [flagshipCampaign], (data) => {
+    const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+    return Array.isArray(list) && list.length > 0 ? list.map(normalizeCampaign) : [flagshipCampaign];
+  })
 );
 
 export const getCampaign = cache(() =>
