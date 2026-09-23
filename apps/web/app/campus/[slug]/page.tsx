@@ -43,17 +43,28 @@ export default async function CampusProfilePage({ params }: Props) {
     getCampuses(),
   ]);
 
+  const campusNameLower = campus.name.trim().toLowerCase();
   const campusPrefix = campus.name.split(' ')[0].toLowerCase();
-  const campusArticles = articles.filter(
-    (a) =>
-      a.campus?.toLowerCase() === campus.name.toLowerCase() ||
-      a.campus?.toLowerCase().includes(campusPrefix)
-  );
-  const campusStories = stories.filter(
-    (s) =>
-      s.campus?.toLowerCase() === campus.name.toLowerCase() ||
-      s.campus?.toLowerCase().includes(campusPrefix)
-  );
+  const campusArticles = articles.filter((a) => {
+    const c = (a.campus || '').trim().toLowerCase();
+    if (!c) return false;
+    return (
+      c === campusNameLower ||
+      c.includes(campusNameLower) ||
+      campusNameLower.includes(c) ||
+      (campusPrefix.length >= 3 && c.includes(campusPrefix))
+    );
+  });
+  const campusStories = stories.filter((s) => {
+    const c = (s.campus || '').trim().toLowerCase();
+    if (!c) return false;
+    return (
+      c === campusNameLower ||
+      c.includes(campusNameLower) ||
+      campusNameLower.includes(c) ||
+      (campusPrefix.length >= 3 && c.includes(campusPrefix))
+    );
+  });
   const campusEvents = events.filter((e) => e.state === campus.state).slice(0, 3);
   const otherCampuses = campuses.filter((c) => c.id !== campus.id).slice(0, 3);
 

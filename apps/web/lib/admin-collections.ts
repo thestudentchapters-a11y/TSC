@@ -312,6 +312,7 @@ export const collections: Record<string, CollectionDef> = {
     columns: [
       { name: 'title', label: 'Story' },
       { name: 'name', label: 'From' },
+      { name: 'campus', label: 'Campus' },
       { name: 'category', label: 'Category', type: 'badge' },
       { name: 'submittedOn', label: 'Submitted', type: 'date' },
       { name: 'status', label: 'Status', type: 'status' },
@@ -320,7 +321,8 @@ export const collections: Record<string, CollectionDef> = {
       { name: 'title', label: 'Story title', type: 'text', required: true },
       { name: 'name', label: 'Submitter', type: 'text', width: 'half' },
       { name: 'email', label: 'Email', type: 'text', width: 'half' },
-      { name: 'college', label: 'College / University / School', type: 'text', width: 'half' },
+      { name: 'campus', label: 'Associated Campus', type: 'text', width: 'half' },
+      { name: 'college', label: 'College / Institution', type: 'text', width: 'half' },
       { name: 'category', label: 'Category', type: 'text', width: 'half' },
       { name: 'summary', label: 'Summary', type: 'textarea' },
       { name: 'status', label: 'Status', type: 'select', options: ['pending', 'under review', 'approved', 'rejected'], width: 'half' },
@@ -332,6 +334,7 @@ export const collections: Record<string, CollectionDef> = {
     description: 'Campus news submissions awaiting review.',
     columns: [
       { name: 'title', label: 'News' },
+      { name: 'name', label: 'From' },
       { name: 'campus', label: 'Campus' },
       { name: 'category', label: 'Category', type: 'badge' },
       { name: 'submittedOn', label: 'Submitted', type: 'date' },
@@ -340,7 +343,9 @@ export const collections: Record<string, CollectionDef> = {
     fields: [
       { name: 'title', label: 'News title', type: 'text', required: true },
       { name: 'name', label: 'Submitter', type: 'text', width: 'half' },
-      { name: 'campus', label: 'Campus', type: 'text', width: 'half' },
+      { name: 'email', label: 'Email', type: 'text', width: 'half' },
+      { name: 'campus', label: 'Associated Campus', type: 'text', width: 'half' },
+      { name: 'college', label: 'College / Institution', type: 'text', width: 'half' },
       { name: 'category', label: 'Category', type: 'text', width: 'half' },
       { name: 'summary', label: 'Summary', type: 'textarea' },
       { name: 'status', label: 'Status', type: 'select', options: ['pending', 'under review', 'approved', 'rejected'], width: 'half' },

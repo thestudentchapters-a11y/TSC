@@ -8,6 +8,7 @@ export interface IStorySubmission {
   email: string;
   phone?: string;
   college?: string;
+  campus?: string;
   city: string;
   state: string;
   storyTitle: string;
@@ -31,6 +32,7 @@ const StorySubmissionSchema = new Schema(
     email: { type: String, required: true, trim: true, lowercase: true },
     phone: { type: String },
     college: { type: String, default: '' },
+    campus: { type: String, default: '' },
     city: { type: String, default: '' },
     state: { type: String, default: '' },
     storyTitle: { type: String, required: true },

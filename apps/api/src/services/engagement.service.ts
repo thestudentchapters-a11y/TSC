@@ -21,7 +21,8 @@ export const submissionService = {
       name: payload.name || 'Story Contributor',
       email: payload.email || 'contributor@tsc.demo',
       phone: payload.phone || undefined,
-      college: payload.college || 'University / College',
+      college: payload.college || payload.campus || 'University / College',
+      campus: payload.campus || payload.college || '',
       city: payload.city || '',
       state: payload.state || '',
       storyTitle: payload.title || payload.storyTitle,
@@ -153,11 +154,13 @@ export const submissionService = {
         ],
       });
 
+      const storyCampus = doc.campus || doc.college || '';
       if (existingStory) {
         existingStory.title = doc.storyTitle;
         existingStory.content = doc.storyContent;
         existingStory.dek = doc.storyContent ? doc.storyContent.slice(0, 160).trim() + '…' : 'Student submission on TSC';
         existingStory.category = storyCat;
+        existingStory.campus = storyCampus;
         if (doc.images && doc.images.length > 0) {
           existingStory.image = doc.images[0];
         }
@@ -172,6 +175,7 @@ export const submissionService = {
           dek: doc.storyContent ? doc.storyContent.slice(0, 160).trim() + '…' : 'Student submission on TSC',
           category: storyCat,
           content: doc.storyContent,
+          campus: storyCampus,
           image: doc.images && doc.images.length > 0 ? doc.images[0] : '/images/hero/hero-collab.jpg',
           imageAlt: doc.storyTitle,
           author: doc.user || reviewer,

@@ -434,6 +434,59 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
       save(updated);
     }
 
+    if (row.status === 'approved') {
+      if (def.key === 'story-submissions') {
+        try {
+          const customStories = JSON.parse(window.localStorage.getItem('tsc.custom.stories') || '[]');
+          const storyCampus = String(row.campus || row.college || '').trim();
+          const storyTitle = String(row.title || row.storyTitle || 'Campus Story').trim();
+          const storyContent = String(row.summary || row.storyContent || row.content || '').trim();
+          const newStory = {
+            id: `approved-story-${row.id}`,
+            slug: slugify(storyTitle),
+            title: storyTitle,
+            dek: storyContent ? (storyContent.slice(0, 160).trim() + '…') : 'Student submission on TSC',
+            category: String(row.category || row.storyCategory || 'student').toLowerCase(),
+            content: storyContent,
+            campus: storyCampus,
+            image: Array.isArray(row.images) && row.images[0] ? row.images[0] : (row.image || '/images/stories/story-1.jpg'),
+            author: String(row.name || 'TSC Contributor'),
+            authorRole: 'Student',
+            date: new Date().toISOString().slice(0, 10),
+            status: 'published',
+            featured: false,
+          };
+          const filtered = customStories.filter((s: any) => s.id !== newStory.id && s.title !== newStory.title);
+          window.localStorage.setItem('tsc.custom.stories', JSON.stringify([newStory, ...filtered]));
+          push(`🎉 Approved! Story "${storyTitle}" is live on Main Stories and ${storyCampus || 'Campus'} profile page.`, 'success');
+        } catch {}
+      } else if (def.key === 'campus-submissions') {
+        try {
+          const customArticles = JSON.parse(window.localStorage.getItem('tsc.custom.articles') || '[]');
+          const newsCampus = String(row.campus || row.college || '').trim();
+          const newsTitle = String(row.title || row.newsTitle || 'Campus News').trim();
+          const newsContent = String(row.summary || row.description || row.content || '').trim();
+          const newArticle = {
+            id: `approved-news-${row.id}`,
+            slug: slugify(newsTitle),
+            title: newsTitle,
+            excerpt: newsContent ? (newsContent.slice(0, 180).trim() + '…') : 'Campus news on TSC',
+            content: newsContent,
+            category: String(row.category || 'Campus News'),
+            campus: newsCampus,
+            image: Array.isArray(row.images) && row.images[0] ? row.images[0] : (row.image || '/images/news/news-1.jpg'),
+            author: String(row.name || 'TSC Campus Reporter'),
+            date: new Date().toISOString().slice(0, 10),
+            status: 'published',
+            featured: false,
+          };
+          const filtered = customArticles.filter((a: any) => a.id !== newArticle.id && a.title !== newArticle.title);
+          window.localStorage.setItem('tsc.custom.articles', JSON.stringify([newArticle, ...filtered]));
+          push(`🎉 Approved! News "${newsTitle}" is live on Main News and ${newsCampus || 'Campus'} profile page.`, 'success');
+        } catch {}
+      }
+    }
+
     push('Item saved successfully.', 'success');
   };
 

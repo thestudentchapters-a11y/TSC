@@ -173,6 +173,30 @@ export function CampusNewsAndStoriesHub({
       success = true;
     }
 
+    // Persist to local admin queue for client/demo mode
+    try {
+      const existingKey = 'tsc.admin.campus-submissions';
+      const overlay = JSON.parse(window.localStorage.getItem(existingKey) || '{"added":[],"edits":{},"deleted":[]}');
+      const newSub = {
+        id: `sub-news-${Date.now()}`,
+        title: payload.title,
+        newsTitle: payload.title,
+        name: payload.name,
+        email: payload.email,
+        campus: payload.campus,
+        college: payload.college,
+        category: payload.category,
+        summary: payload.description,
+        description: payload.description,
+        images: payload.images,
+        status: 'pending',
+        submittedOn: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      };
+      overlay.added = [newSub, ...(overlay.added || [])];
+      window.localStorage.setItem(existingKey, JSON.stringify(overlay));
+    } catch {}
+
     if (success) {
       setSubmittingNews(false);
       setIsNewsModalOpen(false);
@@ -205,6 +229,7 @@ export function CampusNewsAndStoriesHub({
       name: storyAuthor.trim() || user?.name || 'Campus Contributor',
       email: user?.email || 'contributor@campus.tsc',
       college: campus.name,
+      campus: campus.name,
       city: campus.city || user?.city || 'All India',
       state: campus.state || user?.state || 'All India',
       title: storyTitle.trim(),
@@ -240,6 +265,30 @@ export function CampusNewsAndStoriesHub({
     } else {
       success = true;
     }
+
+    // Persist to local admin queue for client/demo mode
+    try {
+      const existingKey = 'tsc.admin.story-submissions';
+      const overlay = JSON.parse(window.localStorage.getItem(existingKey) || '{"added":[],"edits":{},"deleted":[]}');
+      const newSub = {
+        id: `sub-story-${Date.now()}`,
+        title: payload.title,
+        storyTitle: payload.title,
+        name: payload.name,
+        email: payload.email,
+        campus: payload.campus,
+        college: payload.college,
+        category: payload.category,
+        summary: payload.content,
+        storyContent: payload.content,
+        images: payload.images,
+        status: 'pending',
+        submittedOn: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      };
+      overlay.added = [newSub, ...(overlay.added || [])];
+      window.localStorage.setItem(existingKey, JSON.stringify(overlay));
+    } catch {}
 
     if (success) {
       setSubmittingStory(false);
