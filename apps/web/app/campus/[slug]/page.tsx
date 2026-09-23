@@ -9,6 +9,7 @@ import { CategoryPill } from '@/components/common/CategoryPill';
 import { Reveal } from '@/components/common/Reveal';
 import { TextCTA } from '@/components/common/Button';
 import { CampusNewsAndStoriesHub } from '@/components/campus/CampusNewsAndStoriesHub';
+import { CampusDescription } from '@/components/campus/CampusDescription';
 import { getCampusBySlug, getCampuses, getStories, getEvents, getArticles } from '@/lib/data';
 import { formatDate } from '@/lib/utils';
 
@@ -100,15 +101,11 @@ export default async function CampusProfilePage({ params }: Props) {
           <div className="mt-10 grid gap-12 lg:grid-cols-12">
             <div className="space-y-10 lg:col-span-8">
               <DemoNotice />
-              <div>
-                <h2 className="font-display text-xl font-bold">About the campus</h2>
-                <p className="mt-3 text-[15px] leading-7 text-muted">{campus.description}</p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {campus.categories.map((c) => (
-                    <CategoryPill key={c} variant="outline">{c}</CategoryPill>
-                  ))}
-                </div>
-              </div>
+              <CampusDescription
+                description={campus.description}
+                categories={campus.categories}
+                campusName={campus.name}
+              />
 
               {/* Campus News & Stories Hub */}
               <CampusNewsAndStoriesHub
