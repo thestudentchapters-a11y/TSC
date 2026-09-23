@@ -26,9 +26,8 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };
 
-// Server-rendered homepage feed aggregator Developed by Ayush
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Incremental Static Regeneration (ISR) with background revalidation
+export const revalidate = 30;
 
 export default async function HomePage() {
   const [articles, stories, campuses, opportunities, editions, episodes, events, campaign, settings] = await Promise.all([

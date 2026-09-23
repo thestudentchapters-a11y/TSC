@@ -301,18 +301,38 @@ function normalizeCampaign(raw: any): Campaign {
   };
 }
 
-async function withApi<T>(path: string, fallback: T, transform?: (data: any) => T): Promise<T> {
+interface FetchApiOptions {
+  revalidate?: number | false;
+  timeoutMs?: number;
+}
+
+async function withApi<T>(
+  path: string,
+  fallback: T,
+  transform?: (data: any) => T,
+  options?: FetchApiOptions
+): Promise<T> {
   const base = getBaseApiUrl();
   if (!base) return fallback;
   try {
+    const timeout = options?.timeoutMs ?? 3500;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-    const res = await fetch(`${base}${path}`, {
-      cache: 'no-store',
+    const revalidateSec = options?.revalidate !== undefined ? options.revalidate : 30;
+
+    const fetchInit: RequestInit = {
       headers: { Accept: 'application/json' },
       signal: controller.signal,
-    }).finally(() => clearTimeout(timeoutId));
+    };
+
+    if (revalidateSec === false || revalidateSec === 0) {
+      fetchInit.cache = 'no-store';
+    } else {
+      (fetchInit as any).next = { revalidate: revalidateSec };
+    }
+
+    const res = await fetch(`${base}${path}`, fetchInit).finally(() => clearTimeout(timeoutId));
 
     if (!res.ok) throw new Error(`API responded ${res.status}`);
     const json = (await res.json()) as { data?: any };
@@ -342,12 +362,18 @@ export const getArticles = cache(() =>
   })
 );
 export const getArticleBySlug = cache(async function (slug: string): Promise<Article | undefined> {
+  const items = await getArticles();
+  const directMatch = items.find((a) => a.slug === slug);
+  if (directMatch && Array.isArray(directMatch.content) && directMatch.content.length > 0) {
+    return directMatch;
+  }
+
   const item = await withApi<Article | null>(`/api/news/${slug}`, null, (data) =>
     data ? normalizeArticle(data) : null
   );
   if (item) return item;
-  const items = await getArticles();
-  return items.find((a) => a.slug === slug);
+
+  return items.find((a) => a.slug === slug || slug.includes(a.slug) || a.slug.includes(slug));
 });
 
 /* Stories */
@@ -365,12 +391,18 @@ export const getStories = cache(() =>
   })
 );
 export const getStoryBySlug = cache(async function (slug: string): Promise<Story | undefined> {
+  const items = await getStories();
+  const directMatch = items.find((s) => s.slug === slug);
+  if (directMatch && Array.isArray(directMatch.content) && directMatch.content.length > 0) {
+    return directMatch;
+  }
+
   const item = await withApi<Story | null>(`/api/stories/${slug}`, null, (data) =>
     data ? normalizeStory(data) : null
   );
   if (item) return item;
-  const items = await getStories();
-  return items.find((s) => s.slug === slug);
+
+  return items.find((s) => s.slug === slug || slug.includes(s.slug) || s.slug.includes(slug));
 });
 
 /* Campuses */
@@ -387,12 +419,16 @@ export const getCampuses = cache(() =>
   })
 );
 export const getCampusBySlug = cache(async function (slug: string): Promise<Campus | undefined> {
+  const items = await getCampuses();
+  const directMatch = items.find((c) => c.slug === slug);
+  if (directMatch) return directMatch;
+
   const item = await withApi<Campus | null>(`/api/campuses/${slug}`, null, (data) =>
     data ? normalizeCampus(data) : null
   );
   if (item) return item;
-  const items = await getCampuses();
-  return items.find((c) => c.slug === slug);
+
+  return items.find((c) => slug.includes(c.slug) || c.slug.includes(slug));
 });
 
 /* Podcast */
@@ -427,12 +463,16 @@ export const getEvents = cache(() =>
   )
 );
 export const getEventBySlug = cache(async function (slug: string): Promise<TscEvent | undefined> {
+  const items = await getEvents();
+  const directMatch = items.find((e) => e.slug === slug);
+  if (directMatch) return directMatch;
+
   const item = await withApi<TscEvent | null>(`/api/events/${slug}`, null, (data) =>
     data && (data.title?.trim() || data.name?.trim()) ? normalizeEvent(data) : null
   );
   if (item) return item;
-  const items = await getEvents();
-  return items.find((e) => e.slug === slug);
+
+  return items.find((e) => slug.includes(e.slug) || e.slug.includes(slug));
 });
 
 /* Opportunities */
@@ -453,12 +493,16 @@ export const getEditions = cache(() =>
   )
 );
 export const getEditionBySlug = cache(async function (slug: string): Promise<CurrentAffairsEdition | undefined> {
+  const items = await getEditions();
+  const directMatch = items.find((e) => e.slug === slug);
+  if (directMatch) return directMatch;
+
   const item = await withApi<CurrentAffairsEdition | null>(`/api/current-affairs/${slug}`, null, (data) =>
     data ? normalizeEdition(data) : null
   );
   if (item) return item;
-  const items = await getEditions();
-  return items.find((e) => e.slug === slug);
+
+  return items.find((e) => slug.includes(e.slug) || e.slug.includes(slug));
 });
 
 /* Legal Awareness */
@@ -468,12 +512,16 @@ export const getLegalArticles = cache(() =>
   )
 );
 export const getLegalBySlug = cache(async function (slug: string): Promise<LegalArticle | undefined> {
+  const items = await getLegalArticles();
+  const directMatch = items.find((l) => l.slug === slug);
+  if (directMatch) return directMatch;
+
   const item = await withApi<LegalArticle | null>(`/api/legal-awareness/${slug}`, null, (data) =>
     data ? normalizeLegal(data) : null
   );
   if (item) return item;
-  const items = await getLegalArticles();
-  return items.find((l) => l.slug === slug);
+
+  return items.find((l) => slug.includes(l.slug) || l.slug.includes(slug));
 });
 
 /* Campaigns */

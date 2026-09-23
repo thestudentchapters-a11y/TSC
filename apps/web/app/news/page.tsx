@@ -12,8 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/news' },
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 30;
 
 const PER_PAGE = 6;
 
