@@ -321,6 +321,32 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
             window.localStorage.setItem('tsc.admin.story-submissions', JSON.stringify(subData));
           }
         }
+
+        const campRaw = window.localStorage.getItem('tsc.admin.campus-submissions');
+        if (campRaw) {
+          const campData = JSON.parse(campRaw);
+          let campChanged = false;
+          if (Array.isArray(campData.added)) {
+            campData.added = campData.added.map((item: any) => {
+              if (item.title === row.title || item.storyTitle === row.title) {
+                campChanged = true;
+                return { ...item, status: 'pending' };
+              }
+              return item;
+            });
+          }
+          if (campData.edits) {
+            for (const k of Object.keys(campData.edits)) {
+              if (campData.edits[k].title === row.title || campData.edits[k].storyTitle === row.title) {
+                campData.edits[k].status = 'pending';
+                campChanged = true;
+              }
+            }
+          }
+          if (campChanged) {
+            window.localStorage.setItem('tsc.admin.campus-submissions', JSON.stringify(campData));
+          }
+        }
       } catch { }
     } else if (def.key === 'news') {
       try {
@@ -462,27 +488,60 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
         } catch {}
       } else if (def.key === 'campus-submissions') {
         try {
-          const customArticles = JSON.parse(window.localStorage.getItem('tsc.custom.articles') || '[]');
-          const newsCampus = String(row.campus || row.college || '').trim();
-          const newsTitle = String(row.title || row.newsTitle || 'Campus News').trim();
-          const newsContent = String(row.summary || row.description || row.content || '').trim();
-          const newArticle = {
-            id: `approved-news-${row.id}`,
-            slug: slugify(newsTitle),
-            title: newsTitle,
-            excerpt: newsContent ? (newsContent.slice(0, 180).trim() + '…') : 'Campus news on TSC',
-            content: newsContent,
-            category: String(row.category || 'Campus News'),
-            campus: newsCampus,
-            image: Array.isArray(row.images) && row.images[0] ? row.images[0] : (row.image || '/images/news/news-1.jpg'),
-            author: String(row.name || 'TSC Campus Reporter'),
-            date: new Date().toISOString().slice(0, 10),
-            status: 'published',
-            featured: false,
-          };
-          const filtered = customArticles.filter((a: any) => a.id !== newArticle.id && a.title !== newArticle.title);
-          window.localStorage.setItem('tsc.custom.articles', JSON.stringify([newArticle, ...filtered]));
-          push(`🎉 Approved! News "${newsTitle}" is live on Main News and ${newsCampus || 'Campus'} profile page.`, 'success');
+          const isStory =
+            row.type === 'story' ||
+            (!row.type &&
+              (String(row.category || '').toLowerCase() === 'campus' ||
+                String(row.category || '').toLowerCase() === 'student' ||
+                String(row.category || '').toLowerCase() === 'startup' ||
+                Boolean(row.storyTitle)));
+
+          if (isStory) {
+            const customStories = JSON.parse(window.localStorage.getItem('tsc.custom.stories') || '[]');
+            const storyCampus = String(row.campus || row.college || '').trim();
+            const storyTitle = String(row.storyTitle || row.title || row.newsTitle || 'Campus Story').trim();
+            const storyContent = String(row.summary || row.description || row.content || '').trim();
+            const newStory = {
+              id: `approved-story-${row.id}`,
+              slug: slugify(storyTitle),
+              title: storyTitle,
+              dek: storyContent ? (storyContent.slice(0, 160).trim() + '…') : 'Student submission on TSC',
+              category: String(row.category || 'campus').toLowerCase(),
+              content: storyContent,
+              campus: storyCampus,
+              image: Array.isArray(row.images) && row.images[0] ? row.images[0] : (row.image || '/images/stories/story-1.jpg'),
+              author: String(row.name || 'TSC Contributor'),
+              authorRole: 'Student',
+              date: new Date().toISOString().slice(0, 10),
+              status: 'published',
+              featured: false,
+            };
+            const filtered = customStories.filter((s: any) => s.id !== newStory.id && s.title !== newStory.title);
+            window.localStorage.setItem('tsc.custom.stories', JSON.stringify([newStory, ...filtered]));
+            push(`🎉 Approved! Story "${storyTitle}" is live on Main Stories and ${storyCampus || 'Campus'} profile page.`, 'success');
+          } else {
+            const customArticles = JSON.parse(window.localStorage.getItem('tsc.custom.articles') || '[]');
+            const newsCampus = String(row.campus || row.college || '').trim();
+            const newsTitle = String(row.newsTitle || row.title || 'Campus News').trim();
+            const newsContent = String(row.summary || row.description || row.content || '').trim();
+            const newArticle = {
+              id: `approved-news-${row.id}`,
+              slug: slugify(newsTitle),
+              title: newsTitle,
+              excerpt: newsContent ? (newsContent.slice(0, 180).trim() + '…') : 'Campus news on TSC',
+              content: newsContent,
+              category: String(row.category || 'Campus News'),
+              campus: newsCampus,
+              image: Array.isArray(row.images) && row.images[0] ? row.images[0] : (row.image || '/images/news/news-1.jpg'),
+              author: String(row.name || 'TSC Campus Reporter'),
+              date: new Date().toISOString().slice(0, 10),
+              status: 'published',
+              featured: false,
+            };
+            const filtered = customArticles.filter((a: any) => a.id !== newArticle.id && a.title !== newArticle.title);
+            window.localStorage.setItem('tsc.custom.articles', JSON.stringify([newArticle, ...filtered]));
+            push(`🎉 Approved! News "${newsTitle}" is live on Main News and ${newsCampus || 'Campus'} profile page.`, 'success');
+          }
         } catch {}
       }
     }
@@ -689,7 +748,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
                   className="border-b border-hairline/70 last:border-0 hover:bg-cream/60"
                 >
                   {def.columns.map((c, i) => (
-                    <td key={c.name} className={cn('px-4 py-3', i === 0 && 'font-semibold text-ink')}>
+                    <td key={c.name} className={cn('px-4 py-3', (i === 0 || c.name === 'newsTitle' || c.name === 'storyTitle') && 'text-ink')}>
                       <CellRender row={row} col={c} onToggle={() => c.type === 'bool' && toggleField(row, c.name)} />
                     </td>
                   ))}
@@ -934,6 +993,36 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 }
 
 function CellRender({ row, col, onToggle }: { row: Row; col: { name: string; label: string; type?: string }; onToggle: () => void }) {
+  if (col.name === 'newsTitle') {
+    const isStory =
+      row.type === 'story' ||
+      (!row.type &&
+        (String(row.category || '').toLowerCase() === 'campus' ||
+          String(row.category || '').toLowerCase() === 'student' ||
+          String(row.category || '').toLowerCase() === 'startup' ||
+          Boolean(row.storyTitle)));
+    if (isStory) {
+      return <span className="text-muted/40 font-normal">—</span>;
+    }
+    const title = String(row.newsTitle || row.title || '—');
+    return <span className="line-clamp-1 max-w-[280px] font-semibold text-ink">{title}</span>;
+  }
+
+  if (col.name === 'storyTitle') {
+    const isStory =
+      row.type === 'story' ||
+      (!row.type &&
+        (String(row.category || '').toLowerCase() === 'campus' ||
+          String(row.category || '').toLowerCase() === 'student' ||
+          String(row.category || '').toLowerCase() === 'startup' ||
+          Boolean(row.storyTitle)));
+    if (!isStory) {
+      return <span className="text-muted/40 font-normal">—</span>;
+    }
+    const title = String(row.storyTitle || row.title || '—');
+    return <span className="line-clamp-1 max-w-[280px] font-semibold text-ink">{title}</span>;
+  }
+
   const value = row[col.name];
   if (col.type === 'bool') {
     return (
@@ -964,7 +1053,19 @@ function CellRender({ row, col, onToggle }: { row: Row; col: { name: string; lab
 function ItemForm({ def, initial, presetFilter, onSubmit, onCancel }: { def: CollectionDef; initial: Row | null; presetFilter?: Record<string, string>; onSubmit: (row: Row) => void; onCancel: () => void }) {
   const { push } = useToast();
   const [values, setValues] = useState<Record<string, unknown>>(() => {
-    if (initial) return { ...(initial ?? {}) };
+    if (initial) {
+      const isStory =
+        initial.type === 'story' ||
+        (!initial.type &&
+          (String(initial.category || '').toLowerCase() === 'campus' ||
+            String(initial.category || '').toLowerCase() === 'student' ||
+            String(initial.category || '').toLowerCase() === 'startup' ||
+            Boolean(initial.storyTitle)));
+      return {
+        ...(initial ?? {}),
+        type: initial.type || (isStory ? 'story' : 'news'),
+      };
+    }
     const today = new Date().toISOString().slice(0, 10);
     const defaults: Record<string, unknown> = {
       date: today,
