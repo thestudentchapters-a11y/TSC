@@ -125,15 +125,7 @@ export function StoriesSection({ stories: initialStories }: { stories: Story[] }
     };
 
     const timer = setTimeout(sync, 350);
-    window.addEventListener('storage', sync);
-    window.addEventListener('focus', sync);
-    window.addEventListener('pageshow', sync);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('storage', sync);
-      window.removeEventListener('focus', sync);
-      window.removeEventListener('pageshow', sync);
-    };
+    return () => clearTimeout(timer);
   }, [api]);
 
   const filtered = tab === 'all' ? items : items.filter((s) => s.category === tab);

@@ -127,14 +127,6 @@ export function StoriesFeed({
 
   useEffect(() => {
     syncStories();
-    window.addEventListener('storage', syncStories);
-    window.addEventListener('focus', syncStories);
-    window.addEventListener('pageshow', syncStories);
-    return () => {
-      window.removeEventListener('storage', syncStories);
-      window.removeEventListener('focus', syncStories);
-      window.removeEventListener('pageshow', syncStories);
-    };
   }, []);
 
   const activeCategory = searchParamsHook?.get('category') ?? category ?? '';

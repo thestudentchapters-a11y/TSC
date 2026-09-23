@@ -206,14 +206,6 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
       reloadRows();
       setReady(true);
     }
-    window.addEventListener('focus', reloadRows);
-    window.addEventListener('pageshow', reloadRows);
-    window.addEventListener('storage', reloadRows);
-    return () => {
-      window.removeEventListener('focus', reloadRows);
-      window.removeEventListener('pageshow', reloadRows);
-      window.removeEventListener('storage', reloadRows);
-    };
   }, [def, reloadRows]);
 
   const save = useCallback(

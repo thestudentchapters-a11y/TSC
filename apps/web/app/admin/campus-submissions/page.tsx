@@ -196,12 +196,6 @@ export default function CampusSubmissionsAdminPage() {
 
   useEffect(() => {
     loadSubmissions();
-    window.addEventListener('focus', loadSubmissions);
-    window.addEventListener('storage', loadSubmissions);
-    return () => {
-      window.removeEventListener('focus', loadSubmissions);
-      window.removeEventListener('storage', loadSubmissions);
-    };
   }, [loadSubmissions]);
 
   const persistSubmissions = (updated: CampusSubmissionItem[]) => {

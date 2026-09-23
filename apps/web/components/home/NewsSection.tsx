@@ -126,15 +126,7 @@ export function NewsSection({ articles: initialArticles }: { articles: Article[]
     };
 
     const timer = setTimeout(sync, 150);
-    window.addEventListener('storage', sync);
-    window.addEventListener('focus', sync);
-    window.addEventListener('pageshow', sync);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('storage', sync);
-      window.removeEventListener('focus', sync);
-      window.removeEventListener('pageshow', sync);
-    };
+    return () => clearTimeout(timer);
   }, [api]);
 
   const featured = items.find((a) => a.featured) ?? items[0];

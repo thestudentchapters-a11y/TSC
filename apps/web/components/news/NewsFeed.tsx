@@ -136,14 +136,6 @@ export function NewsFeed({
 
   useEffect(() => {
     syncArticles();
-    window.addEventListener('storage', syncArticles);
-    window.addEventListener('focus', syncArticles);
-    window.addEventListener('pageshow', syncArticles);
-    return () => {
-      window.removeEventListener('storage', syncArticles);
-      window.removeEventListener('focus', syncArticles);
-      window.removeEventListener('pageshow', syncArticles);
-    };
   }, []);
 
   const normalize = (str?: string) => {
