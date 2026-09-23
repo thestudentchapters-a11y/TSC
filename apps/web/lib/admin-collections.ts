@@ -216,7 +216,8 @@ export const collections: Record<string, CollectionDef> = {
       { name: 'featured', label: 'Featured', type: 'checkbox', width: 'half' },
       { name: 'active', label: 'Active', type: 'checkbox', width: 'half' },
     ],
-    filters: { key: 'type', label: 'Type', options: ['Job', 'Internship', 'Fellowship', 'Scholarship'] },
+    // Option filter bar commented out for jobs, fellowship, and internship panels:
+    // filters: { key: 'type', label: 'Type', options: ['Job', 'Internship', 'Fellowship', 'Scholarship'] },
   },
   'current-affairs': {
     key: 'current-affairs', title: 'Current Affairs', singular: 'Edition', icon: Globe2, seedKey: 'editions',

@@ -619,7 +619,23 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
               className="w-56 bg-transparent text-sm focus:outline-none"
             />
           </div>
+          {/* Option filter bar - commented out for jobs, fellowship, and internship panels */}
+          {/*
           {def.filters && (
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              aria-label={def.filters.label}
+              className="rounded-[6px] border border-hairline bg-white px-3 py-2.5 text-sm"
+            >
+              <option value="">All {def.filters.label.toLowerCase()}</option>
+              {def.filters.options.map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+          )}
+          */}
+          {def.filters && !presetFilter && def.key !== 'opportunities' && (
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -637,7 +653,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
           </span>
         </div>
         <Button size="sm" onClick={() => setCreating(true)}>
-          <Plus aria-hidden className="h-4 w-4" /> New {def.singular}
+          <Plus aria-hidden className="h-4 w-4" /> New {presetFilter?.type ?? def.singular}
         </Button>
       </div>
 
