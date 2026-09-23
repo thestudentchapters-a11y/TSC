@@ -22,8 +22,8 @@ export interface ListResult<T> {
 /** Standard pagination + sorting + simple filtering for list endpoints. */
 export function buildListOptions(query: Record<string, unknown>): ListOptions {
   const page = Math.max(1, Number(query.page) || 1);
-  const limit = Math.min(50, Math.max(1, Number(query.limit) || 12));
-  return { page, limit, sort: typeof query.sort === 'string' ? query.sort : '-createdAt' };
+  const limit = Math.min(200, Math.max(1, Number(query.limit) || 12));
+  return { page, limit, sort: typeof query.sort === 'string' ? query.sort : '-date -createdAt' };
 }
 
 export function paginatedResult<T>(data: T[], total: number, opts: ListOptions): ListResult<T> {

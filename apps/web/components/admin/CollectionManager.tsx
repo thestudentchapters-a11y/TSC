@@ -187,7 +187,12 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
                 campus: item.campus || item.college,
                 image: item.image || (Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : undefined),
               }));
-            setRows(valid);
+            const sorted = valid.sort((a: any, b: any) => {
+              const timeA = new Date(String(a.date || a.createdAt || a.submittedOn || a.receivedOn || 0)).getTime();
+              const timeB = new Date(String(b.date || b.createdAt || b.submittedOn || b.receivedOn || 0)).getTime();
+              return (isNaN(timeB) ? 0 : timeB) - (isNaN(timeA) ? 0 : timeA);
+            });
+            setRows(sorted);
           }
         })
         .catch(() => {

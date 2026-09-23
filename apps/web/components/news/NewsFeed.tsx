@@ -116,15 +116,17 @@ export function NewsFeed({
               status: item.status || 'published',
             }));
 
-            const published = mapped.filter((a) => !a.status || a.status.toLowerCase() === 'published');
-            setArticles((prev) => {
-              const liveIds = new Set(published.map((a) => a.id));
-              const liveTitles = new Set(published.map((a) => a.title.toLowerCase().trim()));
-              const remaining = prev.filter(
-                (p) => !liveIds.has(p.id) && !liveTitles.has(p.title.toLowerCase().trim())
-              );
-              return [...published, ...remaining];
-            });
+            const published = mapped
+              .filter((a) => !a.status || a.status.toLowerCase() === 'published')
+              .sort((a, b) => {
+                const timeA = new Date(a.date || 0).getTime();
+                const timeB = new Date(b.date || 0).getTime();
+                return (isNaN(timeB) ? 0 : timeB) - (isNaN(timeA) ? 0 : timeA);
+              });
+
+            if (published.length > 0) {
+              setArticles(published);
+            }
           }
         })
         .catch(() => {});

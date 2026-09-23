@@ -354,12 +354,11 @@ export const getArticles = cache(() =>
     if (!Array.isArray(list) || list.length === 0) return demoArticles;
     const mapped = list.map(normalizeArticle);
     if (mapped.length === 0) return demoArticles;
-    const dbSlugs = new Set(mapped.map((a) => a.slug.toLowerCase().trim()));
-    const dbTitles = new Set(mapped.map((a) => a.title.toLowerCase().trim()));
-    const extraDemos = demoArticles.filter(
-      (d) => !dbSlugs.has(d.slug.toLowerCase().trim()) && !dbTitles.has(d.title.toLowerCase().trim())
-    );
-    return [...mapped, ...extraDemos];
+    return mapped.sort((a, b) => {
+      const timeA = new Date(a.date || 0).getTime();
+      const timeB = new Date(b.date || 0).getTime();
+      return (isNaN(timeB) ? 0 : timeB) - (isNaN(timeA) ? 0 : timeA);
+    });
   })
 );
 export const getArticleBySlug = cache(async function (slug: string): Promise<Article | undefined> {
@@ -384,12 +383,11 @@ export const getStories = cache(() =>
     if (!Array.isArray(list) || list.length === 0) return demoStories;
     const mapped = list.map(normalizeStory);
     if (mapped.length === 0) return demoStories;
-    const dbSlugs = new Set(mapped.map((s) => s.slug.toLowerCase().trim()));
-    const dbTitles = new Set(mapped.map((s) => s.title.toLowerCase().trim()));
-    const extraDemos = demoStories.filter(
-      (d) => !dbSlugs.has(d.slug.toLowerCase().trim()) && !dbTitles.has(d.title.toLowerCase().trim())
-    );
-    return [...mapped, ...extraDemos];
+    return mapped.sort((a, b) => {
+      const timeA = new Date(a.date || 0).getTime();
+      const timeB = new Date(b.date || 0).getTime();
+      return (isNaN(timeB) ? 0 : timeB) - (isNaN(timeA) ? 0 : timeA);
+    });
   })
 );
 export const getStoryBySlug = cache(async function (slug: string): Promise<Story | undefined> {
