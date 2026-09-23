@@ -228,4 +228,24 @@ export function getVideoThumbnail(
   return fallback;
 }
 
+export function getPublicApiUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0';
+    if (!isLocalhost && (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1'))) {
+      return 'https://tsc-6htb.onrender.com';
+    }
+    return envUrl || 'http://localhost:5000';
+  }
+
+  // Node.js SSR / Server-side:
+  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+    if (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1')) {
+      return 'https://tsc-6htb.onrender.com';
+    }
+  }
+  return envUrl ? envUrl.replace('localhost', '127.0.0.1') : 'http://127.0.0.1:5000';
+}
+
 

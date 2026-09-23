@@ -32,7 +32,7 @@ export function ParticipationSection({
     }
 
     const api = process.env.NEXT_PUBLIC_API_URL;
-    if (api) {
+    if (api && (!initialImages || (!initialImages.writeStory && !initialImages.campusNews))) {
       fetch(`${api}/api/settings`)
         .then((r) => r.json())
         .then((res) => {
@@ -44,7 +44,7 @@ export function ParticipationSection({
           /* keep current */
         });
     }
-  }, []);
+  }, [initialImages]);
   return (
     <section aria-label="Student participation" className="bg-white section-pad">
       <div className="container-tsc">

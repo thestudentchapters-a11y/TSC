@@ -8,7 +8,7 @@ import { SectionHeading } from '@/components/common/SectionHeading';
 import { StoryCard } from '@/components/cards/StoryCard';
 import { TextCTA } from '@/components/common/Button';
 import type { Story, StoryCategory } from '@/types/content';
-import { cn } from '@/lib/utils';
+import { cn, getPublicApiUrl } from '@/lib/utils';
 
 const TABS: { key: StoryCategory | 'all'; label: string; icon: typeof User; desc: string }[] = [
   { key: 'all', label: 'All', icon: User, desc: 'Every journey, across categories.' },
@@ -20,7 +20,7 @@ const TABS: { key: StoryCategory | 'all'; label: string; icon: typeof User; desc
 export function StoriesSection({ stories: initialStories }: { stories: Story[] }) {
   const [items, setItems] = useState<Story[]>(initialStories);
   const [tab, setTab] = useState<StoryCategory | 'all'>('all');
-  const api = process.env.NEXT_PUBLIC_API_URL || '';
+  const api = getPublicApiUrl();
 
   useEffect(() => {
     setItems(initialStories);
@@ -124,11 +124,12 @@ export function StoriesSection({ stories: initialStories }: { stories: Story[] }
       }
     };
 
-    sync();
+    const timer = setTimeout(sync, 350);
     window.addEventListener('storage', sync);
     window.addEventListener('focus', sync);
     window.addEventListener('pageshow', sync);
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('storage', sync);
       window.removeEventListener('focus', sync);
       window.removeEventListener('pageshow', sync);

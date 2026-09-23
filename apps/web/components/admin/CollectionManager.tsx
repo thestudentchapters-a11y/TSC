@@ -8,7 +8,7 @@ import { Field, Input, Textarea, Select, Checkbox } from '@/components/forms/For
 import { Button } from '@/components/common/Button';
 import { useToast } from '@/components/common/Toast';
 import { collections, type CollectionDef, type FieldDef } from '@/lib/admin-collections';
-import { cn, formatDate, slugify, getYoutubeThumbnailUrl } from '@/lib/utils';
+import { cn, formatDate, slugify, getYoutubeThumbnailUrl, getPublicApiUrl } from '@/lib/utils';
 import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
 import { RichTextEditor } from '@/components/forms/RichTextEditor';
 
@@ -126,7 +126,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
   const def = collections[collectionKey];
   const { push } = useToast();
   const { getToken } = useAuth();
-  const api = process.env.NEXT_PUBLIC_API_URL;
+  const api = getPublicApiUrl();
   const token = getToken() || (typeof window !== 'undefined' ? (localStorage.getItem('tsc_token') || localStorage.getItem('tsc.token')) : null);
 
   const [rows, setRows] = useState<Row[]>([]);

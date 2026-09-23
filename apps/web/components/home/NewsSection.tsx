@@ -6,6 +6,7 @@ import { SectionHeading } from '@/components/common/SectionHeading';
 import { StaggerGrid, StaggerItem } from '@/components/common/Reveal';
 import { ArticleCard } from '@/components/cards/ArticleCard';
 import { TextCTA } from '@/components/common/Button';
+import { getPublicApiUrl } from '@/lib/utils';
 import type { Article } from '@/types/content';
 
 const CATEGORIES = [
@@ -17,7 +18,7 @@ const CATEGORIES = [
 
 export function NewsSection({ articles: initialArticles }: { articles: Article[] }) {
   const [items, setItems] = useState<Article[]>(initialArticles);
-  const api = process.env.NEXT_PUBLIC_API_URL || '';
+  const api = getPublicApiUrl();
 
   useEffect(() => {
     setItems(initialArticles);
@@ -124,11 +125,12 @@ export function NewsSection({ articles: initialArticles }: { articles: Article[]
       }
     };
 
-    sync();
+    const timer = setTimeout(sync, 150);
     window.addEventListener('storage', sync);
     window.addEventListener('focus', sync);
     window.addEventListener('pageshow', sync);
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('storage', sync);
       window.removeEventListener('focus', sync);
       window.removeEventListener('pageshow', sync);

@@ -197,7 +197,7 @@ export function Hero({ initialPanels }: { initialPanels?: Array<{ src: string; a
     }
 
     const api = process.env.NEXT_PUBLIC_API_URL;
-    if (api) {
+    if (api && (!initialPanels || initialPanels.length === 0)) {
       fetch(`${api}/api/settings`)
         .then((r) => r.json())
         .then((res) => {

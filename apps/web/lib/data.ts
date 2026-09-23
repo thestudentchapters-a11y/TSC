@@ -13,16 +13,10 @@ import {
   demoArticles, demoStories, demoCampuses, demoEpisodes, demoEvents,
   demoOpportunities, demoEditions, demoLegalArticles, flagshipCampaign,
 } from '@/data/content';
-import { getYoutubeThumbnailUrl, getPodcastThumbnail } from '@/lib/utils';
+import { getYoutubeThumbnailUrl, getPodcastThumbnail, getPublicApiUrl } from '@/lib/utils';
 
 function getBaseApiUrl(): string {
-  let url = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://127.0.0.1:5000';
-  if (typeof window === 'undefined' && url.includes('localhost')) {
-    // In Node.js on server side, 'localhost' often resolves to ::1 (IPv6) which fails
-    // when backend is bound to 0.0.0.0 or 127.0.0.1 (IPv4). Prefer 127.0.0.1 for server-side fetches.
-    url = url.replace('localhost', '127.0.0.1');
-  }
-  return url;
+  return getPublicApiUrl();
 }
 
 const API = getBaseApiUrl();

@@ -30,17 +30,11 @@ export const metadata: Metadata = {
 export const revalidate = 30;
 
 export default async function HomePage() {
-  const [articles, stories, campuses, opportunities, editions, episodes, events, campaign, settings] = await Promise.all([
-    getArticles(),
-    getStories(),
-    getCampuses(),
-    getOpportunities(),
-    getEditions(),
-    getEpisodes(),
-    getEvents(),
-    getCampaign(),
-    getSiteSettings(),
-  ]);
+  // Load data progressively in smooth batches to prevent database & network congestion
+  const [settings, articles] = await Promise.all([getSiteSettings(), getArticles()]);
+  const [stories, campuses] = await Promise.all([getStories(), getCampuses()]);
+  const [opportunities, editions] = await Promise.all([getOpportunities(), getEditions()]);
+  const [episodes, events, campaign] = await Promise.all([getEpisodes(), getEvents(), getCampaign()]);
 
   const latestEdition = [...editions].sort((a, b) => b.year - a.year)[0];
 

@@ -32,7 +32,7 @@ export function CommunitySection({ initialBg }: { initialBg?: string }) {
     }
 
     const api = process.env.NEXT_PUBLIC_API_URL;
-    if (api) {
+    if (api && !initialBg) {
       fetch(`${api}/api/settings`)
         .then((r) => r.json())
         .then((res) => {
@@ -43,7 +43,7 @@ export function CommunitySection({ initialBg }: { initialBg?: string }) {
           /* keep current */
         });
     }
-  }, []);
+  }, [initialBg]);
 
   return (
     <section aria-label="Community and membership" className="relative overflow-hidden section-pad">

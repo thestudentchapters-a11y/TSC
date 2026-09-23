@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { StoryCard } from '@/components/cards/StoryCard';
 import { EmptyState } from '@/components/common/States';
 import { StaggerGrid, StaggerItem } from '@/components/common/Reveal';
+import { getPublicApiUrl } from '@/lib/utils';
 import type { Story } from '@/types/content';
 
 interface StoriesFeedProps {
@@ -25,7 +26,7 @@ export function StoriesFeed({
     setStories(initialStories);
   }, [initialStories]);
 
-  const api = process.env.NEXT_PUBLIC_API_URL || '';
+  const api = getPublicApiUrl();
 
   const syncStories = () => {
     let localItems: Story[] = [];

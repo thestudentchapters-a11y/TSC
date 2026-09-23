@@ -6,6 +6,7 @@ import { ArticleCard } from '@/components/cards/ArticleCard';
 import { Pagination } from '@/components/common/Pagination';
 import { EmptyState } from '@/components/common/States';
 import { StaggerGrid, StaggerItem } from '@/components/common/Reveal';
+import { getPublicApiUrl } from '@/lib/utils';
 import type { Article } from '@/types/content';
 
 interface NewsFeedProps {
@@ -25,7 +26,7 @@ export function NewsFeed({
 }: NewsFeedProps) {
   const searchParamsHook = useSearchParams();
   const [articles, setArticles] = useState<Article[]>(initialArticles);
-  const api = process.env.NEXT_PUBLIC_API_URL || '';
+  const api = getPublicApiUrl();
 
   useEffect(() => {
     setArticles(initialArticles);
