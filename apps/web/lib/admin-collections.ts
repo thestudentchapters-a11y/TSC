@@ -70,6 +70,7 @@ const coreFields: FieldDef[] = [
       'Technology & Innovation',
       'Youth & Society',
       'Achievements',
+      'Others',
     ],
     width: 'half',
   },

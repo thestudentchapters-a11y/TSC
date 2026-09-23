@@ -103,6 +103,7 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
 
   const [isNewsModalOpen, setIsNewsModalOpen] = useState(false);
   const [editingNews, setEditingNews] = useState<Article | null>(null);
+  const [isCustomNewsCategory, setIsCustomNewsCategory] = useState(false);
   const [newsForm, setNewsForm] = useState({
     title: '',
     category: 'Student News' as NewsCategory,
@@ -374,6 +375,8 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
   const handleOpenNewsModal = (article?: Article) => {
     if (article) {
       setEditingNews(article);
+      const isCustom = !NEWS_CATEGORIES.includes(article.category as any);
+      setIsCustomNewsCategory(isCustom);
       setNewsForm({
         title: article.title,
         category: article.category,
@@ -389,6 +392,7 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
       });
     } else {
       setEditingNews(null);
+      setIsCustomNewsCategory(false);
       setNewsForm({
         title: '',
         category: 'Student News',
@@ -1389,17 +1393,49 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
 
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="News Category" htmlFor="n-cat" required>
-                <Select
-                  id="n-cat"
-                  value={newsForm.category}
-                  onChange={(e) => setNewsForm({ ...newsForm, category: e.target.value as NewsCategory })}
-                >
-                  {NEWS_CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </Select>
+                {isCustomNewsCategory ? (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="n-cat"
+                      value={newsForm.category === 'Others' ? '' : newsForm.category}
+                      onChange={(e) => setNewsForm({ ...newsForm, category: e.target.value as NewsCategory })}
+                      placeholder="Write custom category name…"
+                      autoFocus
+                      className="flex-1"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomNewsCategory(false);
+                        setNewsForm({ ...newsForm, category: NEWS_CATEGORIES[0] });
+                      }}
+                      className="shrink-0 rounded border border-hairline bg-cream/70 px-2.5 py-2 text-xs font-semibold text-ink/80 hover:bg-cream hover:text-brand transition-colors"
+                      title="Choose from standard options"
+                    >
+                      Choose from list
+                    </button>
+                  </div>
+                ) : (
+                  <Select
+                    id="n-cat"
+                    value={newsForm.category}
+                    onChange={(e) => {
+                      if (e.target.value === 'Others') {
+                        setIsCustomNewsCategory(true);
+                        setNewsForm({ ...newsForm, category: '' as NewsCategory });
+                      } else {
+                        setNewsForm({ ...newsForm, category: e.target.value as NewsCategory });
+                      }
+                    }}
+                  >
+                    {NEWS_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                    <option value="Others">Others</option>
+                  </Select>
+                )}
               </Field>
 
               <Field label="Author / Byline" htmlFor="n-auth" required>

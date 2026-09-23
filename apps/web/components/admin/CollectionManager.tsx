@@ -1083,6 +1083,25 @@ function ItemForm({ def, initial, presetFilter, onSubmit, onCancel }: { def: Col
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Track select fields where user picked 'Others' or has a custom string value
+  const [customFields, setCustomFields] = useState<Record<string, boolean>>(() => {
+    const initCustom: Record<string, boolean> = {};
+    if (initial) {
+      for (const f of def.fields) {
+        if (f.type === 'select') {
+          const currentVal = String(initial[f.name] ?? '').trim();
+          if (currentVal && f.options && f.options.length > 0) {
+            const standardOptions = f.options.filter((opt) => opt !== 'Others');
+            if (!standardOptions.includes(currentVal)) {
+              initCustom[f.name] = true;
+            }
+          }
+        }
+      }
+    }
+    return initCustom;
+  });
+
   const setField = (name: string, value: unknown) => {
     setValues((v) => {
       const next = { ...v, [name]: value };
@@ -1126,6 +1145,9 @@ function ItemForm({ def, initial, presetFilter, onSubmit, onCancel }: { def: Col
       const strVal = typeof val === 'string' ? val.trim() : val;
       if (f.required && (strVal === undefined || strVal === null || strVal === '')) {
         errs[f.name] = `${f.label} is required.`;
+      }
+      if (f.name === 'category' && (strVal === 'Others' || (customFields['category'] && !strVal))) {
+        errs[f.name] = 'Please write a custom category name.';
       }
     }
 
@@ -1188,15 +1210,65 @@ function ItemForm({ def, initial, presetFilter, onSubmit, onCancel }: { def: Col
       }
       case 'textarea':
         return <Textarea id={id} value={String(v ?? '')} onChange={(e) => setField(f.name, e.target.value)} />;
-      case 'select':
+      case 'select': {
+        const isCustom = Boolean(customFields[f.name]);
+        if (isCustom) {
+          return (
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <Input
+                  id={id}
+                  value={v === 'Others' ? '' : String(v ?? '')}
+                  onChange={(e) => setField(f.name, e.target.value)}
+                  placeholder={`Write ${f.label.toLowerCase()} name…`}
+                  autoFocus
+                  className="flex-1"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomFields((prev) => ({ ...prev, [f.name]: false }));
+                    setField(f.name, f.options?.[0] || '');
+                  }}
+                  className="shrink-0 rounded-md border border-hairline bg-cream/70 px-2.5 py-2 text-xs font-semibold text-ink/80 hover:bg-cream hover:text-brand transition-colors"
+                  title="Choose from standard options"
+                >
+                  Choose from list
+                </button>
+              </div>
+              <p className="text-[11px] text-muted">
+                Type your custom {f.label.toLowerCase()} name, or click &ldquo;Choose from list&rdquo; to select from presets.
+              </p>
+            </div>
+          );
+        }
+
         return (
-          <Select id={id} value={String(v ?? '')} onChange={(e) => setField(f.name, e.target.value)}>
+          <Select
+            id={id}
+            value={String(v ?? '')}
+            onChange={(e) => {
+              const selectedVal = e.target.value;
+              if (selectedVal === 'Others' || selectedVal === 'Other') {
+                setCustomFields((prev) => ({ ...prev, [f.name]: true }));
+                setField(f.name, '');
+              } else {
+                setField(f.name, selectedVal);
+              }
+            }}
+          >
             <option value="">Select…</option>
             {f.options?.map((o) => (
-              <option key={o} value={o}>{o}</option>
+              <option key={o} value={o}>
+                {o}
+              </option>
             ))}
+            {!f.options?.includes('Others') && (f.name === 'category' || def.key === 'news') && (
+              <option value="Others">Others</option>
+            )}
           </Select>
         );
+      }
       case 'checkbox':
         return <Checkbox id={id} label={f.label} checked={!!v} onChange={(e) => setField(f.name, e.target.checked)} />;
       case 'date':
