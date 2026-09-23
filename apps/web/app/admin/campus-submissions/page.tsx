@@ -166,12 +166,12 @@ export default function CampusSubmissionsAdminPage() {
               const merged = Array.from(map.values());
               try {
                 window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(merged));
-              } catch {}
+              } catch { }
               return merged;
             });
           }
         })
-        .catch(() => {});
+        .catch(() => { });
 
       fetch(`${api}/api/campus-submissions?_t=${Date.now()}&limit=100`, { headers, cache: 'no-store' })
         .then((res) => (res.ok ? res.json() : null))
@@ -185,12 +185,12 @@ export default function CampusSubmissionsAdminPage() {
               const merged = Array.from(map.values());
               try {
                 window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(merged));
-              } catch {}
+              } catch { }
               return merged;
             });
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [api, token]);
 
@@ -240,7 +240,7 @@ export default function CampusSubmissionsAdminPage() {
         };
         const filtered = customStories.filter((s: any) => s.id !== newStory.id && s.title !== newStory.title);
         window.localStorage.setItem('tsc.custom.stories', JSON.stringify([newStory, ...filtered]));
-      } catch {}
+      } catch { }
     } else {
       try {
         const customArticles = JSON.parse(window.localStorage.getItem('tsc.custom.articles') || '[]');
@@ -260,7 +260,7 @@ export default function CampusSubmissionsAdminPage() {
         };
         const filtered = customArticles.filter((a: any) => a.id !== newArticle.id && a.title !== newArticle.title);
         window.localStorage.setItem('tsc.custom.articles', JSON.stringify([newArticle, ...filtered]));
-      } catch {}
+      } catch { }
     }
   };
 
@@ -280,7 +280,7 @@ export default function CampusSubmissionsAdminPage() {
           },
           body: JSON.stringify({ status: 'approved' }),
         });
-      } catch {}
+      } catch { }
     }
 
     push(
@@ -304,7 +304,7 @@ export default function CampusSubmissionsAdminPage() {
           },
           body: JSON.stringify({ status: 'rejected' }),
         });
-      } catch {}
+      } catch { }
     }
 
     push(`Submission "${sub.title}" marked as rejected.`, 'info');
@@ -325,7 +325,7 @@ export default function CampusSubmissionsAdminPage() {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
-      } catch {}
+      } catch { }
     }
 
     push('Submission deleted successfully.', 'info');
@@ -419,11 +419,10 @@ export default function CampusSubmissionsAdminPage() {
         <button
           type="button"
           onClick={() => setFilterType('all')}
-          className={`inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all ${
-            filterType === 'all'
+          className={`inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all ${filterType === 'all'
               ? 'bg-brand text-white shadow-sm'
               : 'text-muted hover:text-ink hover:bg-cream'
-          }`}
+            }`}
         >
           <Layers className="h-3.5 w-3.5" />
           <span>All Campus Submissions ({allCount})</span>
@@ -432,11 +431,10 @@ export default function CampusSubmissionsAdminPage() {
         <button
           type="button"
           onClick={() => setFilterType('news')}
-          className={`inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all ${
-            filterType === 'news'
+          className={`inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all ${filterType === 'news'
               ? 'bg-brand text-white shadow-sm'
               : 'text-muted hover:text-ink hover:bg-cream'
-          }`}
+            }`}
         >
           <Newspaper className="h-3.5 w-3.5" />
           <span>Campus News ({newsCount})</span>
@@ -445,11 +443,10 @@ export default function CampusSubmissionsAdminPage() {
         <button
           type="button"
           onClick={() => setFilterType('story')}
-          className={`inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all ${
-            filterType === 'story'
+          className={`inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all ${filterType === 'story'
               ? 'bg-brand text-white shadow-sm'
               : 'text-muted hover:text-ink hover:bg-cream'
-          }`}
+            }`}
         >
           <BookOpen className="h-3.5 w-3.5" />
           <span>Campus Stories ({storiesCount})</span>
@@ -463,8 +460,8 @@ export default function CampusSubmissionsAdminPage() {
           {filterType === 'all'
             ? 'campus submissions'
             : filterType === 'news'
-            ? 'campus news submissions'
-            : 'campus story submissions'}
+              ? 'campus news submissions'
+              : 'campus story submissions'}
           {campusFilter ? ` for "${campusFilter}"` : ''}
         </span>
 
@@ -617,13 +614,12 @@ export default function CampusSubmissionsAdminPage() {
                   {/* Status Badge */}
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
-                      className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${
-                        sub.status === 'approved'
+                      className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${sub.status === 'approved'
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
                           : sub.status === 'rejected'
-                          ? 'bg-red-50 text-red-700 border-red-300'
-                          : 'bg-gold-50 text-gold-deep border-gold/50'
-                      }`}
+                            ? 'bg-red-50 text-red-700 border-red-300'
+                            : 'bg-gold-50 text-gold-deep border-gold/50'
+                        }`}
                     >
                       {sub.status}
                     </span>
@@ -703,22 +699,20 @@ export default function CampusSubmissionsAdminPage() {
                 <button
                   type="button"
                   onClick={() => setEditingSub({ ...editingSub, type: 'news' })}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-bold text-xs ${
-                    editingSub.type === 'news'
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-bold text-xs ${editingSub.type === 'news'
                       ? 'border-brand bg-brand text-white'
                       : 'border-hairline bg-cream text-muted'
-                  }`}
+                    }`}
                 >
                   <Newspaper className="h-3.5 w-3.5" /> Campus News
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditingSub({ ...editingSub, type: 'story' })}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-bold text-xs ${
-                    editingSub.type === 'story'
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-bold text-xs ${editingSub.type === 'story'
                       ? 'border-brand bg-brand text-white'
                       : 'border-hairline bg-cream text-muted'
-                  }`}
+                    }`}
                 >
                   <BookOpen className="h-3.5 w-3.5" /> Campus Story
                 </button>
