@@ -140,6 +140,7 @@ export function CampusNewsAndStoriesHub({
       city: campus.city || user?.city || 'All India',
       state: campus.state || user?.state || 'All India',
       title: newsTitle.trim(),
+      type: 'news' as const,
       category: newsCategory || 'Campus News',
       description: newsContent.trim() ? `${newsExcerpt.trim()}\n\n${newsContent.trim()}` : newsExcerpt.trim(),
       images: newsImage ? [newsImage] : [],
@@ -173,10 +174,10 @@ export function CampusNewsAndStoriesHub({
       success = true;
     }
 
-    // Persist to local admin queue for client/demo mode
+    // Persist to local campus submissions queue
     try {
-      const existingKey = 'tsc.admin.campus-submissions';
-      const overlay = JSON.parse(window.localStorage.getItem(existingKey) || '{"added":[],"edits":{},"deleted":[]}');
+      const existingKey = 'tsc.admin.campusSubmissions';
+      const currentList = JSON.parse(window.localStorage.getItem(existingKey) || '[]');
       const newSub = {
         id: `sub-news-${Date.now()}`,
         title: payload.title,
@@ -185,6 +186,9 @@ export function CampusNewsAndStoriesHub({
         email: payload.email,
         campus: payload.campus,
         college: payload.college,
+        city: payload.city,
+        state: payload.state,
+        type: 'news',
         category: payload.category,
         summary: payload.description,
         description: payload.description,
@@ -193,8 +197,8 @@ export function CampusNewsAndStoriesHub({
         submittedOn: new Date().toISOString(),
         createdAt: new Date().toISOString(),
       };
-      overlay.added = [newSub, ...(overlay.added || [])];
-      window.localStorage.setItem(existingKey, JSON.stringify(overlay));
+      const updated = [newSub, ...currentList.filter((s: any) => s.id !== newSub.id)];
+      window.localStorage.setItem(existingKey, JSON.stringify(updated));
     } catch {}
 
     if (success) {
@@ -209,7 +213,7 @@ export function CampusNewsAndStoriesHub({
       setNewsImage('');
 
       push(
-        `Campus News submitted for ${campus.name}! It is now in the Admin review queue and will be published once approved by editors.`,
+        `Campus News submitted for ${campus.name}! It is now in the Campus Submissions admin review queue and will be published once approved.`,
         'success'
       );
     }
@@ -233,7 +237,9 @@ export function CampusNewsAndStoriesHub({
       city: campus.city || user?.city || 'All India',
       state: campus.state || user?.state || 'All India',
       title: storyTitle.trim(),
+      type: 'story' as const,
       category: storyCategory || 'campus',
+      description: storyContent.trim() ? `${storyDek.trim()}\n\n${storyContent.trim()}` : storyDek.trim(),
       content: storyContent.trim() ? `${storyDek.trim()}\n\n${storyContent.trim()}` : storyDek.trim(),
       images: storyImage ? [storyImage] : [],
       consent: true,
@@ -244,7 +250,7 @@ export function CampusNewsAndStoriesHub({
     if (api) {
       try {
         const token = window.localStorage.getItem('tsc_token');
-        const res = await fetch(`${api}/api/submissions/story`, {
+        const res = await fetch(`${api}/api/submissions/campus`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -266,28 +272,31 @@ export function CampusNewsAndStoriesHub({
       success = true;
     }
 
-    // Persist to local admin queue for client/demo mode
+    // Persist to local campus submissions queue
     try {
-      const existingKey = 'tsc.admin.story-submissions';
-      const overlay = JSON.parse(window.localStorage.getItem(existingKey) || '{"added":[],"edits":{},"deleted":[]}');
+      const existingKey = 'tsc.admin.campusSubmissions';
+      const currentList = JSON.parse(window.localStorage.getItem(existingKey) || '[]');
       const newSub = {
         id: `sub-story-${Date.now()}`,
         title: payload.title,
-        storyTitle: payload.title,
+        newsTitle: payload.title,
         name: payload.name,
         email: payload.email,
         campus: payload.campus,
         college: payload.college,
+        city: payload.city,
+        state: payload.state,
+        type: 'story',
         category: payload.category,
-        summary: payload.content,
-        storyContent: payload.content,
+        summary: payload.description,
+        description: payload.description,
         images: payload.images,
         status: 'pending',
         submittedOn: new Date().toISOString(),
         createdAt: new Date().toISOString(),
       };
-      overlay.added = [newSub, ...(overlay.added || [])];
-      window.localStorage.setItem(existingKey, JSON.stringify(overlay));
+      const updated = [newSub, ...currentList.filter((s: any) => s.id !== newSub.id)];
+      window.localStorage.setItem(existingKey, JSON.stringify(updated));
     } catch {}
 
     if (success) {
@@ -302,7 +311,7 @@ export function CampusNewsAndStoriesHub({
       setStoryImage('');
 
       push(
-        `Campus Story submitted for ${campus.name}! It is now in the Admin review queue and will be published once approved by editors.`,
+        `Campus Story submitted for ${campus.name}! It is now in the Campus Submissions admin review queue and will be published once approved.`,
         'success'
       );
     }

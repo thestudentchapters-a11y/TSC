@@ -457,6 +457,21 @@ export function registerRoutes(app: Router) {
     })
   );
 
+  app.delete(
+    '/api/submissions/:kind(story|campus)/:id',
+    requireAuth,
+    requireEditor,
+    asyncHandler(async (req: AuthRequest, res) => {
+      if (req.params.kind === 'story') {
+        await StorySubmission.findByIdAndDelete(req.params.id);
+      } else {
+        await CampusSubmission.findByIdAndDelete(req.params.id);
+      }
+      res.json({ success: true, data: null });
+    })
+  );
+
+
   /* ── Memberships & notifications (member) ───────────────────────────── */
   app.get(
     '/api/memberships/me',

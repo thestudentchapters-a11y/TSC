@@ -50,6 +50,7 @@ export const submissionService = {
   },
 
   async submitCampusNews(payload: Record<string, unknown>, userId?: string) {
+    const submissionType = payload.type === 'story' ? 'story' : 'news';
     const doc = await CampusSubmission.create({
       user: userId || undefined,
       name: payload.name || 'Campus Reporter',
@@ -59,7 +60,8 @@ export const submissionService = {
       city: payload.city || '',
       state: payload.state || '',
       newsTitle: payload.title || payload.newsTitle,
-      category: payload.category || 'campus',
+      type: submissionType,
+      category: payload.category || (submissionType === 'story' ? 'campus' : 'Campus News'),
       description: payload.description || payload.content,
       eventDate: payload.eventDate ? new Date(payload.eventDate as string) : undefined,
       images: Array.isArray(payload.images) ? payload.images : payload.image ? [payload.image] : [],
@@ -72,8 +74,8 @@ export const submissionService = {
       emailService
         .sendSubmissionReceipt(
           payload.email,
-          String(payload.name || 'Campus Reporter'),
-          'Campus News',
+          String(payload.name || 'Campus Contributor'),
+          submissionType === 'story' ? 'Campus Story' : 'Campus News',
           String(doc.newsTitle)
         )
         .catch((e) => console.error('[Email Receipt Error]:', e));
@@ -210,80 +212,136 @@ export const submissionService = {
       });
     }
 
-    // When campus news is approved by admin/editor, automatically publish to Article collection
+    // When campus submission is approved, publish to Article (news) or Story collection based on type
     if (kind === 'campus' && status === 'approved') {
-      const baseSlug = slugify(doc.newsTitle || 'campus-news');
-      let uniqueSlug = baseSlug;
-      let counter = 1;
-      while (await Article.findOne({ slug: uniqueSlug })) {
-        uniqueSlug = `${baseSlug}-${counter++}`;
-      }
+      const isStory = doc.type === 'story' || doc.category === 'campus' || doc.category === 'student' || doc.category === 'startup';
+      const targetCampus = doc.campus || doc.college || '';
 
-      const existingArticle = await Article.findOne({
-        $or: [
-          { submissionId: doc._id },
-          { title: doc.newsTitle },
-        ],
-      });
-
-      const newsImg = doc.images && doc.images.length > 0 ? doc.images[0] : (doc.image || '/images/hero/hero-campus.jpg');
-      const excerptText = doc.description ? (doc.description.length > 180 ? doc.description.slice(0, 180).trim() + '…' : doc.description) : 'Campus news on TSC';
-
-      if (existingArticle) {
-        existingArticle.title = doc.newsTitle;
-        existingArticle.content = doc.description;
-        existingArticle.excerpt = excerptText;
-        existingArticle.campus = doc.campus || doc.college;
-        existingArticle.category = doc.category || 'Campus News';
-        if (newsImg) {
-          existingArticle.image = newsImg;
-          existingArticle.featuredImage = newsImg;
+      if (isStory) {
+        const baseSlug = slugify(doc.newsTitle || 'campus-story');
+        let uniqueSlug = baseSlug;
+        let counter = 1;
+        while (await Story.findOne({ slug: uniqueSlug })) {
+          uniqueSlug = `${baseSlug}-${counter++}`;
         }
-        existingArticle.status = 'published';
-        existingArticle.submissionId = doc._id;
-        existingArticle.submittedBy = doc.name;
-        await existingArticle.save();
-      } else {
-        await Article.create({
-          title: doc.newsTitle,
-          slug: uniqueSlug,
-          excerpt: excerptText,
-          category: doc.category || 'Campus News',
-          content: doc.description,
-          campus: doc.campus || doc.college,
-          image: newsImg,
-          featuredImage: newsImg,
-          gallery: doc.images || [],
-          author: doc.name || 'TSC Campus Reporter',
-          status: 'published',
-          featured: false,
-          date: new Date().toISOString().slice(0, 10),
-          submittedBy: doc.name,
-          submissionId: doc._id,
-        });
-      }
 
-      if (targetUserId) {
-        try {
-          await Notification.create({
-            user: targetUserId,
-            title: `🎉 Campus News Approved & Published!`,
-            body: `Your campus news "${title}" has been approved by our editorial team and is now live on THE STUDENT CHAPTERS™!`,
-            type: 'submission',
-            link: `/news/${uniqueSlug}`,
+        const existingStory = await Story.findOne({
+          $or: [{ submissionId: doc._id }, { title: doc.newsTitle }],
+        });
+
+        const storyImg = doc.images && doc.images.length > 0 ? doc.images[0] : (doc.image || '/images/hero/hero-collab.jpg');
+        const dekText = doc.description ? (doc.description.length > 160 ? doc.description.slice(0, 160).trim() + '…' : doc.description) : 'Campus story on TSC';
+
+        if (existingStory) {
+          existingStory.title = doc.newsTitle;
+          existingStory.content = doc.description;
+          existingStory.dek = dekText;
+          existingStory.campus = targetCampus;
+          existingStory.category = doc.category || 'campus';
+          if (storyImg) existingStory.image = storyImg;
+          existingStory.status = 'published';
+          existingStory.submissionId = doc._id;
+          existingStory.submittedBy = doc.name;
+          await existingStory.save();
+        } else {
+          await Story.create({
+            title: doc.newsTitle,
+            slug: uniqueSlug,
+            dek: dekText,
+            category: doc.category || 'campus',
+            content: doc.description,
+            campus: targetCampus,
+            image: storyImg,
+            imageAlt: doc.newsTitle,
+            author: doc.name || 'TSC Contributor',
+            readingTime: Math.max(1, Math.ceil((doc.description?.split(' ').length || 100) / 200)),
+            status: 'published',
+            featured: false,
+            submittedBy: doc.name,
+            submissionId: doc._id,
           });
-        } catch (err) {
-          console.error('[Notification Error]:', err);
+        }
+
+        if (targetUserId) {
+          try {
+            await Notification.create({
+              user: targetUserId,
+              title: `🎉 Campus Story Approved & Published!`,
+              body: `Your campus story "${title}" has been approved and is live on ${targetCampus}!`,
+              type: 'submission',
+              link: `/stories/${uniqueSlug}`,
+            });
+          } catch (err) {
+            console.error('[Notification Error]:', err);
+          }
+        }
+      } else {
+        const baseSlug = slugify(doc.newsTitle || 'campus-news');
+        let uniqueSlug = baseSlug;
+        let counter = 1;
+        while (await Article.findOne({ slug: uniqueSlug })) {
+          uniqueSlug = `${baseSlug}-${counter++}`;
+        }
+
+        const existingArticle = await Article.findOne({
+          $or: [{ submissionId: doc._id }, { title: doc.newsTitle }],
+        });
+
+        const newsImg = doc.images && doc.images.length > 0 ? doc.images[0] : (doc.image || '/images/hero/hero-campus.jpg');
+        const excerptText = doc.description ? (doc.description.length > 180 ? doc.description.slice(0, 180).trim() + '…' : doc.description) : 'Campus news on TSC';
+
+        if (existingArticle) {
+          existingArticle.title = doc.newsTitle;
+          existingArticle.content = doc.description;
+          existingArticle.excerpt = excerptText;
+          existingArticle.campus = targetCampus;
+          existingArticle.category = doc.category || 'Campus News';
+          if (newsImg) {
+            existingArticle.image = newsImg;
+            existingArticle.featuredImage = newsImg;
+          }
+          existingArticle.status = 'published';
+          existingArticle.submissionId = doc._id;
+          existingArticle.submittedBy = doc.name;
+          await existingArticle.save();
+        } else {
+          await Article.create({
+            title: doc.newsTitle,
+            slug: uniqueSlug,
+            excerpt: excerptText,
+            category: doc.category || 'Campus News',
+            content: doc.description,
+            campus: targetCampus,
+            image: newsImg,
+            featuredImage: newsImg,
+            gallery: doc.images || [],
+            author: doc.name || 'TSC Campus Reporter',
+            status: 'published',
+            featured: false,
+            date: new Date().toISOString().slice(0, 10),
+            submittedBy: doc.name,
+            submissionId: doc._id,
+          });
+        }
+
+        if (targetUserId) {
+          try {
+            await Notification.create({
+              user: targetUserId,
+              title: `🎉 Campus News Approved & Published!`,
+              body: `Your campus news "${title}" has been approved by our editorial team and is now live on THE STUDENT CHAPTERS™!`,
+              type: 'submission',
+              link: `/news/${uniqueSlug}`,
+            });
+          } catch (err) {
+            console.error('[Notification Error]:', err);
+          }
         }
       }
     } else if (kind === 'campus' && status !== 'approved') {
-      // If status moved back to pending, under review, or rejected, remove from live published articles
-      await Article.deleteMany({
-        $or: [
-          { submissionId: doc._id },
-          { title: doc.newsTitle },
-        ],
-      });
+      // If status moved back to pending, under review, or rejected, remove from live published articles and stories
+      await Article.deleteMany({ $or: [{ submissionId: doc._id }, { title: doc.newsTitle }] });
+      await Story.deleteMany({ $or: [{ submissionId: doc._id }, { title: doc.newsTitle }] });
     }
 
     if (targetUserId && status !== 'approved') {

@@ -242,6 +242,7 @@ export interface StorySubmissionRecord {
 
 export interface CampusSubmissionRecord {
   id: string;
+  type?: 'news' | 'story';
   name: string;
   email: string;
   campus: string;

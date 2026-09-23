@@ -64,6 +64,7 @@ export interface ICampusSubmission {
   city?: string;
   state?: string;
   newsTitle: string;
+  type?: 'news' | 'story';
   category: string;
   description: string;
   eventDate?: Date;
@@ -87,6 +88,7 @@ const CampusSubmissionSchema = new Schema(
     city: { type: String, default: '' },
     state: { type: String, default: '' },
     newsTitle: { type: String, required: true },
+    type: { type: String, enum: ['news', 'story'], default: 'news' },
     category: { type: String, required: true },
     description: { type: String, required: true },
     eventDate: { type: Date },

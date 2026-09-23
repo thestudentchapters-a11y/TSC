@@ -259,14 +259,15 @@ export function CampusManagementAdmin() {
           if (json && Array.isArray(json.data) && json.data.length > 0) {
             const mapped: CampusSubmissionRecord[] = json.data.map((item: any) => ({
               id: item.id || item._id?.toString(),
-              title: item.newsTitle || item.title,
+              type: item.type || (item.isStory ? 'story' : 'news'),
+              title: item.newsTitle || item.storyTitle || item.title || 'Untitled Submission',
               name: item.name,
               email: item.email,
               campus: item.campus || item.college,
               city: item.city || '',
               state: item.state || '',
-              category: item.category || 'Campus News',
-              summary: item.description || item.summary || '',
+              category: item.category || item.storyCategory || 'Campus News',
+              summary: item.description || item.storyContent || item.summary || '',
               images: item.images || [],
               status: item.status || 'pending',
               submittedOn: item.createdAt || item.submittedOn || new Date().toISOString(),
@@ -817,6 +818,7 @@ export function CampusManagementAdmin() {
     type: 'campus' | 'story',
     sub: CampusSubmissionRecord | StorySubmissionRecord
   ) => {
+    const effectiveType = (sub as any).type === 'story' ? 'story' : type;
     const endpointId = (sub as any)._id || sub.id;
     if (api) {
       try {
@@ -838,7 +840,7 @@ export function CampusManagementAdmin() {
       }
     }
 
-    if (type === 'campus') {
+    if (effectiveType === 'campus') {
       const cs = sub as CampusSubmissionRecord;
       const targetCampus = cs.campus || cs.college || 'Campus';
       // Publish as Campus Article
@@ -862,20 +864,9 @@ export function CampusManagementAdmin() {
 
       saveArticlesToLocal([newArticle, ...articles.filter((a) => a.title !== newArticle.title)]);
 
-      // Update submission status in local state
-      const updatedSubs = campusSubs.map((s) =>
-        s.id === cs.id ? { ...s, status: 'approved' as const } : s
-      );
-      setCampusSubs(updatedSubs);
-      try {
-        window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updatedSubs));
-      } catch {
-        /* ignore */
-      }
-
       push(`Approved and published "${cs.title}" to ${targetCampus} newsroom!`, 'success');
     } else {
-      const ss = sub as StorySubmissionRecord;
+      const ss = sub as any;
       const targetCampus = ss.college || ss.campus || 'Campus';
       // Publish as Campus Story
       const newStory: Story = {
@@ -902,9 +893,23 @@ export function CampusManagementAdmin() {
 
       saveStoriesToLocal([newStory, ...stories.filter((s) => s.title !== newStory.title)]);
 
-      // Update submission status in local state
+      push(`Approved and published "${ss.title}" to ${targetCampus} stories!`, 'success');
+    }
+
+    const isInCampus = campusSubs.some((s) => s.id === sub.id);
+    if (isInCampus) {
+      const updatedSubs = campusSubs.map((s) =>
+        s.id === sub.id ? { ...s, status: 'approved' as const } : s
+      );
+      setCampusSubs(updatedSubs);
+      try {
+        window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updatedSubs));
+      } catch {
+        /* ignore */
+      }
+    } else {
       const updatedSubs = storySubs.map((s) =>
-        s.id === ss.id ? { ...s, status: 'approved' as const } : s
+        s.id === sub.id ? { ...s, status: 'approved' as const } : s
       );
       setStorySubs(updatedSubs);
       try {
@@ -912,8 +917,6 @@ export function CampusManagementAdmin() {
       } catch {
         /* ignore */
       }
-
-      push(`Approved and published "${ss.title}" to ${targetCampus} stories!`, 'success');
     }
 
     setReviewingSubmission(null);
@@ -940,7 +943,8 @@ export function CampusManagementAdmin() {
       }
     }
 
-    if (type === 'campus') {
+    const isInCampus = campusSubs.some((s) => s.id === id);
+    if (isInCampus) {
       const updated = campusSubs.map((s) => (s.id === id ? { ...s, status: 'rejected' as const } : s));
       setCampusSubs(updated);
       try {
@@ -960,6 +964,51 @@ export function CampusManagementAdmin() {
     push('Submission marked as rejected.', 'success');
     setReviewingSubmission(null);
     setReviewNote('');
+  };
+
+  const handleDeleteSubmission = async (
+    type: 'campus' | 'story',
+    id: string
+  ) => {
+    if (!confirm('Are you sure you want to delete this submission?')) return;
+
+    if (api) {
+      try {
+        const routeKind = type === 'campus' ? 'campus' : 'story';
+        await fetch(`${api}/api/submissions/${routeKind}/${id}`, {
+          method: 'DELETE',
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+      } catch (err) {
+        console.error('Delete submission API error:', err);
+      }
+    }
+
+    const isInCampus = campusSubs.some((s) => s.id === id);
+    if (isInCampus) {
+      const updated = campusSubs.filter((s) => s.id !== id);
+      setCampusSubs(updated);
+      try {
+        window.localStorage.setItem('tsc.admin.campusSubmissions', JSON.stringify(updated));
+      } catch {
+        /* ignore */
+      }
+    } else {
+      const updated = storySubs.filter((s) => s.id !== id);
+      setStorySubs(updated);
+      try {
+        window.localStorage.setItem('tsc.admin.storySubmissions', JSON.stringify(updated));
+      } catch {
+        /* ignore */
+      }
+    }
+
+    push('Submission deleted.', 'success');
+    if (reviewingSubmission?.data?.id === id) {
+      setReviewingSubmission(null);
+    }
   };
 
   // Filtered lists
@@ -1015,12 +1064,12 @@ export function CampusManagementAdmin() {
       raw: CampusSubmissionRecord | StorySubmissionRecord;
     }> = [
       ...campusSubs.map((cs) => ({
-        type: 'campus' as const,
+        type: (cs.type === 'story' ? 'story' : 'campus') as 'campus' | 'story',
         id: cs.id,
         title: cs.title,
         submitter: cs.name,
         email: cs.email,
-        campus: cs.campus,
+        campus: cs.campus || cs.college || 'Campus',
         city: cs.city,
         category: cs.category,
         summary: cs.summary,
@@ -1692,6 +1741,16 @@ export function CampusManagementAdmin() {
                             <Check className="h-3 w-3" /> Approve
                           </Button>
                         )}
+
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeleteSubmission(sub.type, sub.id)}
+                          className="h-7 text-xs px-2 text-red-600 hover:bg-red-50 hover:border-red-300"
+                          title="Delete submission"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -2057,9 +2116,22 @@ export function CampusManagementAdmin() {
                       reviewingSubmission.data.id
                     )
                   }
-                  className="text-red-600 hover:border-red-400"
+                  className="text-amber-700 hover:border-amber-400"
                 >
-                  <X className="h-3.5 w-3.5" /> Reject Submission
+                  <X className="h-3.5 w-3.5" /> Reject
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    handleDeleteSubmission(
+                      reviewingSubmission.type,
+                      reviewingSubmission.data.id
+                    )
+                  }
+                  className="text-red-600 hover:bg-red-50 hover:border-red-400"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Delete
                 </Button>
               </div>
 
