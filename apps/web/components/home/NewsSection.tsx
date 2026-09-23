@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
 import { Newspaper, GraduationCap, Users, Cpu } from 'lucide-react';
 import { SectionHeading } from '@/components/common/SectionHeading';
 import { StaggerGrid, StaggerItem } from '@/components/common/Reveal';
@@ -12,9 +15,119 @@ const CATEGORIES = [
   { icon: Cpu, name: 'Technology & Innovation', desc: 'Emerging technologies, innovations and ideas transforming the world around us.' },
 ];
 
-export function NewsSection({ articles }: { articles: Article[] }) {
-  const featured = articles.find((a) => a.featured) ?? articles[0];
-  const secondary = articles.filter((a) => a.id !== featured?.id).slice(0, 3);
+export function NewsSection({ articles: initialArticles }: { articles: Article[] }) {
+  const [items, setItems] = useState<Article[]>(initialArticles);
+  const api = process.env.NEXT_PUBLIC_API_URL || '';
+
+  useEffect(() => {
+    setItems(initialArticles);
+  }, [initialArticles]);
+
+  useEffect(() => {
+    const sync = () => {
+      let localItems: Article[] = [];
+      try {
+        const storedNews: Article[] = JSON.parse(
+          window.localStorage.getItem('tsc.custom.news') || '[]'
+        );
+        const storedArticles: Article[] = JSON.parse(
+          window.localStorage.getItem('tsc.custom.articles') || '[]'
+        );
+
+        let adminNewsItems: Article[] = [];
+        const adminNewsRaw = window.localStorage.getItem('tsc.admin.news');
+        if (adminNewsRaw) {
+          const parsed = JSON.parse(adminNewsRaw);
+          const added = parsed.added || [];
+          const edits = Object.values(parsed.edits || {});
+          adminNewsItems = [...added, ...edits].map((item: any) => ({
+            id: item.id || item._id?.toString() || item.slug,
+            slug: item.slug || '',
+            title: item.title || item.newsTitle || 'Untitled',
+            excerpt: item.excerpt || item.summary || '',
+            content: Array.isArray(item.content) ? item.content : [item.content || item.summary || ''],
+            category: item.category || 'Student News',
+            tags: Array.isArray(item.tags) ? item.tags : [],
+            author: item.author || 'TSC Campus Desk',
+            campus: item.campus || '',
+            date: item.date || item.createdAt || new Date().toISOString(),
+            readingTime: item.readingTime || 3,
+            image: item.image || '/images/news/news-1.jpg',
+            imageAlt: item.title || 'News image',
+            featured: Boolean(item.featured),
+            status: item.status || 'published',
+          }));
+        }
+
+        localItems = [...storedNews, ...storedArticles, ...adminNewsItems].filter(
+          (a) => a && (a.status === 'published' || !a.status)
+        );
+      } catch {
+        /* ignore */
+      }
+
+      if (localItems.length > 0) {
+        setItems((prev) => {
+          const existingIds = new Set(prev.map((a) => a.id));
+          const existingTitles = new Set(prev.map((a) => a.title.toLowerCase().trim()));
+          const newOnes = localItems.filter(
+            (item) => !existingIds.has(item.id) && !existingTitles.has(item.title.toLowerCase().trim())
+          );
+          return [...newOnes, ...prev];
+        });
+      }
+
+      if (api) {
+        fetch(`${api}/api/news?_t=${Date.now()}&limit=20`, { cache: 'no-store' })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((json) => {
+            if (json && Array.isArray(json.data) && json.data.length > 0) {
+              const mapped: Article[] = json.data.map((item: any) => ({
+                id: item.id || item._id?.toString() || item.slug,
+                slug: item.slug || '',
+                title: item.title || item.newsTitle || 'Untitled',
+                excerpt: item.excerpt || item.summary || '',
+                content: Array.isArray(item.content) ? item.content : [item.content || ''],
+                category: typeof item.category === 'object' ? item.category?.name : item.category || 'Student News',
+                tags: Array.isArray(item.tags) ? item.tags.map((t: any) => t?.name || t) : [],
+                author: typeof item.author === 'object' ? item.author?.name : item.author || 'TSC Editorial',
+                campus: item.campus || '',
+                date: item.date || item.createdAt || new Date().toISOString(),
+                readingTime: item.readingTime || 3,
+                image: item.image || item.featuredImage || '/images/news/news-1.jpg',
+                imageAlt: item.title || 'News image',
+                featured: Boolean(item.featured),
+                status: item.status || 'published',
+              }));
+
+              const published = mapped.filter((a) => !a.status || a.status.toLowerCase() === 'published');
+              setItems((prev) => {
+                const liveIds = new Set(published.map((a) => a.id));
+                const liveTitles = new Set(published.map((a) => a.title.toLowerCase().trim()));
+                const remaining = prev.filter(
+                  (p) => !liveIds.has(p.id) && !liveTitles.has(p.title.toLowerCase().trim())
+                );
+                return [...published, ...remaining];
+              });
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    sync();
+    window.addEventListener('storage', sync);
+    window.addEventListener('focus', sync);
+    window.addEventListener('pageshow', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('focus', sync);
+      window.removeEventListener('pageshow', sync);
+    };
+  }, [api]);
+
+  const featured = items.find((a) => a.featured) ?? items[0];
+  const secondary = items.filter((a) => a.id !== featured?.id).slice(0, 3);
 
   return (
     <section aria-label="Latest news" className="section-pad">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { School, Rocket, User } from 'lucide-react';
@@ -17,9 +17,118 @@ const TABS: { key: StoryCategory | 'all'; label: string; icon: typeof User; desc
   { key: 'campus', label: 'Campus', icon: School, desc: "What's happening inside India's colleges and universities." },
 ];
 
-export function StoriesSection({ stories }: { stories: Story[] }) {
+export function StoriesSection({ stories: initialStories }: { stories: Story[] }) {
+  const [items, setItems] = useState<Story[]>(initialStories);
   const [tab, setTab] = useState<StoryCategory | 'all'>('all');
-  const filtered = tab === 'all' ? stories : stories.filter((s) => s.category === tab);
+  const api = process.env.NEXT_PUBLIC_API_URL || '';
+
+  useEffect(() => {
+    setItems(initialStories);
+  }, [initialStories]);
+
+  useEffect(() => {
+    const sync = () => {
+      let localItems: Story[] = [];
+      try {
+        const stored: Story[] = JSON.parse(
+          window.localStorage.getItem('tsc.custom.stories') || '[]'
+        );
+
+        let adminStoryItems: Story[] = [];
+        const adminStoriesRaw = window.localStorage.getItem('tsc.admin.stories');
+        if (adminStoriesRaw) {
+          const parsed = JSON.parse(adminStoriesRaw);
+          const added = parsed.added || [];
+          const edits = Object.values(parsed.edits || {});
+          adminStoryItems = [...added, ...edits].map((item: any) => ({
+            id: item.id || item._id?.toString() || item.slug,
+            slug: item.slug || '',
+            title: item.title || item.storyTitle || 'Untitled Story',
+            dek: item.dek || item.summary || '',
+            category: item.category || 'student',
+            image: item.image || '/images/stories/story-1.jpg',
+            imageAlt: item.title || 'Story image',
+            author: item.author || 'TSC Contributor',
+            authorRole: item.authorRole || 'Student',
+            campus: item.campus || '',
+            date: item.date || item.createdAt || new Date().toISOString(),
+            readingTime: item.readingTime || 4,
+            content: Array.isArray(item.content) ? item.content : [item.content || item.summary || ''],
+            quote: item.quote,
+            featured: Boolean(item.featured),
+            status: item.status || 'published',
+          }));
+        }
+
+        localItems = [...stored, ...adminStoryItems].filter(
+          (s) => s && (s.status === 'published' || !s.status)
+        );
+      } catch {
+        /* ignore */
+      }
+
+      if (localItems.length > 0) {
+        setItems((prev) => {
+          const existingIds = new Set(prev.map((s) => s.id));
+          const existingTitles = new Set(prev.map((s) => s.title.toLowerCase().trim()));
+          const newOnes = localItems.filter(
+            (s) => !existingIds.has(s.id) && !existingTitles.has(s.title.toLowerCase().trim())
+          );
+          return [...newOnes, ...prev];
+        });
+      }
+
+      if (api) {
+        fetch(`${api}/api/stories?_t=${Date.now()}&limit=20`, { cache: 'no-store' })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((json) => {
+            if (json && Array.isArray(json.data) && json.data.length > 0) {
+              const mapped: Story[] = json.data.map((item: any) => ({
+                id: item.id || item._id?.toString() || item.slug,
+                slug: item.slug || '',
+                title: item.title || item.storyTitle || 'Untitled Story',
+                dek: item.dek || item.summary || '',
+                category: item.category || 'student',
+                image: item.image || '/images/stories/story-1.jpg',
+                imageAlt: item.title || 'Story image',
+                author: typeof item.author === 'object' ? item.author?.name : item.author || 'TSC Contributor',
+                authorRole: item.authorRole || 'Student',
+                campus: item.campus || '',
+                date: item.date || item.createdAt || new Date().toISOString(),
+                readingTime: item.readingTime || 4,
+                content: Array.isArray(item.content) ? item.content : [item.content || ''],
+                quote: item.quote,
+                featured: Boolean(item.featured),
+                status: item.status || 'published',
+              }));
+
+              const published = mapped.filter((s) => !s.status || s.status.toLowerCase() === 'published');
+              setItems((prev) => {
+                const liveIds = new Set(published.map((s) => s.id));
+                const liveTitles = new Set(published.map((s) => s.title.toLowerCase().trim()));
+                const remaining = prev.filter(
+                  (p) => !liveIds.has(p.id) && !liveTitles.has(p.title.toLowerCase().trim())
+                );
+                return [...published, ...remaining];
+              });
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    sync();
+    window.addEventListener('storage', sync);
+    window.addEventListener('focus', sync);
+    window.addEventListener('pageshow', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('focus', sync);
+      window.removeEventListener('pageshow', sync);
+    };
+  }, [api]);
+
+  const filtered = tab === 'all' ? items : items.filter((s) => s.category === tab);
   const activeTab = TABS.find((t) => t.key === tab)!;
 
   return (

@@ -27,7 +27,8 @@ export const metadata: Metadata = {
 };
 
 // Server-rendered homepage feed aggregator Developed by Ayush
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   const [articles, stories, campuses, opportunities, editions, episodes, events, campaign, settings] = await Promise.all([

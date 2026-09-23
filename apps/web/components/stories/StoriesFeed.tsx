@@ -25,33 +25,107 @@ export function StoriesFeed({
     setStories(initialStories);
   }, [initialStories]);
 
-  const loadLocal = () => {
+  const api = process.env.NEXT_PUBLIC_API_URL || '';
+
+  const syncStories = () => {
+    let localItems: Story[] = [];
     try {
       const stored: Story[] = JSON.parse(
         window.localStorage.getItem('tsc.custom.stories') || '[]'
       );
-      const valid = stored.filter((s) => s && (s.status === 'published' || !s.status));
-      if (valid.length > 0) {
-        setStories((prev) => {
-          const ids = new Set(prev.map((s) => s.id));
-          const newItems = valid.filter((s) => !ids.has(s.id));
-          return [...newItems, ...prev];
-        });
+
+      let adminStoryItems: Story[] = [];
+      const adminStoriesRaw = window.localStorage.getItem('tsc.admin.stories');
+      if (adminStoriesRaw) {
+        const parsed = JSON.parse(adminStoriesRaw);
+        const added = parsed.added || [];
+        const edits = Object.values(parsed.edits || {});
+        adminStoryItems = [...added, ...edits].map((item: any) => ({
+          id: item.id || item._id?.toString() || item.slug,
+          slug: item.slug || '',
+          title: item.title || item.storyTitle || 'Untitled Story',
+          dek: item.dek || item.summary || '',
+          category: item.category || 'student',
+          image: item.image || '/images/stories/story-1.jpg',
+          imageAlt: item.title || 'Story image',
+          author: item.author || 'TSC Contributor',
+          authorRole: item.authorRole || 'Student',
+          campus: item.campus || '',
+          date: item.date || item.createdAt || new Date().toISOString(),
+          readingTime: item.readingTime || 4,
+          content: Array.isArray(item.content) ? item.content : [item.content || item.summary || ''],
+          quote: item.quote,
+          featured: Boolean(item.featured),
+          status: item.status || 'published',
+        }));
       }
+
+      localItems = [...stored, ...adminStoryItems].filter(
+        (s) => s && (s.status === 'published' || !s.status)
+      );
     } catch {
-      /* noop */
+      /* ignore */
+    }
+
+    if (localItems.length > 0) {
+      setStories((prev) => {
+        const existingIds = new Set(prev.map((s) => s.id));
+        const existingTitles = new Set(prev.map((s) => s.title.toLowerCase().trim()));
+        const newOnes = localItems.filter(
+          (s) => !existingIds.has(s.id) && !existingTitles.has(s.title.toLowerCase().trim())
+        );
+        return [...newOnes, ...prev];
+      });
+    }
+
+    if (api) {
+      fetch(`${api}/api/stories?_t=${Date.now()}&limit=100`, { cache: 'no-store' })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            const mapped: Story[] = json.data.map((item: any) => ({
+              id: item.id || item._id?.toString() || item.slug,
+              slug: item.slug || '',
+              title: item.title || item.storyTitle || 'Untitled Story',
+              dek: item.dek || item.summary || '',
+              category: item.category || 'student',
+              image: item.image || '/images/stories/story-1.jpg',
+              imageAlt: item.title || 'Story image',
+              author: typeof item.author === 'object' ? item.author?.name : item.author || 'TSC Contributor',
+              authorRole: item.authorRole || 'Student',
+              campus: item.campus || '',
+              date: item.date || item.createdAt || new Date().toISOString(),
+              readingTime: item.readingTime || 4,
+              content: Array.isArray(item.content) ? item.content : [item.content || ''],
+              quote: item.quote,
+              featured: Boolean(item.featured),
+              status: item.status || 'published',
+            }));
+
+            const published = mapped.filter((s) => !s.status || s.status.toLowerCase() === 'published');
+            setStories((prev) => {
+              const liveIds = new Set(published.map((s) => s.id));
+              const liveTitles = new Set(published.map((s) => s.title.toLowerCase().trim()));
+              const remaining = prev.filter(
+                (p) => !liveIds.has(p.id) && !liveTitles.has(p.title.toLowerCase().trim())
+              );
+              return [...published, ...remaining];
+            });
+          }
+        })
+        .catch(() => {});
     }
   };
 
   useEffect(() => {
-    loadLocal();
-    window.addEventListener('storage', loadLocal);
-    window.addEventListener('focus', loadLocal);
-    window.addEventListener('pageshow', loadLocal);
+    syncStories();
+    window.addEventListener('storage', syncStories);
+    window.addEventListener('focus', syncStories);
+    window.addEventListener('pageshow', syncStories);
     return () => {
-      window.removeEventListener('storage', loadLocal);
-      window.removeEventListener('focus', loadLocal);
-      window.removeEventListener('pageshow', loadLocal);
+      window.removeEventListener('storage', syncStories);
+      window.removeEventListener('focus', syncStories);
+      window.removeEventListener('pageshow', syncStories);
     };
   }, []);
 

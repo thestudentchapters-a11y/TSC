@@ -25,12 +25,15 @@ export function NewsFeed({
 }: NewsFeedProps) {
   const searchParamsHook = useSearchParams();
   const [articles, setArticles] = useState<Article[]>(initialArticles);
+  const api = process.env.NEXT_PUBLIC_API_URL || '';
 
   useEffect(() => {
     setArticles(initialArticles);
   }, [initialArticles]);
 
-  const loadLocal = () => {
+  const syncArticles = () => {
+    // 1. Gather all local custom/admin news
+    let localItems: Article[] = [];
     try {
       const storedNews: Article[] = JSON.parse(
         window.localStorage.getItem('tsc.custom.news') || '[]'
@@ -38,30 +41,98 @@ export function NewsFeed({
       const storedArticles: Article[] = JSON.parse(
         window.localStorage.getItem('tsc.custom.articles') || '[]'
       );
-      const combined = [...storedNews, ...storedArticles].filter(
+
+      let adminNewsItems: Article[] = [];
+      const adminNewsRaw = window.localStorage.getItem('tsc.admin.news');
+      if (adminNewsRaw) {
+        const parsed = JSON.parse(adminNewsRaw);
+        const added = parsed.added || [];
+        const edits = Object.values(parsed.edits || {});
+        adminNewsItems = [...added, ...edits].map((item: any) => ({
+          id: item.id || item._id?.toString() || item.slug,
+          slug: item.slug || '',
+          title: item.title || item.newsTitle || 'Untitled',
+          excerpt: item.excerpt || item.summary || '',
+          content: Array.isArray(item.content) ? item.content : [item.content || item.summary || ''],
+          category: item.category || 'Student News',
+          tags: Array.isArray(item.tags) ? item.tags : [],
+          author: item.author || 'TSC Campus Desk',
+          campus: item.campus || '',
+          date: item.date || item.createdAt || new Date().toISOString(),
+          readingTime: item.readingTime || 3,
+          image: item.image || '/images/news/news-1.jpg',
+          imageAlt: item.title || 'News image',
+          featured: Boolean(item.featured),
+          status: item.status || 'published',
+        }));
+      }
+
+      localItems = [...storedNews, ...storedArticles, ...adminNewsItems].filter(
         (a) => a && (a.status === 'published' || !a.status)
       );
-      if (combined.length > 0) {
-        setArticles((prev) => {
-          const ids = new Set(prev.map((a) => a.id));
-          const newItems = combined.filter((s) => !ids.has(s.id));
-          return [...newItems, ...prev];
-        });
-      }
     } catch {
-      /* noop */
+      /* ignore */
+    }
+
+    if (localItems.length > 0) {
+      setArticles((prev) => {
+        const existingIds = new Set(prev.map((a) => a.id));
+        const existingTitles = new Set(prev.map((a) => a.title.toLowerCase().trim()));
+        const newOnes = localItems.filter(
+          (item) => !existingIds.has(item.id) && !existingTitles.has(item.title.toLowerCase().trim())
+        );
+        return [...newOnes, ...prev];
+      });
+    }
+
+    // 2. Live fetch from API in browser
+    if (api) {
+      fetch(`${api}/api/news?_t=${Date.now()}&limit=100`, { cache: 'no-store' })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            const mapped: Article[] = json.data.map((item: any) => ({
+              id: item.id || item._id?.toString() || item.slug,
+              slug: item.slug || '',
+              title: item.title || item.newsTitle || 'Untitled',
+              excerpt: item.excerpt || item.summary || '',
+              content: Array.isArray(item.content) ? item.content : [item.content || ''],
+              category: typeof item.category === 'object' ? item.category?.name : item.category || 'Student News',
+              tags: Array.isArray(item.tags) ? item.tags.map((t: any) => t?.name || t) : [],
+              author: typeof item.author === 'object' ? item.author?.name : item.author || 'TSC Editorial',
+              campus: item.campus || '',
+              date: item.date || item.createdAt || new Date().toISOString(),
+              readingTime: item.readingTime || 3,
+              image: item.image || item.featuredImage || '/images/news/news-1.jpg',
+              imageAlt: item.title || 'News image',
+              featured: Boolean(item.featured),
+              status: item.status || 'published',
+            }));
+
+            const published = mapped.filter((a) => !a.status || a.status.toLowerCase() === 'published');
+            setArticles((prev) => {
+              const liveIds = new Set(published.map((a) => a.id));
+              const liveTitles = new Set(published.map((a) => a.title.toLowerCase().trim()));
+              const remaining = prev.filter(
+                (p) => !liveIds.has(p.id) && !liveTitles.has(p.title.toLowerCase().trim())
+              );
+              return [...published, ...remaining];
+            });
+          }
+        })
+        .catch(() => {});
     }
   };
 
   useEffect(() => {
-    loadLocal();
-    window.addEventListener('storage', loadLocal);
-    window.addEventListener('focus', loadLocal);
-    window.addEventListener('pageshow', loadLocal);
+    syncArticles();
+    window.addEventListener('storage', syncArticles);
+    window.addEventListener('focus', syncArticles);
+    window.addEventListener('pageshow', syncArticles);
     return () => {
-      window.removeEventListener('storage', loadLocal);
-      window.removeEventListener('focus', loadLocal);
-      window.removeEventListener('pageshow', loadLocal);
+      window.removeEventListener('storage', syncArticles);
+      window.removeEventListener('focus', syncArticles);
+      window.removeEventListener('pageshow', syncArticles);
     };
   }, []);
 

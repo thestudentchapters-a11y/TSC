@@ -15,7 +15,17 @@ import {
 } from '@/data/content';
 import { getYoutubeThumbnailUrl, getPodcastThumbnail } from '@/lib/utils';
 
-const API = process.env.NEXT_PUBLIC_API_URL;
+function getBaseApiUrl(): string {
+  let url = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://127.0.0.1:5000';
+  if (typeof window === 'undefined' && url.includes('localhost')) {
+    // In Node.js on server side, 'localhost' often resolves to ::1 (IPv6) which fails
+    // when backend is bound to 0.0.0.0 or 127.0.0.1 (IPv4). Prefer 127.0.0.1 for server-side fetches.
+    url = url.replace('localhost', '127.0.0.1');
+  }
+  return url;
+}
+
+const API = getBaseApiUrl();
 
 const isObjectId = (v: any) => typeof v === 'string' && /^[a-f\d]{24}$/i.test(v);
 
@@ -292,13 +302,14 @@ function normalizeCampaign(raw: any): Campaign {
 }
 
 async function withApi<T>(path: string, fallback: T, transform?: (data: any) => T): Promise<T> {
-  if (!API) return fallback;
+  const base = getBaseApiUrl();
+  if (!base) return fallback;
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-    const res = await fetch(`${API}${path}`, {
-      next: { revalidate: 30 },
+    const res = await fetch(`${base}${path}`, {
+      cache: 'no-store',
       headers: { Accept: 'application/json' },
       signal: controller.signal,
     }).finally(() => clearTimeout(timeoutId));
@@ -310,17 +321,25 @@ async function withApi<T>(path: string, fallback: T, transform?: (data: any) => 
       return transform(rawData);
     }
     return (rawData as T) ?? fallback;
-  } catch (err) {
-    console.warn(`[TSC] API unavailable for ${path}; serving fallback content.`);
+  } catch (err: any) {
+    console.warn(`[TSC] API fetch for ${path} (${err?.message || err}); serving fallback content.`);
     return fallback;
   }
 }
 
 /* News */
 export const getArticles = cache(() =>
-  withApi<Article[]>('/api/news?limit=100', demoArticles, (data) =>
-    Array.isArray(data) ? data.map(normalizeArticle) : demoArticles
-  )
+  withApi<Article[]>('/api/news?limit=100', demoArticles, (data) => {
+    if (!Array.isArray(data)) return demoArticles;
+    const mapped = data.map(normalizeArticle);
+    if (mapped.length === 0) return demoArticles;
+    const dbSlugs = new Set(mapped.map((a) => a.slug.toLowerCase().trim()));
+    const dbTitles = new Set(mapped.map((a) => a.title.toLowerCase().trim()));
+    const extraDemos = demoArticles.filter(
+      (d) => !dbSlugs.has(d.slug.toLowerCase().trim()) && !dbTitles.has(d.title.toLowerCase().trim())
+    );
+    return [...mapped, ...extraDemos];
+  })
 );
 export const getArticleBySlug = cache(async function (slug: string): Promise<Article | undefined> {
   const item = await withApi<Article | null>(`/api/news/${slug}`, null, (data) =>
@@ -333,9 +352,17 @@ export const getArticleBySlug = cache(async function (slug: string): Promise<Art
 
 /* Stories */
 export const getStories = cache(() =>
-  withApi<Story[]>('/api/stories', demoStories, (data) =>
-    Array.isArray(data) ? data.map(normalizeStory) : demoStories
-  )
+  withApi<Story[]>('/api/stories?limit=100', demoStories, (data) => {
+    if (!Array.isArray(data)) return demoStories;
+    const mapped = data.map(normalizeStory);
+    if (mapped.length === 0) return demoStories;
+    const dbSlugs = new Set(mapped.map((s) => s.slug.toLowerCase().trim()));
+    const dbTitles = new Set(mapped.map((s) => s.title.toLowerCase().trim()));
+    const extraDemos = demoStories.filter(
+      (d) => !dbSlugs.has(d.slug.toLowerCase().trim()) && !dbTitles.has(d.title.toLowerCase().trim())
+    );
+    return [...mapped, ...extraDemos];
+  })
 );
 export const getStoryBySlug = cache(async function (slug: string): Promise<Story | undefined> {
   const item = await withApi<Story | null>(`/api/stories/${slug}`, null, (data) =>
@@ -348,9 +375,16 @@ export const getStoryBySlug = cache(async function (slug: string): Promise<Story
 
 /* Campuses */
 export const getCampuses = cache(() =>
-  withApi<Campus[]>('/api/campuses', demoCampuses, (data) =>
-    Array.isArray(data) ? data.map(normalizeCampus) : demoCampuses
-  )
+  withApi<Campus[]>('/api/campuses?limit=100', demoCampuses, (data) => {
+    if (!Array.isArray(data)) return demoCampuses;
+    const mapped = data.map(normalizeCampus);
+    if (mapped.length === 0) return demoCampuses;
+    const dbSlugs = new Set(mapped.map((c) => c.slug.toLowerCase().trim()));
+    const extraDemos = demoCampuses.filter(
+      (d) => !dbSlugs.has(d.slug.toLowerCase().trim())
+    );
+    return [...mapped, ...extraDemos];
+  })
 );
 export const getCampusBySlug = cache(async function (slug: string): Promise<Campus | undefined> {
   const item = await withApi<Campus | null>(`/api/campuses/${slug}`, null, (data) =>
