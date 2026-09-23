@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export const revalidate = 30;
 
-const PER_PAGE = 6;
+const PER_PAGE = 12;
 
 const STANDARD_CATEGORIES = [
   'Student News',

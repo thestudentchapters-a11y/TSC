@@ -21,7 +21,7 @@ export function NewsFeed({
   initialArticles,
   currentCategory,
   currentPage,
-  perPage = 6,
+  perPage = 12,
   searchParams,
 }: NewsFeedProps) {
   const searchParamsHook = useSearchParams();
