@@ -247,6 +247,62 @@ export function CampusManagementAdmin() {
           }
         })
         .catch(() => {});
+
+      fetch(`${api}/api/submissions/campus?_t=${Date.now()}&limit=100`, {
+        cache: 'no-store',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            const mapped: CampusSubmissionRecord[] = json.data.map((item: any) => ({
+              id: item.id || item._id?.toString(),
+              title: item.newsTitle || item.title,
+              name: item.name,
+              email: item.email,
+              campus: item.campus || item.college,
+              city: item.city || '',
+              state: item.state || '',
+              category: item.category || 'Campus News',
+              summary: item.description || item.summary || '',
+              images: item.images || [],
+              status: item.status || 'pending',
+              submittedOn: item.createdAt || item.submittedOn || new Date().toISOString(),
+            }));
+            setCampusSubs(mapped);
+          }
+        })
+        .catch(() => {});
+
+      fetch(`${api}/api/submissions/story?_t=${Date.now()}&limit=100`, {
+        cache: 'no-store',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            const mapped: StorySubmissionRecord[] = json.data.map((item: any) => ({
+              id: item.id || item._id?.toString(),
+              title: item.storyTitle || item.title,
+              name: item.name,
+              email: item.email,
+              college: item.college || item.campus,
+              city: item.city || '',
+              state: item.state || '',
+              category: item.storyCategory || item.category || 'student',
+              summary: item.storyContent || item.summary || '',
+              images: item.images || [],
+              status: item.status || 'pending',
+              submittedOn: item.createdAt || item.submittedOn || new Date().toISOString(),
+            }));
+            setStorySubs(mapped);
+          }
+        })
+        .catch(() => {});
     }
   }, [api, token]);
 
@@ -757,34 +813,56 @@ export function CampusManagementAdmin() {
   };
 
   // Approval & Moderation Actions
-  const handleApproveSubmission = (
+  const handleApproveSubmission = async (
     type: 'campus' | 'story',
     sub: CampusSubmissionRecord | StorySubmissionRecord
   ) => {
+    const endpointId = (sub as any)._id || sub.id;
+    if (api) {
+      try {
+        const routeKind = type === 'campus' ? 'campus' : 'story';
+        const res = await fetch(`${api}/api/submissions/${routeKind}/${endpointId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ status: 'approved', reviewNote: reviewNote || 'Approved by editor' }),
+        });
+        const errJson = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          console.warn('API approve warning:', errJson);
+        }
+      } catch (err: any) {
+        console.error('Approve submission API error:', err);
+      }
+    }
+
     if (type === 'campus') {
       const cs = sub as CampusSubmissionRecord;
+      const targetCampus = cs.campus || cs.college || 'Campus';
       // Publish as Campus Article
       const newArticle: Article = {
         id: `approved-news-${Date.now()}`,
         slug: slugify(cs.title),
         title: cs.title,
-        campus: cs.campus,
-        category: 'Student News',
+        campus: targetCampus,
+        category: cs.category || 'Student News',
         excerpt: cs.summary,
-        content: [cs.summary, `Submitted by ${cs.name} (${cs.email}) from ${cs.campus}, ${cs.city}.`],
+        content: [cs.summary, `Submitted by ${cs.name} (${cs.email}) from ${targetCampus}, ${cs.city}.`],
         author: cs.name,
         date: new Date().toISOString(),
         readingTime: 2,
-        image: '/images/news/news-2.jpg',
+        image: Array.isArray(cs.images) && cs.images[0] ? cs.images[0] : '/images/news/news-2.jpg',
         imageAlt: cs.title,
-        tags: ['Campus News', cs.category, cs.city],
+        tags: ['Campus News', cs.category, cs.city].filter(Boolean),
         featured: false,
         status: 'published',
       };
 
-      saveArticlesToLocal([newArticle, ...articles]);
+      saveArticlesToLocal([newArticle, ...articles.filter((a) => a.title !== newArticle.title)]);
 
-      // Update submission status
+      // Update submission status in local state
       const updatedSubs = campusSubs.map((s) =>
         s.id === cs.id ? { ...s, status: 'approved' as const } : s
       );
@@ -795,31 +873,36 @@ export function CampusManagementAdmin() {
         /* ignore */
       }
 
-      push(`Approved and published "${cs.title}" to ${cs.campus} newsroom!`, 'success');
+      push(`Approved and published "${cs.title}" to ${targetCampus} newsroom!`, 'success');
     } else {
       const ss = sub as StorySubmissionRecord;
+      const targetCampus = ss.college || ss.campus || 'Campus';
       // Publish as Campus Story
       const newStory: Story = {
         id: `approved-story-${Date.now()}`,
         slug: slugify(ss.title),
         title: ss.title,
-        campus: ss.college,
-        category: ss.category.toLowerCase().includes('startup') ? 'startup' : ss.category.toLowerCase().includes('student') ? 'student' : 'campus',
+        campus: targetCampus,
+        category: (ss.category || '').toLowerCase().includes('startup')
+          ? 'startup'
+          : (ss.category || '').toLowerCase().includes('student')
+          ? 'student'
+          : 'campus',
         author: ss.name,
-        authorRole: `Student • ${ss.college}`,
+        authorRole: `Student • ${targetCampus}`,
         dek: ss.summary,
-        content: [ss.summary, `Contributed by ${ss.name} from ${ss.college}, ${ss.city}. Published with review.`],
+        content: [ss.summary, `Contributed by ${ss.name} from ${targetCampus}, ${ss.city}. Published with review.`],
         date: new Date().toISOString(),
         readingTime: 3,
-        image: '/images/stories/story-3.jpg',
+        image: Array.isArray(ss.images) && ss.images[0] ? ss.images[0] : '/images/stories/story-3.jpg',
         imageAlt: ss.title,
         featured: false,
         status: 'published',
       };
 
-      saveStoriesToLocal([newStory, ...stories]);
+      saveStoriesToLocal([newStory, ...stories.filter((s) => s.title !== newStory.title)]);
 
-      // Update submission status
+      // Update submission status in local state
       const updatedSubs = storySubs.map((s) =>
         s.id === ss.id ? { ...s, status: 'approved' as const } : s
       );
@@ -830,16 +913,33 @@ export function CampusManagementAdmin() {
         /* ignore */
       }
 
-      push(`Approved and published "${ss.title}" to campus stories!`, 'success');
+      push(`Approved and published "${ss.title}" to ${targetCampus} stories!`, 'success');
     }
 
     setReviewingSubmission(null);
+    setReviewNote('');
   };
 
-  const handleRejectSubmission = (
+  const handleRejectSubmission = async (
     type: 'campus' | 'story',
     id: string
   ) => {
+    if (api) {
+      try {
+        const routeKind = type === 'campus' ? 'campus' : 'story';
+        await fetch(`${api}/api/submissions/${routeKind}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ status: 'rejected', reviewNote: reviewNote || 'Rejected by editor' }),
+        });
+      } catch (err) {
+        console.error('Reject submission API error:', err);
+      }
+    }
+
     if (type === 'campus') {
       const updated = campusSubs.map((s) => (s.id === id ? { ...s, status: 'rejected' as const } : s));
       setCampusSubs(updated);
@@ -859,6 +959,7 @@ export function CampusManagementAdmin() {
     }
     push('Submission marked as rejected.', 'success');
     setReviewingSubmission(null);
+    setReviewNote('');
   };
 
   // Filtered lists

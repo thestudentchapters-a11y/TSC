@@ -229,11 +229,13 @@ export interface StorySubmissionRecord {
   name: string;
   email: string;
   college: string;
+  campus?: string;
   city: string;
   state: string;
   title: string;
   category: string;
   summary: string;
+  images?: string[];
   status: SubmissionStatus;
   submittedOn: string;
 }
@@ -243,11 +245,13 @@ export interface CampusSubmissionRecord {
   name: string;
   email: string;
   campus: string;
+  college?: string;
   city: string;
   state: string;
   title: string;
   category: string;
   summary: string;
+  images?: string[];
   status: SubmissionStatus;
   submittedOn: string;
 }
