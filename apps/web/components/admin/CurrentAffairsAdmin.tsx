@@ -35,6 +35,7 @@ import { demoEditions } from '@/data/content';
 import { type CurrentAffairsEdition, type AffairArticle, type AffairTopic } from '@/types/content';
 import { slugify } from '@/lib/utils';
 import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 const MONTH_OPTIONS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -44,6 +45,38 @@ const MONTH_OPTIONS = [
 const CATEGORY_OPTIONS: AffairTopic[] = [
   'India', 'World', 'Economy', 'Science & Technology', 'Education'
 ];
+
+const getDeletedEditionKeys = (): string[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem('tsc.admin.current-affairs.deleted');
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+const addDeletedEditionKeys = (keys: (string | undefined | null)[]) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const existing = getDeletedEditionKeys();
+    const validKeys = keys.filter(Boolean).map(String);
+    const combined = Array.from(new Set([...existing, ...validKeys]));
+    localStorage.setItem('tsc.admin.current-affairs.deleted', JSON.stringify(combined));
+  } catch {}
+};
+
+const normalizeEditionItem = (item: any): CurrentAffairsEdition => {
+  const idVal = String(item.id || item._id || item.slug || `ca-${Date.now()}`);
+  return {
+    ...item,
+    id: idVal,
+    _id: item._id ? String(item._id) : undefined,
+    slug: item.slug || slugify(item.title || `current-affairs-${item.month}-${item.year}`),
+    topics: Array.isArray(item.topics) ? item.topics : ['India', 'World', 'Economy', 'Science & Technology', 'Education'],
+    articles: Array.isArray(item.articles) ? item.articles : [],
+  };
+};
 
 interface SchedulerStatusData {
   currentTime: string;
@@ -55,8 +88,13 @@ interface SchedulerStatusData {
 
 export function CurrentAffairsAdmin() {
   const { push } = useToast();
+  const { getToken } = useAuth();
   const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-  const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
+  const token =
+    getToken() ||
+    (typeof window !== 'undefined'
+      ? localStorage.getItem('tsc_token') || localStorage.getItem('tsc.token')
+      : null);
 
   const [editions, setEditions] = useState<CurrentAffairsEdition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,6 +141,18 @@ export function CurrentAffairsAdmin() {
   // Fetch editions & scheduler status
   const fetchEditions = useCallback(async () => {
     setLoading(true);
+    const deletedKeys = getDeletedEditionKeys();
+    const isNotDeleted = (e: any) => {
+      const id = String(e.id || '');
+      const oid = String(e._id || '');
+      const slug = String(e.slug || '');
+      return (
+        (!id || !deletedKeys.includes(id)) &&
+        (!oid || !deletedKeys.includes(oid)) &&
+        (!slug || !deletedKeys.includes(slug))
+      );
+    };
+
     try {
       // 1. Fetch from API
       const res = await fetch(`${api}/api/current-affairs`, {
@@ -110,9 +160,11 @@ export function CurrentAffairsAdmin() {
       });
       if (res.ok) {
         const json = await res.json();
-        const items: CurrentAffairsEdition[] = json.data || json.items || [];
-        if (items.length > 0) {
-          setEditions(items);
+        const rawItems = json.data || json.items || [];
+        if (Array.isArray(rawItems) && rawItems.length > 0) {
+          const normalized = rawItems.map(normalizeEditionItem).filter(isNotDeleted);
+          setEditions(normalized);
+          persistEditionsLocally(normalized);
         } else {
           loadLocalOrDemo();
         }
@@ -127,14 +179,32 @@ export function CurrentAffairsAdmin() {
   }, [api]);
 
   const loadLocalOrDemo = () => {
+    const deletedKeys = getDeletedEditionKeys();
+    const isNotDeleted = (e: any) => {
+      const id = String(e.id || '');
+      const oid = String(e._id || '');
+      const slug = String(e.slug || '');
+      return (
+        (!id || !deletedKeys.includes(id)) &&
+        (!oid || !deletedKeys.includes(oid)) &&
+        (!slug || !deletedKeys.includes(slug))
+      );
+    };
+
     try {
       const stored = localStorage.getItem('tsc.admin.current-affairs.editions');
       if (stored) {
-        setEditions(JSON.parse(stored));
-        return;
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          const filtered = parsed.map(normalizeEditionItem).filter(isNotDeleted);
+          setEditions(filtered);
+          return;
+        }
       }
     } catch {}
-    setEditions(demoEditions);
+
+    const seedFiltered = demoEditions.map(normalizeEditionItem).filter(isNotDeleted);
+    setEditions(seedFiltered);
   };
 
   const persistEditionsLocally = (updated: CurrentAffairsEdition[]) => {
@@ -250,41 +320,118 @@ export function CurrentAffairsAdmin() {
   const handleSaveEdition = async () => {
     if (!editingEdition) return;
 
-    try {
-      if (editingEdition.id && !editingEdition.id.startsWith('ca-')) {
-        await fetch(`${api}/api/current-affairs/${editingEdition.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(editingEdition),
-        });
+    const editionToSave = { ...editingEdition };
+    const authHeaders = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    if (api) {
+      try {
+        const payload: Record<string, any> = { ...editionToSave };
+        delete payload.id;
+        if (typeof payload._id === 'string' && !/^[a-f\d]{24}$/i.test(payload._id)) {
+          delete payload._id;
+        }
+
+        const endpointId = (editionToSave as any)._id || editionToSave.id;
+        const isExistingInDb = endpointId && !String(endpointId).startsWith('ca-');
+
+        if (isExistingInDb) {
+          await fetch(`${api}/api/current-affairs/${endpointId}`, {
+            method: 'PUT',
+            headers: authHeaders,
+            body: JSON.stringify(payload),
+          });
+        } else {
+          const res = await fetch(`${api}/api/current-affairs`, {
+            method: 'POST',
+            headers: authHeaders,
+            body: JSON.stringify(payload),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.data?._id) {
+              editionToSave.id = String(json.data._id);
+              (editionToSave as any)._id = String(json.data._id);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[CurrentAffairs Save Warning]:', err);
       }
-    } catch {}
+    }
 
     const updated = isCreatingNew
-      ? [editingEdition, ...editions]
-      : editions.map((e) => (e.id === editingEdition.id ? editingEdition : e));
+      ? [editionToSave, ...editions.filter((e) => e.slug !== editionToSave.slug)]
+      : editions.map((e) =>
+          e.id === editionToSave.id || e.slug === editionToSave.slug ? editionToSave : e
+        );
 
     setEditions(updated);
     persistEditionsLocally(updated);
 
-    push(`${editingEdition.title} has been saved.`, 'success');
+    push(`${editionToSave.title} has been saved.`, 'success');
 
     setEditingEdition(null);
     setIsCreatingNew(false);
   };
 
   // Delete Edition
-  const handleDeleteEdition = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this edition?')) return;
-    try {
-      await fetch(`${api}/api/current-affairs/${id}`, { method: 'DELETE' });
-    } catch {}
+  const handleDeleteEdition = async (ed: CurrentAffairsEdition) => {
+    const displayTitle = ed.title || `${ed.month} ${ed.year}`;
+    if (!confirm(`Are you sure you want to delete "${displayTitle}"?`)) return;
 
-    const updated = editions.filter((e) => e.id !== id);
+    const targetId = (ed as any)._id || ed.id;
+    const targetSlug = ed.slug;
+
+    // 1. Mark as deleted persistently so it NEVER reappears on refresh
+    addDeletedEditionKeys([ed.id, (ed as any)._id, ed.slug]);
+
+    // 2. Remove from active state immediately
+    const updated = editions.filter(
+      (e) =>
+        e.id !== ed.id &&
+        e.slug !== targetSlug &&
+        (e as any)._id !== targetId &&
+        (e as any)._id !== ed.id
+    );
     setEditions(updated);
     persistEditionsLocally(updated);
 
-    push('Current Affairs edition removed.', 'success');
+    // 3. Delete from backend database with authorization token
+    if (api) {
+      try {
+        const authHeaders = {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+
+        // Try deleting by ObjectId first if available
+        if (targetId && !String(targetId).startsWith('ca-')) {
+          const res = await fetch(`${api}/api/current-affairs/${targetId}`, {
+            method: 'DELETE',
+            headers: authHeaders,
+          });
+          if (!res.ok && targetSlug) {
+            // Fallback by slug
+            await fetch(`${api}/api/current-affairs/${targetSlug}`, {
+              method: 'DELETE',
+              headers: authHeaders,
+            });
+          }
+        } else if (targetSlug) {
+          await fetch(`${api}/api/current-affairs/${targetSlug}`, {
+            method: 'DELETE',
+            headers: authHeaders,
+          });
+        }
+      } catch (err) {
+        console.warn('[CurrentAffairs Delete API Sync Warning]:', err);
+      }
+    }
+
+    push(`Current Affairs edition "${displayTitle}" removed.`, 'success');
   };
 
   // Open Auto Write Mail & Review Broadcast Modal for an Edition
@@ -626,7 +773,7 @@ export function CurrentAffairsAdmin() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => handleDeleteEdition(ed.id || ed.slug)}
+                    onClick={() => handleDeleteEdition(ed)}
                     className="text-rose-600 hover:bg-rose-50"
                   >
                     <Trash2 className="h-4 w-4" />
