@@ -748,7 +748,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
                   className="border-b border-hairline/70 last:border-0 hover:bg-cream/60"
                 >
                   {def.columns.map((c, i) => (
-                    <td key={c.name} className={cn('px-4 py-3', (i === 0 || c.name === 'newsTitle' || c.name === 'storyTitle') && 'text-ink')}>
+                    <td key={c.name} className={cn('px-4 py-3', i === 0 && 'font-semibold text-ink')}>
                       <CellRender row={row} col={c} onToggle={() => c.type === 'bool' && toggleField(row, c.name)} />
                     </td>
                   ))}
@@ -993,36 +993,6 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 }
 
 function CellRender({ row, col, onToggle }: { row: Row; col: { name: string; label: string; type?: string }; onToggle: () => void }) {
-  if (col.name === 'newsTitle') {
-    const isStory =
-      row.type === 'story' ||
-      (!row.type &&
-        (String(row.category || '').toLowerCase() === 'campus' ||
-          String(row.category || '').toLowerCase() === 'student' ||
-          String(row.category || '').toLowerCase() === 'startup' ||
-          Boolean(row.storyTitle)));
-    if (isStory) {
-      return <span className="text-muted/40 font-normal">—</span>;
-    }
-    const title = String(row.newsTitle || row.title || '—');
-    return <span className="line-clamp-1 max-w-[280px] font-semibold text-ink">{title}</span>;
-  }
-
-  if (col.name === 'storyTitle') {
-    const isStory =
-      row.type === 'story' ||
-      (!row.type &&
-        (String(row.category || '').toLowerCase() === 'campus' ||
-          String(row.category || '').toLowerCase() === 'student' ||
-          String(row.category || '').toLowerCase() === 'startup' ||
-          Boolean(row.storyTitle)));
-    if (!isStory) {
-      return <span className="text-muted/40 font-normal">—</span>;
-    }
-    const title = String(row.storyTitle || row.title || '—');
-    return <span className="line-clamp-1 max-w-[280px] font-semibold text-ink">{title}</span>;
-  }
-
   const value = row[col.name];
   if (col.type === 'bool') {
     return (

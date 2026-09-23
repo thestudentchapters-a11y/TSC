@@ -334,8 +334,8 @@ export const collections: Record<string, CollectionDef> = {
     key: 'campus-submissions', title: 'Campus Submissions', singular: 'Submission', icon: School, seedKey: 'campusSubmissions',
     description: 'Campus news and stories submissions awaiting review.',
     columns: [
-      { name: 'newsTitle', label: 'News' },
-      { name: 'storyTitle', label: 'Stories' },
+      { name: 'title', label: 'Submission' },
+      { name: 'type', label: 'Type', type: 'badge' },
       { name: 'name', label: 'From' },
       { name: 'campus', label: 'Campus' },
       { name: 'category', label: 'Category', type: 'badge' },
