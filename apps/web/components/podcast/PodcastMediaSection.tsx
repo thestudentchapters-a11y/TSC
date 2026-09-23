@@ -79,7 +79,6 @@ export function PodcastMediaSection({
                 title={`${title} — Video Episode`}
                 className="absolute inset-0 h-full w-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                allowFullScreen
                 loading="lazy"
                 onLoad={() => setIsVideoLoading(false)}
               />

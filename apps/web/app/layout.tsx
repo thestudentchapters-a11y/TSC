@@ -69,6 +69,9 @@ export const metadata: Metadata = {
     email: true,
     address: true,
   },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
 };
 
 export const viewport: Viewport = {
