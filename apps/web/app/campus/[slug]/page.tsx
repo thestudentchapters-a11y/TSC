@@ -94,7 +94,7 @@ export default async function CampusProfilePage({ params }: Props) {
         <div className="container-tsc">
           <Reveal>
             <div className="relative aspect-[16/7] overflow-hidden rounded-md">
-              <Image src={campus.image} alt={campus.imageAlt} fill priority sizes="100vw" className="object-cover" />
+              <Image src={campus.image} alt={campus.imageAlt} fill priority sizes="100vw" className="object-top" />
             </div>
           </Reveal>
 
