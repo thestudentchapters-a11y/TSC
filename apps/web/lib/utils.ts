@@ -233,19 +233,31 @@ export function getPublicApiUrl(): string {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
     const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0';
-    if (!isLocalhost && (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1'))) {
-      return 'https://tsc-6htb.onrender.com';
+    if (isLocalhost) {
+      if (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1') || envUrl.includes('onrender.com')) {
+        return 'http://localhost:5000';
+      }
+      return envUrl;
     }
-    return envUrl || 'http://localhost:5000';
-  }
-
-  // Node.js SSR / Server-side:
-  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
     if (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1')) {
       return 'https://tsc-6htb.onrender.com';
     }
+    return envUrl;
   }
-  return envUrl ? envUrl.replace('localhost', '127.0.0.1') : 'http://127.0.0.1:5000';
+
+  // Node.js SSR / Server-side:
+  if (process.env.NODE_ENV === 'production' && process.env.VERCEL) {
+    if (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1')) {
+      return 'https://tsc-6htb.onrender.com';
+    }
+    return envUrl;
+  }
+
+  // When developing locally or rendering SSR on localhost:
+  if (!envUrl || envUrl.includes('localhost') || envUrl.includes('127.0.0.1') || envUrl.includes('onrender.com')) {
+    return 'http://127.0.0.1:5000';
+  }
+  return envUrl;
 }
 
 

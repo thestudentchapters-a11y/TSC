@@ -20,8 +20,20 @@ export function createContentService<T = Record<string, unknown>>(
       if (query.public === '1' || query.public === true) {
         (filter as Record<string, unknown>).status = 'published';
       }
+      // Omit multi-megabyte content payloads on list feeds unless explicitly requested
+      const shouldOmitContent =
+        ['Article', 'Story'].includes(model.modelName) &&
+        query.includeContent !== 'true' &&
+        query.includeContent !== '1' &&
+        query.full !== 'true';
+
+      const findQuery = model.find(filter as never);
+      if (shouldOmitContent) {
+        findQuery.select('-content');
+      }
+
       const [data, total] = await Promise.all([
-        model.find(filter as never).sort(opts.sort).skip((opts.page! - 1) * opts.limit!).limit(opts.limit!).lean(),
+        findQuery.sort(opts.sort).skip((opts.page! - 1) * opts.limit!).limit(opts.limit!).lean(),
         model.countDocuments(filter as never),
       ]);
       return paginatedResult(data as T[], total, opts);

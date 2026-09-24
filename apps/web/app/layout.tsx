@@ -69,6 +69,11 @@ export const metadata: Metadata = {
     email: true,
     address: true,
   },
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
   other: {
     'mobile-web-app-capable': 'yes',
   },

@@ -309,7 +309,7 @@ async function withApi<T>(
   const base = getBaseApiUrl();
   if (!base) return fallback;
   try {
-    const timeout = options?.timeoutMs ?? 3500;
+    const timeout = options?.timeoutMs ?? 10000;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
