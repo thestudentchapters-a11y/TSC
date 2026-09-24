@@ -81,21 +81,21 @@ export function Header() {
 
                   {item.children && (
                     <div
-                      className="invisible absolute left-1/2 top-full z-20 -translate-x-1/2 translate-y-2 pt-3 opacity-0 transition-all duration-300 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100"
+                      className="invisible absolute left-1/2 top-full z-20 -translate-x-1/2 translate-y-2 pt-3 opacity-0 transition-all duration-300 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 whitespace-normal"
                     >
-                      <div className="w-72 overflow-hidden rounded-md border border-hairline bg-white p-2 shadow-lift">
+                      <div className="w-80 overflow-hidden rounded-md border border-hairline bg-white p-2 shadow-lift">
                         {item.children.map((child) => (
                           <Link
                             key={child.href + child.label}
                             href={child.href}
-                            className="group/item rounded-sm px-3 py-2.5 transition-colors hover:bg-brand-50"
+                            className="group/item block rounded-sm px-3 py-2.5 transition-colors hover:bg-brand-50"
                           >
                             <span className="flex items-center gap-2 font-display text-[12.5px] font-bold text-ink group-hover/item:text-brand">
-                              <span aria-hidden className="h-1.5 w-1.5 rounded-[2px] bg-gold opacity-0 transition-opacity group-hover/item:opacity-100" />
-                              {child.label}
+                              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-[2px] bg-gold opacity-0 transition-opacity group-hover/item:opacity-100" />
+                              <span>{child.label}</span>
                             </span>
                             {child.description && (
-                              <span className="mt-0.5 block pl-3.5 text-[11.5px] leading-4 text-muted">
+                              <span className="mt-1 block pl-3.5 text-[11.5px] leading-relaxed text-muted whitespace-normal break-words">
                                 {child.description}
                               </span>
                             )}
