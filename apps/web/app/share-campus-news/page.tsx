@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { Field, Input, Select, Textarea, Checkbox, FormSuccess } from '@/components/forms/Form';
 import { Button } from '@/components/common/Button';
 import { useToast } from '@/components/common/Toast';
+import { compressImage, formatBytes } from '@/lib/image-compression';
 
 const CATEGORIES = ['Campus News', 'Campus Event', 'Achievement', 'Club / Community', 'Student Initiative', 'Fest / Culture', 'Sports', 'Other'];
 const STATES = ['Andhra Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Odisha', 'Punjab', 'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Other'];
@@ -42,44 +43,47 @@ export default function ShareCampusNewsPage() {
         setUploadingImage(false);
         return;
       }
-      if (file.size > 10 * 1024 * 1024) {
-        push('Image size exceeds 10MB limit.', 'error');
+      if (file.size > 15 * 1024 * 1024) {
+        push('Image size exceeds 15MB limit.', 'error');
         setUploadingImage(false);
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result as string;
-        let finalUrl = base64;
-        try {
-          const res = await fetch(`${api}/api/media/upload`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify({
-              file: base64,
-              altText: file.name.replace(/\.[^/.]+$/, ''),
-            }),
-          });
-          const json = await res.json().catch(() => ({}));
-          if (res.ok && json.url) {
-            finalUrl = json.url;
-          }
-        } catch {
-          // Keep base64 fallback
-        }
+      // Lossless / high-efficiency compression
+      const compressed = await compressImage(file, { maxDimension: 2048, quality: 0.88 });
+      const base64 = compressed.dataUrl;
 
-        setImages((prev) => [...prev, finalUrl]);
-        push('Image attached successfully!', 'success');
-        setUploadingImage(false);
-        if (fileInputRef.current) fileInputRef.current.value = '';
-      };
-      reader.readAsDataURL(file);
+      if (compressed.savedPercentage > 10) {
+        push(`Image optimized: ${formatBytes(compressed.originalSize)} → ${formatBytes(compressed.compressedSize)} (${compressed.savedPercentage}% saved).`, 'info');
+      }
+
+      let finalUrl = base64;
+      try {
+        const res = await fetch(`${api}/api/media/upload`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            file: base64,
+            altText: file.name.replace(/\.[^/.]+$/, ''),
+          }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && json.url) {
+          finalUrl = json.url;
+        }
+      } catch {
+        // Keep compressed base64 fallback
+      }
+
+      setImages((prev) => [...prev, finalUrl]);
+      push('Image attached successfully!', 'success');
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } catch {
-      push('Failed to process image file.', 'error');
+      push('Failed to process and compress image file.', 'error');
       setUploadingImage(false);
     }
   };

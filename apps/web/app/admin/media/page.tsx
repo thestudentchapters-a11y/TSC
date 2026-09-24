@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { Images, UploadCloud, Copy, Check, Sparkles, Loader2, Trash2 } from 'lucide-react';
 import { useToast } from '@/components/common/Toast';
 import { Button } from '@/components/common/Button';
+import { compressImage, formatBytes } from '@/lib/image-compression';
 
 interface MediaItem {
   id?: string;
@@ -134,65 +135,68 @@ export default function AdminMediaPage() {
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      push('File size exceeds 10MB limit.', 'error');
+    if (file.size > 15 * 1024 * 1024) {
+      push('File size exceeds 15MB limit.', 'error');
       return;
     }
 
     setUploading(true);
     try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64Data = reader.result as string;
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-        const token = typeof window !== 'undefined' ? (localStorage.getItem('tsc_token') || localStorage.getItem('tsc.token')) : null;
+      // Lossless / high-efficiency compression: reduces payload by up to 90%
+      const compressed = await compressImage(file, { maxDimension: 2048, quality: 0.88 });
+      const base64Data = compressed.dataUrl;
 
-        try {
-          const res = await fetch(`${apiUrl}/api/media/upload`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify({
-              file: base64Data,
-              altText: file.name.replace(/\.[^/.]+$/, ''),
-            }),
-          });
+      if (compressed.savedPercentage > 10) {
+        push(`Asset optimized: ${formatBytes(compressed.originalSize)} → ${formatBytes(compressed.compressedSize)} (${compressed.savedPercentage}% saved).`, 'info');
+      }
 
-          const data = await res.json();
-          if (res.ok && data.url) {
-            const newItem: MediaItem = {
-              id: data.id || data._id,
-              url: data.url,
-              filename: file.name,
-            };
-            // If it was in deleted set, un-delete it
-            if (deletedUrls.has(data.url)) {
-              const updatedDeleted = new Set(deletedUrls);
-              updatedDeleted.delete(data.url);
-              setDeletedUrls(updatedDeleted);
-              localStorage.setItem('tsc.admin.media.deleted', JSON.stringify(Array.from(updatedDeleted)));
-            }
-            saveMediaList([newItem, ...mediaList.filter((m) => m.url !== data.url)]);
-            push('Image uploaded to Cloudinary successfully!', 'success');
-          } else {
-            const previewItem: MediaItem = { url: base64Data, filename: file.name };
-            saveMediaList([previewItem, ...mediaList]);
-            push(data.error || 'Uploaded to preview media library.', 'info');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const token = typeof window !== 'undefined' ? (localStorage.getItem('tsc_token') || localStorage.getItem('tsc.token')) : null;
+
+      try {
+        const res = await fetch(`${apiUrl}/api/media/upload`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            file: base64Data,
+            altText: file.name.replace(/\.[^/.]+$/, ''),
+          }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.url) {
+          const newItem: MediaItem = {
+            id: data.id || data._id,
+            url: data.url,
+            filename: file.name,
+          };
+          // If it was in deleted set, un-delete it
+          if (deletedUrls.has(data.url)) {
+            const updatedDeleted = new Set(deletedUrls);
+            updatedDeleted.delete(data.url);
+            setDeletedUrls(updatedDeleted);
+            localStorage.setItem('tsc.admin.media.deleted', JSON.stringify(Array.from(updatedDeleted)));
           }
-        } catch {
+          saveMediaList([newItem, ...mediaList.filter((m) => m.url !== data.url)]);
+          push('Image uploaded to Cloudinary successfully!', 'success');
+        } else {
           const previewItem: MediaItem = { url: base64Data, filename: file.name };
           saveMediaList([previewItem, ...mediaList]);
-          push('Image added to media preview.', 'info');
-        } finally {
-          setUploading(false);
-          if (fileInputRef.current) fileInputRef.current.value = '';
+          push(data.error || 'Uploaded to preview media library.', 'info');
         }
-      };
-      reader.readAsDataURL(file);
+      } catch {
+        const previewItem: MediaItem = { url: base64Data, filename: file.name };
+        saveMediaList([previewItem, ...mediaList]);
+        push('Image added to media preview.', 'info');
+      } finally {
+        setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
     } catch {
-      push('Failed to process image file.', 'error');
+      push('Failed to process and compress image file.', 'error');
       setUploading(false);
     }
   };

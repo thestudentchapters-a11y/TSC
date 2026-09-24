@@ -70,8 +70,11 @@ export const metadata: Metadata = {
     address: true,
   },
   icons: {
-    icon: '/icon.svg',
-    shortcut: '/icon.svg',
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' },
+    ],
+    shortcut: '/favicon.ico',
     apple: '/icon.svg',
   },
   other: {

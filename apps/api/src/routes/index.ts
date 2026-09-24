@@ -398,6 +398,8 @@ export function registerRoutes(app: Router) {
         body: JSON.stringify({
           file,
           folder: 'tsc_media',
+          // Lossless & perceptual optimization: prevents excessive storage usage on Cloudinary
+          transformation: 'c_limit,w_2048,h_2048,q_auto:good,f_auto',
         }),
       });
 

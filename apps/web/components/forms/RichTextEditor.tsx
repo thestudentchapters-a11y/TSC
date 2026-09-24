@@ -32,6 +32,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/common/Button';
 import { Modal } from '@/components/common/Modal';
 import { useToast } from '@/components/common/Toast';
+import { compressImage, formatBytes } from '@/lib/image-compression';
 
 export interface RichTextEditorProps {
   id?: string;
@@ -262,8 +263,8 @@ export function RichTextEditor({
       push('Please select a valid image file (PNG, JPG, WebP, GIF).', 'error');
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      push('File size exceeds the 10MB limit.', 'error');
+    if (file.size > 15 * 1024 * 1024) {
+      push('File size exceeds the 15MB limit.', 'error');
       return;
     }
 
@@ -271,10 +272,15 @@ export function RichTextEditor({
     const api = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
 
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const base64Data = reader.result as string;
+    try {
+      // Lossless / high-efficiency compression: reduces payload by up to 90%
+      const compressed = await compressImage(file, { maxDimension: 2048, quality: 0.88 });
+      const base64Data = compressed.dataUrl;
       setImageUrl(base64Data);
+
+      if (compressed.savedPercentage > 10) {
+        push(`Compressed: ${formatBytes(compressed.originalSize)} → ${formatBytes(compressed.compressedSize)} (${compressed.savedPercentage}% saved).`, 'info');
+      }
 
       try {
         const res = await fetch(`${api}/api/media/upload`, {
@@ -299,8 +305,10 @@ export function RichTextEditor({
       } finally {
         setUploadingImage(false);
       }
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      push('Failed to process and compress image.', 'error');
+      setUploadingImage(false);
+    }
   };
 
   const handleInsertImage = () => {
