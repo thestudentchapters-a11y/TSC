@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShieldAlert, Lock, ArrowLeft, Shield } from 'lucide-react';
+import { ShieldAlert, Lock, ArrowLeft } from 'lucide-react';
 import { AdminShell } from '@/components/admin/AdminShell';
+import { AdminFooter } from '@/components/admin/AdminFooter';
 import { Button } from '@/components/common/Button';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { canAccessRoute } from '@/lib/permissions';
@@ -14,23 +15,46 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   if (!ready) {
-    return <div className="container-tsc section-pad pt-32 text-center text-muted">Checking access…</div>;
+    return (
+      <div className="flex min-h-screen flex-col bg-cream">
+        <div className="flex-1 flex items-center justify-center p-8 text-center text-muted font-medium">
+          Checking access…
+        </div>
+        <AdminFooter />
+      </div>
+    );
   }
 
   // Restrict access strictly to authenticated editors and administrators
   if (!user || (user.role !== 'admin' && user.role !== 'editor')) {
     return (
-      <div className="container-tsc section-pad pt-32">
-        <div className="card-base mx-auto max-w-md p-8 text-center shadow-lift">
-          <ShieldAlert aria-hidden className="mx-auto h-12 w-12 text-brand" />
-          <h1 className="mt-4 font-display text-xl font-bold text-ink">Newsroom Access Restricted</h1>
-          <p className="mt-2 text-sm leading-6 text-muted">
-            This console is strictly for authorized The Student Chapters™ editors and administrators. Please sign in with your official account.
-          </p>
-          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-            <Button href="/login" size="md" arrow>Sign In to Newsroom</Button>
+      <div className="flex min-h-screen flex-col bg-cream">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-brand-dark px-4 sm:px-8">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gold font-display text-sm font-black text-ink shadow-sm">
+              TSC
+            </div>
+            <span className="font-display text-sm font-bold uppercase tracking-wider text-white">
+              The Student Chapters™
+            </span>
+          </Link>
+          <Button href="/login" size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+            Sign In
+          </Button>
+        </header>
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="card-base mx-auto max-w-md p-8 text-center shadow-lift bg-white">
+            <ShieldAlert aria-hidden className="mx-auto h-12 w-12 text-brand" />
+            <h1 className="mt-4 font-display text-xl font-bold text-ink">Newsroom Access Restricted</h1>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              This console is strictly for authorized The Student Chapters™ editors and administrators. Please sign in with your official account.
+            </p>
+            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button href="/login" size="md" arrow>Sign In to Newsroom</Button>
+            </div>
           </div>
         </div>
+        <AdminFooter />
       </div>
     );
   }

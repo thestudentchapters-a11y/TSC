@@ -38,8 +38,8 @@ export function Header() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
 
-  // Hide the global website navbar on standalone PDF dossier views
-  if (pathname?.endsWith('/pdf') || pathname?.includes('/pdf/')) {
+  // Hide the global website navbar on standalone PDF dossier views and admin console
+  if (pathname?.endsWith('/pdf') || pathname?.includes('/pdf/') || pathname?.startsWith('/admin')) {
     return null;
   }
 

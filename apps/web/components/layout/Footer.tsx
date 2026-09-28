@@ -20,8 +20,8 @@ const socials = [
 export function Footer() {
   const pathname = usePathname();
 
-  // Hide on standalone PDF dossier views
-  if (pathname?.endsWith('/pdf') || pathname?.includes('/pdf/')) {
+  // Hide on standalone PDF dossier views and admin console
+  if (pathname?.endsWith('/pdf') || pathname?.includes('/pdf/') || pathname?.startsWith('/admin')) {
     return null;
   }
 
