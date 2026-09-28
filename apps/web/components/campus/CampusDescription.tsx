@@ -10,14 +10,14 @@ interface CampusDescriptionProps {
   campusName?: string;
 }
 
-interface ParsedSection {
+export interface ParsedSection {
   icon?: string;
   title: string;
   content: string;
   paragraphs: string[];
 }
 
-function toTitleCase(str: string): string {
+export function toTitleCase(str: string): string {
   if (!str) return '';
   return str
     .toLowerCase()
@@ -32,7 +32,7 @@ function toTitleCase(str: string): string {
     .join(' ');
 }
 
-function parseCampusContent(raw: string) {
+export function parseCampusContent(raw: string) {
   if (!raw) return { isHtml: false, intro: '', sections: [] as ParsedSection[], plainParagraphs: [] as string[] };
 
   // Check if content has HTML tags

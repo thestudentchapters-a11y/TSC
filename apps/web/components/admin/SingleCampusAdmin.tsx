@@ -50,8 +50,9 @@ import {
   demoStorySubmissions,
 } from '@/data/content';
 import { slugify, formatDate, cn } from '@/lib/utils';
+import { CampusDescription, parseCampusContent } from '@/components/campus/CampusDescription';
 
-type SubTabType = 'news' | 'stories' | 'submissions';
+type SubTabType = 'overview' | 'news' | 'stories' | 'submissions';
 
 const NEWS_CATEGORIES: NewsCategory[] = [
   'Student News',
@@ -78,8 +79,19 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
         localStorage.getItem('token')
       : null);
 
-  const [activeTab, setActiveTab] = useState<SubTabType>('news');
+  const [activeTab, setActiveTab] = useState<SubTabType>('overview');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Read URL query tab parameter if provided (e.g. ?tab=news)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab') as SubTabType;
+      if (tabParam && ['overview', 'news', 'stories', 'submissions'].includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
+    }
+  }, []);
 
   // Data states
   const [campuses, setCampuses] = useState<Campus[]>(demoCampuses);
@@ -174,6 +186,35 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
     }
 
     if (api) {
+      if (slug) {
+        fetch(`${api}/api/campuses/${slug}?_t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((json) => {
+            const item = json?.data || json?.campus || json;
+            if (item && item.name) {
+              const mapped = {
+                ...item,
+                id: item.id || item._id?.toString() || item.slug,
+              };
+              setCampuses((prev) => {
+                const existingIdx = prev.findIndex((c) => c.slug === slug || c.id === mapped.id);
+                if (existingIdx >= 0) {
+                  const next = [...prev];
+                  next[existingIdx] = mapped;
+                  return next;
+                }
+                return [mapped, ...prev];
+              });
+            }
+          })
+          .catch(() => {});
+      }
+
       fetch(`${api}/api/campuses?_t=${Date.now()}&limit=100`, {
         cache: 'no-store',
         headers: {
@@ -248,6 +289,32 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
   const campusPrefix = useMemo(() => {
     return campus?.name ? campus.name.split(' ')[0].toLowerCase() : '';
   }, [campus]);
+
+  const parsedCampus = useMemo(() => {
+    return parseCampusContent(campus?.description || '');
+  }, [campus?.description]);
+
+  const cleanLeadIntro = useMemo(() => {
+    if (parsedCampus.intro) return parsedCampus.intro;
+    if (parsedCampus.plainParagraphs && parsedCampus.plainParagraphs.length > 0) {
+      return parsedCampus.plainParagraphs[0];
+    }
+    if (campus?.description) {
+      const firstBlock = campus.description.split('\n')[0];
+      return firstBlock.length > 280 ? firstBlock.slice(0, 280) + '…' : firstBlock;
+    }
+    return '';
+  }, [parsedCampus, campus?.description]);
+
+  const filteredOverviewSections = useMemo(() => {
+    if (!searchQuery.trim() || !parsedCampus.sections.length) return parsedCampus.sections;
+    const q = searchQuery.toLowerCase();
+    return parsedCampus.sections.filter(
+      (sec) =>
+        sec.title.toLowerCase().includes(q) ||
+        sec.content.toLowerCase().includes(q)
+    );
+  }, [parsedCampus.sections, searchQuery]);
 
   // Sync helpers
   const saveArticlesToLocal = (updated: Article[]) => {
@@ -903,43 +970,102 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
       </div>
 
       {/* Campus Summary Banner Card */}
-      <div className="card-base flex flex-col md:flex-row items-stretch gap-6 overflow-hidden p-5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={campus.image}
-          alt={campus.name}
-          className="h-36 md:h-auto md:w-56 rounded-lg object-cover border border-hairline shrink-0"
-        />
-        <div className="flex-1 flex flex-col justify-between space-y-3">
-          <div>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
-              <span className="flex items-center gap-1 font-semibold text-ink">
+      <div className="card-base flex flex-col md:flex-row items-start gap-6 overflow-hidden p-5 sm:p-6 bg-white border border-hairline rounded-xl shadow-subtle">
+        {/* Photo with fixed aspect ratio / containment so it NEVER stretches */}
+        <div className="relative w-full md:w-64 lg:w-72 h-44 sm:h-52 rounded-lg overflow-hidden border border-hairline shrink-0 bg-cream/50 shadow-xs">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={campus.image || '/images/campus/campus-1.jpg'}
+            alt={campus.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute top-2.5 left-2.5">
+            <span className="inline-flex items-center gap-1 rounded-md bg-white/95 backdrop-blur-xs px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand shadow-xs border border-brand/20">
+              <Building2 className="h-3 w-3" /> {campus.type}
+            </span>
+          </div>
+        </div>
+
+        {/* Content column */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch space-y-4">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-muted">
+              <span className="flex items-center gap-1.5 font-semibold text-ink">
                 <Building2 className="h-3.5 w-3.5 text-brand" /> {campus.university}
               </span>
               <span>•</span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5 text-brand" /> {campus.city}, {campus.state}
               </span>
+              {campus.categories && campus.categories.length > 0 && (
+                <>
+                  <span>•</span>
+                  <span className="flex items-center gap-1 text-[11px] font-medium text-brand">
+                    {campus.categories.slice(0, 3).join(', ')}
+                    {campus.categories.length > 3 && ` +${campus.categories.length - 3}`}
+                  </span>
+                </>
+              )}
             </div>
-            <p className="mt-2.5 text-xs text-muted leading-relaxed max-w-3xl">
-              {campus.description || 'Verified student chapter on The Student Chapters™ network.'}
+
+            {/* Clean lead intro (avoids dumping multi-thousand-word structured text into a single paragraph) */}
+            <p className="text-xs text-muted leading-relaxed line-clamp-3">
+              {cleanLeadIntro || 'Verified student chapter on The Student Chapters™ network.'}
             </p>
+
+            {parsedCampus.sections.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setActiveTab('overview')}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline pt-0.5"
+              >
+                <span>Read complete structured profile ({parsedCampus.sections.length} sections)</span>
+                <span aria-hidden="true">&rarr;</span>
+              </button>
+            )}
           </div>
 
-          {/* Quick Stats Grid */}
-          <div className="grid grid-cols-3 gap-3 border-t border-hairline/60 pt-3 text-center sm:text-left">
-            <div className="rounded-lg bg-blue-50/60 border border-blue-100 p-2.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-blue-800">Campus News</p>
-              <p className="font-display text-lg font-bold text-blue-950 mt-0.5">{campusArticles.length}</p>
-            </div>
-            <div className="rounded-lg bg-emerald-50/60 border border-emerald-100 p-2.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Student Stories</p>
-              <p className="font-display text-lg font-bold text-emerald-950 mt-0.5">{campusStories.length}</p>
-            </div>
-            <div className="rounded-lg bg-gold-50/60 border border-gold-100 p-2.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-gold-deep">Submissions</p>
-              <p className="font-display text-lg font-bold text-gold-deep mt-0.5">{campusSubmissions.length}</p>
-            </div>
+          {/* Quick Stats Grid with click-to-tab functionality */}
+          <div className="grid grid-cols-3 gap-3 border-t border-hairline/60 pt-3 text-left">
+            <button
+              type="button"
+              onClick={() => setActiveTab('news')}
+              className={cn(
+                'rounded-lg p-2.5 transition-all border text-left',
+                activeTab === 'news'
+                  ? 'bg-blue-50/80 border-blue-200 ring-1 ring-blue-300'
+                  : 'bg-cream/40 border-hairline hover:bg-cream hover:border-brand/30'
+              )}
+            >
+              <p className="text-[10.5px] font-bold uppercase tracking-wider text-blue-800">Campus News</p>
+              <p className="font-display text-lg font-bold text-ink mt-0.5">{campusArticles.length}</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('stories')}
+              className={cn(
+                'rounded-lg p-2.5 transition-all border text-left',
+                activeTab === 'stories'
+                  ? 'bg-emerald-50/80 border-emerald-200 ring-1 ring-emerald-300'
+                  : 'bg-cream/40 border-hairline hover:bg-cream hover:border-brand/30'
+              )}
+            >
+              <p className="text-[10.5px] font-bold uppercase tracking-wider text-emerald-800">Student Stories</p>
+              <p className="font-display text-lg font-bold text-ink mt-0.5">{campusStories.length}</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('submissions')}
+              className={cn(
+                'rounded-lg p-2.5 transition-all border text-left',
+                activeTab === 'submissions'
+                  ? 'bg-gold-50/80 border-gold-200 ring-1 ring-gold-300'
+                  : 'bg-cream/40 border-hairline hover:bg-cream hover:border-brand/30'
+              )}
+            >
+              <p className="text-[10.5px] font-bold uppercase tracking-wider text-gold-deep">Submissions</p>
+              <p className="font-display text-lg font-bold text-ink mt-0.5">{campusSubmissions.length}</p>
+            </button>
           </div>
         </div>
       </div>
@@ -948,6 +1074,20 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-hairline pb-4">
         {/* Navigation Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto rounded-lg bg-cream/70 p-1 border border-hairline/70">
+          <button
+            type="button"
+            onClick={() => setActiveTab('overview')}
+            className={cn(
+              'inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all',
+              activeTab === 'overview'
+                ? 'bg-brand text-white shadow-sm'
+                : 'text-muted hover:text-ink'
+            )}
+          >
+            <School className="h-3.5 w-3.5" />
+            <span>Overview &amp; Profile</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setActiveTab('news')}
@@ -998,11 +1138,84 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={`Search ${activeTab} for ${campus.name}…`}
+            placeholder={
+              activeTab === 'overview'
+                ? `Filter sections in ${campus.name}…`
+                : `Search ${activeTab} for ${campus.name}…`
+            }
             className="w-full rounded-md border border-hairline bg-white pl-8 pr-3 py-1.5 text-xs text-ink placeholder:text-muted focus:border-brand focus:outline-none"
           />
         </div>
       </div>
+
+      {/* TAB 0: CAMPUS OVERVIEW & STRUCTURED PROFILE */}
+      {activeTab === 'overview' && (
+        <div className="space-y-6">
+          <div className="card-base p-6 sm:p-8 bg-white border border-hairline rounded-xl">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 bg-cream/40 border border-hairline/80 rounded-lg p-3 sm:px-4">
+              <div className="flex items-center gap-2 text-xs text-muted">
+                <span className="font-semibold text-ink">
+                  {parsedCampus.sections.length > 0
+                    ? `${parsedCampus.sections.length} structured sections detected`
+                    : 'Standard campus overview'}
+                </span>
+                <span>•</span>
+                <span>Formatted editorial layout</span>
+              </div>
+              <Button size="sm" variant="outline" onClick={handleOpenEditCampus}>
+                <Pencil className="h-3.5 w-3.5 mr-1" /> Edit Profile Text
+              </Button>
+            </div>
+
+            {searchQuery.trim() && parsedCampus.sections.length > 0 ? (
+              <div className="space-y-6">
+                <p className="text-xs text-muted font-medium">
+                  Showing sections matching &ldquo;<span className="text-ink font-bold">{searchQuery}</span>&rdquo; ({filteredOverviewSections.length} found):
+                </p>
+                {filteredOverviewSections.length === 0 ? (
+                  <div className="py-8 text-center text-xs text-muted">
+                    No sections found matching your search.
+                  </div>
+                ) : (
+                  <div className="grid gap-6">
+                    {filteredOverviewSections.map((sec, idx) => (
+                      <div
+                        key={idx}
+                        className="card-base rounded-xl border border-hairline bg-white p-5 sm:p-6 shadow-subtle hover:border-brand/30 transition-colors"
+                      >
+                        <div className="flex items-center gap-3 border-b border-hairline pb-3.5 mb-4">
+                          {sec.icon && (
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 border border-brand/15 text-xl shadow-xs">
+                              {sec.icon}
+                            </span>
+                          )}
+                          <div>
+                            <h3 className="font-display text-[17px] sm:text-[18px] font-bold tracking-tight text-ink">
+                              {sec.title}
+                            </h3>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3 font-sans text-[15px] sm:text-[15.5px] leading-relaxed text-ink/80">
+                          {sec.paragraphs.map((p, pIdx) => (
+                            <p key={pIdx}>{p}</p>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <CampusDescription
+                description={campus.description}
+                categories={campus.categories}
+                campusName={campus.name}
+              />
+            )}
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: CAMPUS NEWS */}
       {activeTab === 'news' && (
@@ -1355,12 +1568,22 @@ export function SingleCampusAdmin({ slug }: { slug: string }) {
               onChange={(url) => setCampusForm({ ...campusForm, image: url })}
             />
 
-            <Field label="Campus Overview & Mission" htmlFor="c-desc">
+            <Field label="Key Focus Areas & Categories (comma-separated)" htmlFor="c-cats">
+              <Input
+                id="c-cats"
+                value={campusForm.categories}
+                onChange={(e) => setCampusForm({ ...campusForm, categories: e.target.value })}
+                placeholder="e.g. Engineering, Technology, Research, Innovation"
+              />
+            </Field>
+
+            <Field label="Campus Overview & Structured Profile" htmlFor="c-desc">
               <Textarea
                 id="c-desc"
-                rows={3}
+                rows={8}
                 value={campusForm.description}
                 onChange={(e) => setCampusForm({ ...campusForm, description: e.target.value })}
+                placeholder="Enter description. You can format sections with emoji headings (e.g. 🎓 ACADEMICS, 🔬 RESEARCH, etc.)"
               />
             </Field>
 

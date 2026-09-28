@@ -12,8 +12,8 @@ export function WhatsAppStickyButton() {
   const [hovered, setHovered] = useState(false);
   const pathname = usePathname();
 
-  // Hide on standalone PDF dossier views
-  if (pathname?.endsWith('/pdf') || pathname?.includes('/pdf/')) {
+  // Hide on standalone PDF dossier views and admin console
+  if (pathname?.endsWith('/pdf') || pathname?.includes('/pdf/') || pathname?.startsWith('/admin')) {
     return null;
   }
 
