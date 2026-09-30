@@ -290,7 +290,7 @@ export function registerRoutes(app: Router) {
         filter.status = req.query.status;
       }
       const campaigns = await Campaign.find(filter).sort({ featured: -1, createdAt: -1 }).lean();
-      const allEpisodes = await CampaignEpisode.find({}).sort({ episodeNumber: 1 }).lean();
+      const allEpisodes = await CampaignEpisode.find({}).sort({ episodeNumber: -1, createdAt: -1 }).lean();
 
       let campaignList = campaigns;
       if (!campaignList.some((c) => c.slug === 'all-india-career-awareness')) {
@@ -328,7 +328,7 @@ export function registerRoutes(app: Router) {
           if (campIds.has(String(ep.campaign))) return true;
           if (ep.campaignSlug && ep.campaignSlug === camp.slug) return true;
           return false;
-        });
+        }).sort((a: any, b: any) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0));
 
         return {
           ...camp,
@@ -398,7 +398,7 @@ export function registerRoutes(app: Router) {
       }
 
       const episodes = await CampaignEpisode.find({ $or: orConditions })
-        .sort({ episodeNumber: 1 })
+        .sort({ episodeNumber: -1, createdAt: -1 })
         .lean();
 
       res.json({
@@ -408,6 +408,32 @@ export function registerRoutes(app: Router) {
           episodes,
         },
       });
+    })
+  );
+
+  app.put(
+    '/api/campaigns/:idOrSlug',
+    requireAuth,
+    requireEditor,
+    asyncHandler(async (req: AuthRequest, res: Response) => {
+      const key = req.params.idOrSlug;
+      const data: Record<string, any> = { ...req.body, updatedAt: new Date() };
+      delete data._id;
+      delete data.id;
+
+      const isOid = isObjectId(key);
+      let query: any = isOid ? { _id: key } : { slug: key };
+      if (!isOid && key === 'camp1') {
+        query = { slug: 'all-india-career-awareness' };
+      }
+
+      const updated = await Campaign.findOneAndUpdate(query, data, {
+        new: true,
+        runValidators: true,
+        upsert: true,
+      }).lean();
+
+      res.json({ success: true, data: updated });
     })
   );
 

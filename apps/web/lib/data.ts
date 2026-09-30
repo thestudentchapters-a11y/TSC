@@ -281,14 +281,16 @@ function normalizeCampaign(raw: any): Campaign {
     headline: raw.headline || (isDefault ? 'Real Careers. Real People. Real Possibilities.' : ''),
     description: raw.description || (isDefault ? flagshipCampaign.description : ''),
     stills: Array.isArray(raw.stills) && raw.stills.length > 0
-      ? raw.stills.map((s: any) => ({
-        image: typeof s === 'string' ? s : s.image || '/images/campaign/campaign-1.jpg',
-        alt: typeof s === 'string' ? 'Campaign still' : s.alt || 'Campaign still',
+      ? raw.stills.map((s: any, idx: number) => ({
+        image: typeof s === 'string' ? s : s.image || `/images/campaign/campaign-${(idx % 3) + 1}.jpg`,
+        alt: typeof s === 'string' ? `Behind the scenes 0${idx + 1}` : s.alt || `Behind the scenes 0${idx + 1}`,
       }))
       : (isDefault ? flagshipCampaign.stills : []),
     episodes: Array.isArray(raw.episodes) && raw.episodes.length > 0
-      ? raw.episodes.map(normalizeCampaignEpisode)
-      : (isDefault ? flagshipCampaign.episodes : []),
+      ? raw.episodes
+          .map(normalizeCampaignEpisode)
+          .sort((a: CampaignEpisode, b: CampaignEpisode) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0))
+      : (isDefault ? [...flagshipCampaign.episodes].sort((a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0)) : []),
     categories: Array.isArray(raw.categories) && raw.categories.length > 0
       ? raw.categories
       : (isDefault ? flagshipCampaign.categories : []),

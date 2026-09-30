@@ -110,6 +110,15 @@ export function CampaignsAdmin() {
     status: 'Released',
   });
 
+  // Dedicated Behind The Scenes Stills Modal State
+  const [isStillsModalOpen, setIsStillsModalOpen] = useState(false);
+  const [savingStills, setSavingStills] = useState(false);
+  const [stillsForm, setStillsForm] = useState<Array<{ image: string; alt: string }>>([
+    { image: '/images/campaign/campaign-1.jpg', alt: 'Behind the scenes 01' },
+    { image: '/images/campaign/campaign-2.jpg', alt: 'Behind the scenes 02' },
+    { image: '/images/campaign/campaign-3.jpg', alt: 'Behind the scenes 03' },
+  ]);
+
   // Load campaigns & episodes from API and LocalStorage
   const loadData = async () => {
     setLoading(true);
@@ -250,9 +259,9 @@ export function CampaignsAdmin() {
       stills: camp.stills?.length
         ? camp.stills
         : [
-            { image: '/images/campaign/campaign-1.jpg', alt: 'Documentary still 1' },
-            { image: '/images/campaign/campaign-2.jpg', alt: 'Documentary still 2' },
-            { image: '/images/campaign/campaign-3.jpg', alt: 'Documentary still 3' },
+            { image: '/images/campaign/campaign-1.jpg', alt: 'Behind the scenes 01' },
+            { image: '/images/campaign/campaign-2.jpg', alt: 'Behind the scenes 02' },
+            { image: '/images/campaign/campaign-3.jpg', alt: 'Behind the scenes 03' },
           ],
       status: camp.status || 'published',
       featured: Boolean(camp.featured),
@@ -397,6 +406,65 @@ export function CampaignsAdmin() {
     }
 
     push(`Campaign "${camp.title}" deleted.`, 'info');
+  };
+
+  const handleOpenStillsEditor = (targetCamp?: Campaign) => {
+    const camp = targetCamp || selectedCampaign;
+    const currentStills = camp.stills?.length
+      ? camp.stills
+      : [
+          { image: '/images/campaign/campaign-1.jpg', alt: 'Behind the scenes 01' },
+          { image: '/images/campaign/campaign-2.jpg', alt: 'Behind the scenes 02' },
+          { image: '/images/campaign/campaign-3.jpg', alt: 'Behind the scenes 03' },
+        ];
+    setStillsForm(currentStills);
+    setIsStillsModalOpen(true);
+  };
+
+  const handleSaveStills = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setSavingStills(true);
+    try {
+      const sanitizedStills = stillsForm
+        .filter((s) => s.image && s.image.trim())
+        .map((s, idx) => ({
+          image: s.image.trim(),
+          alt: s.alt?.trim() || `Behind the scenes ${String(idx + 1).padStart(2, '0')}`,
+        }));
+
+      const finalStills = sanitizedStills.length > 0 ? sanitizedStills : flagshipCampaign.stills;
+
+      const updatedCampaign: Campaign = {
+        ...selectedCampaign,
+        stills: finalStills,
+      };
+
+      const next = campaigns.map((c) =>
+        c.slug === selectedCampaign.slug ? updatedCampaign : c
+      );
+      await persistCampaigns(next);
+
+      const token = getAdminToken();
+      if (api && token) {
+        try {
+          await fetch(`${api}/api/campaigns/${selectedCampaign.id || selectedCampaign.slug}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ stills: finalStills }),
+          });
+        } catch {}
+      }
+
+      push('Behind the Scenes hero images updated successfully!', 'success');
+      setIsStillsModalOpen(false);
+    } catch {
+      push('Failed to save Behind the Scenes images.', 'error');
+    } finally {
+      setSavingStills(false);
+    }
   };
 
   // ----------------------------------------------------
@@ -708,6 +776,75 @@ export function CampaignsAdmin() {
         </div>
       </section>
 
+      {/* Behind The Scenes Stills Section for Selected Campaign */}
+      <section className="mb-10 rounded-xl border border-hairline bg-white p-6 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-hairline pb-5">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="font-display text-lg font-bold text-ink">
+                Behind The Scenes Images (Hero Section)
+              </h2>
+              <span className="rounded-full bg-brand-50 border border-brand/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand">
+                {selectedCampaign.stills?.length || 3} Images
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-muted">
+              These images appear in the hero section of the public campaign page (labeled &ldquo;Behind the scenes 01, 02, 03&rdquo;).
+              Upload new photos or replace them below.
+            </p>
+          </div>
+
+          <Button size="sm" variant="outline" onClick={() => handleOpenStillsEditor()}>
+            <Pencil className="h-3.5 w-3.5" /> Change Hero Images
+          </Button>
+        </div>
+
+        {/* Stills Preview Grid */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {(selectedCampaign.stills?.length
+            ? selectedCampaign.stills
+            : [
+                { image: '/images/campaign/campaign-1.jpg', alt: 'Behind the scenes 01' },
+                { image: '/images/campaign/campaign-2.jpg', alt: 'Behind the scenes 02' },
+                { image: '/images/campaign/campaign-3.jpg', alt: 'Behind the scenes 03' },
+              ]
+          ).map((still, idx) => (
+            <div
+              key={`admin-hero-still-${idx}-${still.image}`}
+              className="group relative overflow-hidden rounded-lg border border-hairline bg-cream/30 p-2.5 transition-all hover:border-brand/40 hover:shadow-sm"
+            >
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-ink/10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={still.image || `/images/campaign/campaign-${(idx % 3) + 1}.jpg`}
+                  alt={still.alt || `Behind the scenes ${String(idx + 1).padStart(2, '0')}`}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent p-3 text-[10px] font-bold uppercase tracking-[0.16em] text-cream">
+                  Behind the scenes {String(idx + 1).padStart(2, '0')}
+                </div>
+              </div>
+
+              <div className="mt-3 px-1 pb-1">
+                <p className="text-[12px] font-bold text-ink truncate" title={still.alt || `Behind the scenes ${String(idx + 1).padStart(2, '0')}`}>
+                  {still.alt || `Behind the scenes 0${idx + 1}`}
+                </p>
+                <p className="mt-0.5 text-[11px] text-muted truncate" title={still.image}>
+                  {still.image}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => handleOpenStillsEditor()}
+                  className="mt-2.5 w-full rounded border border-hairline bg-white py-1.5 text-center font-display text-[10px] font-bold uppercase tracking-wider text-brand transition-colors hover:border-brand hover:bg-brand-50"
+                >
+                  Change Image
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Documentary Episodes Section for Selected Campaign */}
       <section className="rounded-xl border border-hairline bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-hairline pb-5">
@@ -716,6 +853,9 @@ export function CampaignsAdmin() {
               <h2 className="font-display text-lg font-bold text-ink">
                 Documentary Episodes for &ldquo;{selectedCampaign.title}&rdquo;
               </h2>
+              <span className="rounded-full bg-gold/20 border border-gold/40 px-2 py-0.5 font-display text-[9px] font-bold uppercase tracking-wider text-gold-deep">
+                Latest Featured First
+              </span>
               <Link
                 href={`/campaigns/${selectedCampaign.slug}#episodes`}
                 target="_blank"
@@ -749,33 +889,40 @@ export function CampaignsAdmin() {
           </div>
         ) : (
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {selectedCampaign.episodes.map((ep, idx) => {
-              const hasVideo = Boolean(ep.videoUrl);
+            {[...(selectedCampaign.episodes || [])]
+              .sort((a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0))
+              .map((ep, idx) => {
+                const hasVideo = Boolean(ep.videoUrl);
 
-              return (
-                <div
-                  key={`ep-card-${ep.id || idx}`}
-                  className="flex flex-col overflow-hidden rounded-lg border border-hairline bg-cream/30 transition-all hover:border-brand/40 hover:bg-white hover:shadow-md"
-                >
-                  {/* Thumbnail Banner */}
-                  <div className="relative aspect-video w-full overflow-hidden bg-ink/10">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={ep.image || '/images/campaign/campaign-1.jpg'}
-                      alt={ep.title}
-                      className="h-full w-full object-cover"
-                    />
-                    <span className="absolute left-3 top-3 rounded-[4px] bg-brand-dark/95 px-2 py-1 font-display text-[9px] font-bold uppercase tracking-wider text-gold shadow-sm">
-                      Episode {String(ep.episodeNumber).padStart(2, '0')}
-                    </span>
-                    <span className={`absolute bottom-3 right-3 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider shadow-sm ${
-                      ep.status === 'Released'
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-ink/80 text-cream'
-                    }`}>
-                      {ep.status}
-                    </span>
-                  </div>
+                return (
+                  <div
+                    key={`ep-card-${ep.id || idx}`}
+                    className="flex flex-col overflow-hidden rounded-lg border border-hairline bg-cream/30 transition-all hover:border-brand/40 hover:bg-white hover:shadow-md"
+                  >
+                    {/* Thumbnail Banner */}
+                    <div className="relative aspect-video w-full overflow-hidden bg-ink/10">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={ep.image || '/images/campaign/campaign-1.jpg'}
+                        alt={ep.title}
+                        className="h-full w-full object-cover"
+                      />
+                      <span className="absolute left-3 top-3 rounded-[4px] bg-brand-dark/95 px-2 py-1 font-display text-[9px] font-bold uppercase tracking-wider text-gold shadow-sm">
+                        Episode {String(ep.episodeNumber).padStart(2, '0')}
+                      </span>
+                      {idx === 0 && (
+                        <span className="absolute left-24 top-3 rounded-[4px] bg-gold px-2 py-1 font-display text-[9px] font-bold uppercase tracking-wider text-ink shadow-sm">
+                          Latest Featured
+                        </span>
+                      )}
+                      <span className={`absolute bottom-3 right-3 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider shadow-sm ${
+                        ep.status === 'Released'
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-ink/80 text-cream'
+                      }`}>
+                        {ep.status}
+                      </span>
+                    </div>
 
                   {/* Body Content */}
                   <div className="flex flex-1 flex-col p-4">
@@ -945,20 +1092,84 @@ export function CampaignsAdmin() {
               </div>
             </div>
 
-            {/* Campaign Stills */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-ink">
-                Featured Stills / Banner Image URL
-              </label>
-              <ImageUploadInput
-                label="Primary Still / Banner Photo"
-                value={campaignForm.stills[0]?.image || ''}
-                onChange={(url) => {
-                  const updated = [...campaignForm.stills];
-                  updated[0] = { image: url, alt: campaignForm.title };
-                  setCampaignForm((v) => ({ ...v, stills: updated }));
-                }}
-              />
+            {/* Behind the Scenes Stills Manager */}
+            <div className="rounded-lg border border-hairline bg-cream/40 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-ink">
+                    Behind the Scenes Images (Hero Section)
+                  </label>
+                  <p className="text-[11px] text-muted">
+                    These images appear in the hero section labeled &ldquo;Behind the scenes 01, 02, 03&rdquo;.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCampaignForm((v) => ({
+                      ...v,
+                      stills: [
+                        ...v.stills,
+                        {
+                          image: '/images/campaign/campaign-1.jpg',
+                          alt: `Behind the scenes ${String(v.stills.length + 1).padStart(2, '0')}`,
+                        },
+                      ],
+                    }))
+                  }
+                  className="inline-flex items-center gap-1 rounded border border-hairline bg-white px-2 py-1 text-[11px] font-bold uppercase text-brand hover:bg-brand-50"
+                >
+                  <Plus className="h-3 w-3" /> Add Still
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {campaignForm.stills.map((still, idx) => (
+                  <div key={`form-still-${idx}`} className="rounded-md border border-hairline bg-white p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-display text-xs font-bold text-ink">
+                        Behind the scenes {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      {campaignForm.stills.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = campaignForm.stills.filter((_, i) => i !== idx);
+                            setCampaignForm((v) => ({ ...v, stills: updated }));
+                          }}
+                          className="text-red-500 hover:text-red-700 text-xs"
+                          title="Remove still"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <ImageUploadInput
+                      label={`Image ${idx + 1}`}
+                      value={still.image || ''}
+                      onChange={(url) => {
+                        const updated = [...campaignForm.stills];
+                        updated[idx] = {
+                          image: url,
+                          alt: still.alt || `Behind the scenes ${String(idx + 1).padStart(2, '0')}`,
+                        };
+                        setCampaignForm((v) => ({ ...v, stills: updated }));
+                      }}
+                    />
+                    <input
+                      type="text"
+                      value={still.alt || ''}
+                      onChange={(e) => {
+                        const updated = [...campaignForm.stills];
+                        updated[idx] = { ...updated[idx], alt: e.target.value };
+                        setCampaignForm((v) => ({ ...v, stills: updated }));
+                      }}
+                      placeholder={`Caption / Alt (e.g. Behind the scenes 0${idx + 1})`}
+                      className="mt-2 w-full rounded border border-hairline bg-white px-2.5 py-1 text-xs text-ink focus:border-brand focus:outline-none"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
@@ -1233,6 +1444,114 @@ export function CampaignsAdmin() {
                   editingEpisode ? 'Save Episode Changes' : 'Publish Documentary Episode'
                 )}
               </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* ---------------------------------------------------- */}
+      {/* Modal 3: Edit Behind The Scenes Hero Stills          */}
+      {/* ---------------------------------------------------- */}
+      {isStillsModalOpen && (
+        <Modal
+          open={isStillsModalOpen}
+          onClose={() => setIsStillsModalOpen(false)}
+          title={`Behind The Scenes Images: ${selectedCampaign.title}`}
+        >
+          <form onSubmit={handleSaveStills} className="space-y-4">
+            <p className="text-xs text-muted">
+              Update the 3 images displayed in the hero section labeled &ldquo;Behind the scenes 01, 02, 03&rdquo;. You can upload new images from device or paste image URLs.
+            </p>
+
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+              {stillsForm.map((still, idx) => (
+                <div key={`stills-form-item-${idx}`} className="rounded-lg border border-hairline bg-cream/30 p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-display text-xs font-bold uppercase tracking-wider text-ink">
+                      Behind the scenes {String(idx + 1).padStart(2, '0')}
+                    </span>
+                    {stillsForm.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setStillsForm((v) => v.filter((_, i) => i !== idx))}
+                        className="text-red-500 hover:text-red-700 text-xs"
+                        title="Remove image"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  <ImageUploadInput
+                    label={`Image URL / Upload (${idx + 1})`}
+                    value={still.image || ''}
+                    onChange={(url) => {
+                      const updated = [...stillsForm];
+                      updated[idx] = {
+                        image: url,
+                        alt: still.alt || `Behind the scenes ${String(idx + 1).padStart(2, '0')}`,
+                      };
+                      setStillsForm(updated);
+                    }}
+                  />
+
+                  <div className="mt-2.5">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-muted">
+                      Caption / Alt Text
+                    </label>
+                    <input
+                      type="text"
+                      value={still.alt || ''}
+                      onChange={(e) => {
+                        const updated = [...stillsForm];
+                        updated[idx] = { ...updated[idx], alt: e.target.value };
+                        setStillsForm(updated);
+                      }}
+                      placeholder={`Behind the scenes ${String(idx + 1).padStart(2, '0')}`}
+                      className="mt-1 w-full rounded-md border border-hairline bg-white px-3 py-1.5 text-xs text-ink focus:border-brand focus:outline-none"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between border-t border-hairline pt-4">
+              <button
+                type="button"
+                onClick={() =>
+                  setStillsForm((v) => [
+                    ...v,
+                    {
+                      image: '/images/campaign/campaign-1.jpg',
+                      alt: `Behind the scenes ${String(v.length + 1).padStart(2, '0')}`,
+                    },
+                  ])
+                }
+                className="inline-flex items-center gap-1 rounded border border-hairline bg-white px-2.5 py-1.5 text-xs font-bold uppercase tracking-wider text-brand hover:bg-brand-50"
+              >
+                <Plus className="h-3.5 w-3.5" /> Add Another Still
+              </button>
+
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsStillsModalOpen(false)}
+                  disabled={savingStills}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" size="sm" disabled={savingStills}>
+                  {savingStills ? (
+                    <span className="flex items-center gap-1.5">
+                      <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Saving…
+                    </span>
+                  ) : (
+                    'Save Behind The Scenes Images'
+                  )}
+                </Button>
+              </div>
             </div>
           </form>
         </Modal>
