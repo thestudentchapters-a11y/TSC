@@ -272,24 +272,29 @@ function normalizeCampaignEpisode(raw: any): CampaignEpisode {
 
 function normalizeCampaign(raw: any): Campaign {
   if (!raw) return flagshipCampaign;
+  const isDefault = raw.slug === 'all-india-career-awareness' || !raw.slug;
   return {
     id: raw.id || raw._id?.toString() || raw.slug,
     slug: raw.slug || 'all-india-career-awareness',
     eyebrow: raw.eyebrow || 'TSC ORIGINAL CAMPAIGN',
-    title: raw.title || 'ALL INDIA CAREER AWARENESS YOUTH DOCUMENTARY SERIES',
-    headline: raw.headline || 'Real Careers. Real People. Real Possibilities.',
-    description: raw.description || flagshipCampaign.description,
+    title: raw.title || (isDefault ? 'ALL INDIA CAREER AWARENESS YOUTH DOCUMENTARY SERIES' : 'Campaign'),
+    headline: raw.headline || (isDefault ? 'Real Careers. Real People. Real Possibilities.' : ''),
+    description: raw.description || (isDefault ? flagshipCampaign.description : ''),
     stills: Array.isArray(raw.stills) && raw.stills.length > 0
       ? raw.stills.map((s: any) => ({
         image: typeof s === 'string' ? s : s.image || '/images/campaign/campaign-1.jpg',
         alt: typeof s === 'string' ? 'Campaign still' : s.alt || 'Campaign still',
       }))
-      : flagshipCampaign.stills,
-    episodes: Array.isArray(raw.episodes)
+      : (isDefault ? flagshipCampaign.stills : []),
+    episodes: Array.isArray(raw.episodes) && raw.episodes.length > 0
       ? raw.episodes.map(normalizeCampaignEpisode)
-      : flagshipCampaign.episodes,
-    categories: Array.isArray(raw.categories) ? raw.categories : flagshipCampaign.categories,
-    locations: Array.isArray(raw.locations) ? raw.locations : flagshipCampaign.locations,
+      : (isDefault ? flagshipCampaign.episodes : []),
+    categories: Array.isArray(raw.categories) && raw.categories.length > 0
+      ? raw.categories
+      : (isDefault ? flagshipCampaign.categories : []),
+    locations: Array.isArray(raw.locations) && raw.locations.length > 0
+      ? raw.locations
+      : (isDefault ? flagshipCampaign.locations : []),
     status: raw.status || 'published',
     featured: raw.featured ?? true,
   };

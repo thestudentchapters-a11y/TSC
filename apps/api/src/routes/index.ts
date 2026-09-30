@@ -283,20 +283,121 @@ export function registerRoutes(app: Router) {
     })
   );
   app.get(
+    '/api/campaigns',
+    asyncHandler(async (req: Request, res: Response) => {
+      const filter: any = {};
+      if (req.query.status) {
+        filter.status = req.query.status;
+      }
+      const campaigns = await Campaign.find(filter).sort({ featured: -1, createdAt: -1 }).lean();
+      const allEpisodes = await CampaignEpisode.find({}).sort({ episodeNumber: 1 }).lean();
+
+      let campaignList = campaigns;
+      if (!campaignList.some((c) => c.slug === 'all-india-career-awareness')) {
+        const defaultCamp: any = {
+          _id: 'camp1',
+          slug: 'all-india-career-awareness',
+          eyebrow: 'TSC ORIGINAL CAMPAIGN',
+          title: 'ALL INDIA CAREER AWARENESS YOUTH DOCUMENTARY SERIES',
+          headline: 'Real Careers. Real People. Real Possibilities.',
+          description:
+            'What if students could see what a career actually looks like before choosing one? Our All India Career Awareness Youth Documentary Series takes students beyond generic career advice and into the real world — meeting professionals, entrepreneurs, creators, specialists and people building meaningful careers across different industries. Because sometimes, discovering what\'s possible is the first step towards discovering what you want.',
+          stills: [
+            { image: '/images/campaign/campaign-1.jpg', alt: 'Documentary still 1' },
+            { image: '/images/campaign/campaign-2.jpg', alt: 'Documentary still 2' },
+            { image: '/images/campaign/campaign-3.jpg', alt: 'Documentary still 3' },
+          ],
+          categories: ['Medicine', 'Public Administration', 'Technology', 'Media & Creation', 'Engineering', 'Education', 'Entrepreneurship'],
+          locations: ['Patna', 'Delhi', 'Bengaluru', 'Mumbai', 'Hyderabad', 'Kochi'],
+          status: 'published',
+          featured: true,
+        };
+        campaignList = [defaultCamp, ...campaignList];
+      }
+
+      const populated = campaignList.map((camp: any) => {
+        const isDefault = camp.slug === 'all-india-career-awareness';
+        const campIds = new Set([String(camp._id), camp.slug, (camp as any).id].filter(Boolean));
+        if (isDefault) {
+          campIds.add('camp1');
+          campIds.add('all-india-career-awareness');
+        }
+
+        const episodes = allEpisodes.filter((ep: any) => {
+          if ((!ep.campaign || ep.campaign === 'camp1') && isDefault) return true;
+          if (campIds.has(String(ep.campaign))) return true;
+          if (ep.campaignSlug && ep.campaignSlug === camp.slug) return true;
+          return false;
+        });
+
+        return {
+          ...camp,
+          episodes,
+        };
+      });
+
+      res.json({
+        success: true,
+        data: populated,
+        items: populated,
+      });
+    })
+  );
+
+  app.get(
     '/api/campaigns/:idOrSlug',
     asyncHandler(async (req: Request, res: Response) => {
       const key = req.params.idOrSlug;
-      const doc = isObjectId(key)
+      let doc = isObjectId(key)
         ? await Campaign.findById(key).lean()
         : await Campaign.findOne({ slug: key }).lean();
+
+      const isDefault = key === 'all-india-career-awareness' || doc?.slug === 'all-india-career-awareness';
+
+      if (!doc && isDefault) {
+        doc = {
+          _id: 'camp1' as any,
+          slug: 'all-india-career-awareness',
+          eyebrow: 'TSC ORIGINAL CAMPAIGN',
+          title: 'ALL INDIA CAREER AWARENESS YOUTH DOCUMENTARY SERIES',
+          headline: 'Real Careers. Real People. Real Possibilities.',
+          description:
+            'What if students could see what a career actually looks like before choosing one? Our All India Career Awareness Youth Documentary Series takes students beyond generic career advice and into the real world — meeting professionals, entrepreneurs, creators, specialists and people building meaningful careers across different industries. Because sometimes, discovering what\'s possible is the first step towards discovering what you want.',
+          stills: [
+            { image: '/images/campaign/campaign-1.jpg', alt: 'Documentary still 1' },
+            { image: '/images/campaign/campaign-2.jpg', alt: 'Documentary still 2' },
+            { image: '/images/campaign/campaign-3.jpg', alt: 'Documentary still 3' },
+          ],
+          categories: ['Medicine', 'Public Administration', 'Technology', 'Media & Creation', 'Engineering', 'Education', 'Entrepreneurship'],
+          locations: ['Patna', 'Delhi', 'Bengaluru', 'Mumbai', 'Hyderabad', 'Kochi'],
+          status: 'published',
+          featured: true,
+        };
+      }
+
       if (!doc) throw ApiError.notFound('Campaign not found');
 
-      const isDefault = doc.slug === 'all-india-career-awareness';
-      const episodes = await CampaignEpisode.find(
-        isDefault
-          ? { $or: [{ campaign: doc._id }, { campaign: { $exists: false } }, { campaign: null }] }
-          : { campaign: doc._id }
-      )
+      const campaignIdentifiers: any[] = [doc._id, String(doc._id), doc.slug];
+      if ((doc as any).id) campaignIdentifiers.push((doc as any).id);
+      if (isDefault) {
+        campaignIdentifiers.push('camp1', 'all-india-career-awareness');
+      }
+
+      const orConditions: any[] = [
+        { campaign: { $in: campaignIdentifiers } },
+        { campaignSlug: doc.slug },
+      ];
+
+      if (isDefault) {
+        orConditions.push(
+          { campaign: { $exists: false } },
+          { campaign: null },
+          { campaign: '' },
+          { campaign: 'default' }
+        );
+      }
+
+      const episodes = await CampaignEpisode.find({ $or: orConditions })
         .sort({ episodeNumber: 1 })
         .lean();
 
@@ -304,13 +405,13 @@ export function registerRoutes(app: Router) {
         success: true,
         data: {
           ...doc,
-          episodes: episodes.length > 0 ? episodes : ((doc as any).episodes || []),
+          episodes,
         },
       });
     })
   );
 
-  contentRoutes('/api/campaigns', Campaign, ['status']);
+  contentRoutes('/api/campaigns', Campaign, ['status'], false);
   contentRoutes('/api/campaign-episodes', CampaignEpisode, ['status', 'campaign'], false);
   contentRoutes('/api/categories', Category, ['section'], false);
   contentRoutes('/api/tags', Tag, undefined, false);

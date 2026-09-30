@@ -27,11 +27,16 @@ import { useToast } from '@/components/common/Toast';
 import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
 import { flagshipCampaign } from '@/data/content';
 import { type Campaign, type CampaignEpisode } from '@/types/content';
-import { slugify, getYoutubeThumbnailUrl } from '@/lib/utils';
+import { slugify, getYoutubeThumbnailUrl, getPublicApiUrl } from '@/lib/utils';
 
 export function CampaignsAdmin() {
   const { push } = useToast();
-  const api = process.env.NEXT_PUBLIC_API_URL;
+  const api = getPublicApiUrl();
+
+  const getAdminToken = () =>
+    typeof window !== 'undefined'
+      ? localStorage.getItem('tsc_token') || localStorage.getItem('tsc.token')
+      : null;
 
   const [campaigns, setCampaigns] = useState<Campaign[]>([flagshipCampaign]);
   const [selectedCampaignSlug, setSelectedCampaignSlug] = useState<string>(
@@ -118,7 +123,7 @@ export function CampaignsAdmin() {
           const json = await res.json();
           if (Array.isArray(json.data) && json.data.length > 0) {
             loadedCampaigns = json.data.map((c: any) => ({
-              id: c.id || c._id?.toString() || c.slug,
+              id: c._id?.toString() || c.id || c.slug,
               slug: c.slug || slugify(c.title),
               eyebrow: c.eyebrow || 'TSC ORIGINAL CAMPAIGN',
               title: c.title,
@@ -129,7 +134,9 @@ export function CampaignsAdmin() {
               stills: Array.isArray(c.stills) && c.stills.length > 0
                 ? c.stills
                 : flagshipCampaign.stills,
-              episodes: Array.isArray(c.episodes) ? c.episodes : [],
+              episodes: Array.isArray(c.episodes) && c.episodes.length > 0
+                ? c.episodes
+                : (c.slug === flagshipCampaign.slug ? flagshipCampaign.episodes : []),
               status: c.status || 'published',
               featured: Boolean(c.featured),
             }));
@@ -140,14 +147,34 @@ export function CampaignsAdmin() {
       }
     }
 
-    // 2. Check local storage overrides
+    // 2. Check local storage overrides and merge seamlessly
     if (typeof window !== 'undefined') {
       try {
         const saved = window.localStorage.getItem('tsc_admin_campaigns');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            loadedCampaigns = parsed;
+            const campMap = new Map<string, Campaign>();
+            loadedCampaigns.forEach((c) => campMap.set(c.slug, c));
+            parsed.forEach((localCamp: Campaign) => {
+              const existing = campMap.get(localCamp.slug);
+              if (existing) {
+                const epMap = new Map<string, CampaignEpisode>();
+                (existing.episodes || []).forEach((e) => epMap.set(e.id || e.slug, e));
+                (localCamp.episodes || []).forEach((e) => epMap.set(e.id || e.slug, e));
+                campMap.set(localCamp.slug, {
+                  ...existing,
+                  ...localCamp,
+                  id: existing.id || localCamp.id,
+                  episodes: Array.from(epMap.values()).sort(
+                    (a, b) => (Number(a.episodeNumber) || 1) - (Number(b.episodeNumber) || 1)
+                  ),
+                });
+              } else {
+                campMap.set(localCamp.slug, localCamp);
+              }
+            });
+            loadedCampaigns = Array.from(campMap.values());
           }
         }
       } catch {}
@@ -170,6 +197,7 @@ export function CampaignsAdmin() {
     if (typeof window !== 'undefined') {
       try {
         window.localStorage.setItem('tsc_admin_campaigns', JSON.stringify(nextCampaigns));
+        window.dispatchEvent(new Event('tsc_campaigns_updated'));
       } catch {
         /* ignore */
       }
@@ -256,7 +284,7 @@ export function CampaignsAdmin() {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
+      const token = getAdminToken();
 
       if (editingCampaign) {
         // Update existing
@@ -294,7 +322,7 @@ export function CampaignsAdmin() {
         push(`Campaign "${campaignForm.title}" updated successfully!`, 'success');
       } else {
         // Create new
-        const newCampaign: Campaign = {
+        let newCampaign: Campaign = {
           id: `camp_${Date.now()}`,
           title: campaignForm.title,
           slug,
@@ -309,14 +337,10 @@ export function CampaignsAdmin() {
           featured: campaignForm.featured,
         };
 
-        const next = [...campaigns, newCampaign];
-        await persistCampaigns(next);
-        setSelectedCampaignSlug(slug);
-
         // Sync to API
         if (api && token) {
           try {
-            await fetch(`${api}/api/campaigns`, {
+            const res = await fetch(`${api}/api/campaigns`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -324,8 +348,21 @@ export function CampaignsAdmin() {
               },
               body: JSON.stringify(newCampaign),
             });
+            if (res.ok) {
+              const resJson = await res.json();
+              if (resJson?.data?._id || resJson?.data?.id) {
+                newCampaign = {
+                  ...newCampaign,
+                  id: (resJson.data._id || resJson.data.id).toString(),
+                };
+              }
+            }
           } catch {}
         }
+
+        const next = [...campaigns, newCampaign];
+        await persistCampaigns(next);
+        setSelectedCampaignSlug(slug);
 
         push(`Campaign "${campaignForm.title}" created successfully!`, 'success');
       }
@@ -349,7 +386,7 @@ export function CampaignsAdmin() {
     await persistCampaigns(next);
     setSelectedCampaignSlug(next[0]?.slug || flagshipCampaign.slug);
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
+    const token = getAdminToken();
     if (api && token) {
       try {
         await fetch(`${api}/api/campaigns/${camp.id || camp.slug}`, {
@@ -429,7 +466,7 @@ export function CampaignsAdmin() {
         (episodeForm.videoUrl ? getYoutubeThumbnailUrl(episodeForm.videoUrl, 'hq') : null) ||
         '/images/campaign/campaign-1.jpg';
 
-      const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
+      const token = getAdminToken();
 
       let targetCamp = campaigns.find((c) => c.slug === episodeForm.campaignSlug) || selectedCampaign;
       let updatedEpisodes: CampaignEpisode[] = [];
@@ -463,14 +500,18 @@ export function CampaignsAdmin() {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
-              body: JSON.stringify({ ...updated, campaign: targetCamp.id }),
+              body: JSON.stringify({
+                ...updated,
+                campaign: targetCamp.id || targetCamp.slug,
+                campaignSlug: targetCamp.slug,
+              }),
             });
           } catch {}
         }
 
         push(`Episode "${episodeForm.title}" updated successfully!`, 'success');
       } else {
-        const newEpisode: CampaignEpisode = {
+        let newEpisode: CampaignEpisode = {
           id: `ep_${Date.now()}`,
           title: episodeForm.title,
           slug,
@@ -486,20 +527,33 @@ export function CampaignsAdmin() {
           status: episodeForm.status,
         };
 
-        updatedEpisodes = [...(targetCamp.episodes || []), newEpisode];
-
         if (api && token) {
           try {
-            await fetch(`${api}/api/campaign-episodes`, {
+            const res = await fetch(`${api}/api/campaign-episodes`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
-              body: JSON.stringify({ ...newEpisode, campaign: targetCamp.id }),
+              body: JSON.stringify({
+                ...newEpisode,
+                campaign: targetCamp.id || targetCamp.slug,
+                campaignSlug: targetCamp.slug,
+              }),
             });
+            if (res.ok) {
+              const resJson = await res.json();
+              if (resJson?.data?._id || resJson?.data?.id) {
+                newEpisode = {
+                  ...newEpisode,
+                  id: (resJson.data._id || resJson.data.id).toString(),
+                };
+              }
+            }
           } catch {}
         }
+
+        updatedEpisodes = [...(targetCamp.episodes || []), newEpisode];
 
         push(`Episode "${episodeForm.title}" added to campaign!`, 'success');
       }
@@ -525,7 +579,7 @@ export function CampaignsAdmin() {
     );
     await persistCampaigns(nextCampaigns);
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('tsc_token') : null;
+    const token = getAdminToken();
     if (api && token) {
       try {
         await fetch(`${api}/api/campaign-episodes/${ep.id || ep.slug}`, {
