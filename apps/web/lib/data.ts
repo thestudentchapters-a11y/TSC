@@ -322,10 +322,19 @@ function normalizeCampaign(raw: any): Campaign {
       }))
       : (isDefault ? flagshipCampaign.stills : []),
     episodes: Array.isArray(raw.episodes) && raw.episodes.length > 0
-      ? raw.episodes
-          .filter((ep: any) => !isAutoSeededEpisode(ep))
-          .map(normalizeCampaignEpisode)
-          .sort((a: CampaignEpisode, b: CampaignEpisode) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0))
+      ? (() => {
+          const seen = new Set<string>();
+          return raw.episodes
+            .filter((ep: any) => !isAutoSeededEpisode(ep))
+            .map(normalizeCampaignEpisode)
+            .filter((ep: CampaignEpisode) => {
+              const key = (ep.slug || ep.title || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || ep.id).trim().toLowerCase();
+              if (!key || seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            })
+            .sort((a: CampaignEpisode, b: CampaignEpisode) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0));
+        })()
       : [],
     categories: Array.isArray(raw.categories) && raw.categories.length > 0
       ? raw.categories

@@ -176,8 +176,19 @@ export function CampaignsAdmin() {
                 const epMap = new Map<string, CampaignEpisode>();
                 (existing.episodes || [])
                   .filter((ep) => !isAutoSeededEpisode(ep))
-                  .forEach((e) => epMap.set(e.id || e.slug, e));
-                cleanLocalEpisodes.forEach((e) => epMap.set(e.id || e.slug, e));
+                  .forEach((e) => {
+                    const key = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+                    epMap.set(key, e);
+                  });
+                cleanLocalEpisodes.forEach((e) => {
+                  const key = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+                  const existingEp = epMap.get(key);
+                  epMap.set(key, {
+                    ...existingEp,
+                    ...e,
+                    id: existingEp?.id || e.id,
+                  });
+                });
                 campMap.set(localCamp.slug, {
                   ...existing,
                   ...localCamp,
@@ -187,9 +198,14 @@ export function CampaignsAdmin() {
                   ),
                 });
               } else {
+                const epMap = new Map<string, CampaignEpisode>();
+                cleanLocalEpisodes.forEach((e) => {
+                  const key = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+                  epMap.set(key, e);
+                });
                 campMap.set(localCamp.slug, {
                   ...localCamp,
-                  episodes: cleanLocalEpisodes,
+                  episodes: Array.from(epMap.values()),
                 });
               }
             });
@@ -198,6 +214,22 @@ export function CampaignsAdmin() {
         }
       } catch {}
     }
+
+    // Deduplicate episodes within each campaign to prevent doubles
+    loadedCampaigns = loadedCampaigns.map((c) => {
+      const seen = new Set<string>();
+      const dedupedEpisodes = (c.episodes || []).filter((ep) => {
+        if (!ep || isAutoSeededEpisode(ep)) return false;
+        const key = (ep.slug || slugify(ep.title) || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || ep.id).trim().toLowerCase();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      return {
+        ...c,
+        episodes: dedupedEpisodes,
+      };
+    });
 
     // Ensure accurate single active featured campaign
     let foundFeatured = false;
@@ -219,6 +251,19 @@ export function CampaignsAdmin() {
         ...c,
         featured: c.slug === defaultFeat.slug,
       }));
+    }
+
+    // Immediately persist cleaned campaigns back to localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem('tsc_admin_campaigns', JSON.stringify(loadedCampaigns));
+        window.localStorage.setItem('tsc_custom_campaigns', JSON.stringify(loadedCampaigns));
+        const activeFeat = loadedCampaigns.find((c) => Boolean(c.featured)) || loadedCampaigns[0];
+        if (activeFeat) {
+          window.localStorage.setItem('tsc_featured_campaign', JSON.stringify(activeFeat));
+        }
+        window.dispatchEvent(new Event('tsc_campaigns_updated'));
+      } catch {}
     }
 
     setCampaigns(loadedCampaigns);
@@ -688,7 +733,16 @@ export function CampaignsAdmin() {
           } catch {}
         }
 
-        updatedEpisodes = [...(targetCamp.episodes || []), newEpisode];
+        const epMap = new Map<string, CampaignEpisode>();
+        (targetCamp.episodes || []).forEach((e) => {
+          const k = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+          epMap.set(k, e);
+        });
+        const newKey = (newEpisode.slug || slugify(newEpisode.title) || (newEpisode.episodeNumber ? `ep-${newEpisode.episodeNumber}` : '') || newEpisode.id).trim().toLowerCase();
+        epMap.set(newKey, newEpisode);
+        updatedEpisodes = Array.from(epMap.values()).sort(
+          (a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0)
+        );
 
         push(`Episode "${episodeForm.title}" added to campaign!`, 'success');
       }
@@ -708,7 +762,11 @@ export function CampaignsAdmin() {
       return;
     }
 
-    const updatedEpisodes = (selectedCampaign.episodes || []).filter((e) => e.id !== ep.id);
+    const targetKey = (ep.slug || slugify(ep.title) || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || ep.id).trim().toLowerCase();
+    const updatedEpisodes = (selectedCampaign.episodes || []).filter((e) => {
+      const k = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+      return e.id !== ep.id && k !== targetKey;
+    });
     const nextCampaigns = campaigns.map((c) =>
       c.slug === selectedCampaign.slug ? { ...c, episodes: updatedEpisodes } : c
     );

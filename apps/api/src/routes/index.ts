@@ -352,12 +352,22 @@ export function registerRoutes(app: Router) {
           campIds.add('all-india-career-awareness');
         }
 
-        const episodes = allEpisodes.filter((ep: any) => {
-          if ((!ep.campaign || ep.campaign === 'camp1') && isDefault) return true;
-          if (campIds.has(String(ep.campaign))) return true;
-          if (ep.campaignSlug && ep.campaignSlug === camp.slug) return true;
-          return false;
-        }).sort((a: any, b: any) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0));
+        const seenKeys = new Set<string>();
+        const episodes = allEpisodes
+          .filter((ep: any) => {
+            if ((!ep.campaign || ep.campaign === 'camp1') && isDefault) return true;
+            if (campIds.has(String(ep.campaign))) return true;
+            if (ep.campaignSlug && ep.campaignSlug === camp.slug) return true;
+            return false;
+          })
+          .filter((ep: any) => {
+            const key = (ep.slug || ep.title || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || String(ep._id || '')).trim().toLowerCase();
+            if (!key) return true;
+            if (seenKeys.has(key)) return false;
+            seenKeys.add(key);
+            return true;
+          })
+          .sort((a: any, b: any) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0));
 
         return {
           ...camp,
@@ -444,10 +454,18 @@ export function registerRoutes(app: Router) {
         return false;
       };
 
+      const seenKeys = new Set<string>();
       const episodes = (await CampaignEpisode.find({ $or: orConditions })
         .sort({ episodeNumber: -1, createdAt: -1 })
         .lean())
-        .filter((ep) => !isAutoSeededEpisode(ep));
+        .filter((ep) => !isAutoSeededEpisode(ep))
+        .filter((ep: any) => {
+          const key = (ep.slug || ep.title || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || String(ep._id || '')).trim().toLowerCase();
+          if (!key) return true;
+          if (seenKeys.has(key)) return false;
+          seenKeys.add(key);
+          return true;
+        });
 
       res.json({
         success: true,

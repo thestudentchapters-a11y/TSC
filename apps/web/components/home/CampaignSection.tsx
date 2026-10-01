@@ -7,7 +7,7 @@ import { Play, X, Film, Sparkles, MapPin, ExternalLink, Video } from 'lucide-rea
 import { Button } from '@/components/common/Button';
 import { Reveal, StaggerGrid, StaggerItem } from '@/components/common/Reveal';
 import type { Campaign, CampaignEpisode } from '@/types/content';
-import { getVideoEmbedInfo, getPublicApiUrl } from '@/lib/utils';
+import { getVideoEmbedInfo, getPublicApiUrl, slugify } from '@/lib/utils';
 import { isAutoSeededEpisode } from '@/lib/data';
 
 /**
@@ -66,10 +66,19 @@ export function CampaignSection({ campaign }: { campaign: Campaign }) {
           if (Array.isArray(parsedAdmin)) {
             const matched = parsedAdmin.find((c: any) => c.slug === currentCampaign.slug);
             if (matched && Array.isArray(matched.episodes)) {
+              const epMap = new Map<string, CampaignEpisode>();
+              (currentCampaign.episodes || []).forEach((e) => {
+                const k = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+                epMap.set(k, e);
+              });
+              matched.episodes.filter((ep: any) => !isAutoSeededEpisode(ep)).forEach((e: any) => {
+                const k = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+                epMap.set(k, e);
+              });
               currentCampaign = {
                 ...currentCampaign,
                 ...matched,
-                episodes: matched.episodes.filter((ep: any) => !isAutoSeededEpisode(ep)),
+                episodes: Array.from(epMap.values()),
               };
             }
           }
@@ -91,10 +100,19 @@ export function CampaignSection({ campaign }: { campaign: Campaign }) {
                 const freshEps = (apiCamp.episodes || []).filter((ep: any) => !isAutoSeededEpisode(ep));
                 setActiveCampaign((prev) => {
                   if (prev.slug === apiCamp.slug) {
+                    const epMap = new Map<string, CampaignEpisode>();
+                    (prev.episodes || []).forEach((e) => {
+                      const k = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+                      epMap.set(k, e);
+                    });
+                    freshEps.forEach((e: any) => {
+                      const k = (e.slug || slugify(e.title) || (e.episodeNumber ? `ep-${e.episodeNumber}` : '') || e.id).trim().toLowerCase();
+                      epMap.set(k, e);
+                    });
                     return {
                       ...prev,
                       ...apiCamp,
-                      episodes: freshEps.length > 0 ? freshEps : prev.episodes,
+                      episodes: Array.from(epMap.values()),
                     };
                   }
                   return prev;
@@ -137,7 +155,15 @@ export function CampaignSection({ campaign }: { campaign: Campaign }) {
 
   const bgImage = stills[1]?.image ?? stills[0]?.image ?? '/images/campaign/campaign-2.jpg';
 
-  const episodes = (activeCampaign.episodes || []).filter((ep) => !isAutoSeededEpisode(ep));
+  const seenEpisodeKeys = new Set<string>();
+  const episodes = (activeCampaign.episodes || [])
+    .filter((ep) => !isAutoSeededEpisode(ep))
+    .filter((ep) => {
+      const key = (ep.slug || (ep.title ? slugify(ep.title) : '') || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || ep.id).trim().toLowerCase();
+      if (!key || seenEpisodeKeys.has(key)) return false;
+      seenEpisodeKeys.add(key);
+      return true;
+    });
   const latestEpisode = episodes[0];
 
   const embedInfo = playingEpisode?.videoUrl ? getVideoEmbedInfo(playingEpisode.videoUrl) : null;

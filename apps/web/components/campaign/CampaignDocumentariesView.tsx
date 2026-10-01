@@ -7,7 +7,7 @@ import { DemoNotice } from '@/components/common/PageHeader';
 import { StaggerGrid, StaggerItem, Reveal } from '@/components/common/Reveal';
 import { Button } from '@/components/common/Button';
 import { type Campaign, type CampaignEpisode } from '@/types/content';
-import { getPublicApiUrl } from '@/lib/utils';
+import { getPublicApiUrl, slugify } from '@/lib/utils';
 import { isAutoSeededEpisode } from '@/lib/data';
 
 interface CampaignDocumentariesViewProps {
@@ -85,13 +85,18 @@ export function CampaignDocumentariesView({
                 const epMap = new Map<string, CampaignEpisode>();
                 // Keep API / initial episodes first
                 currentEpisodes.forEach((ep) => {
-                  const key = ep.id || ep.slug || String(ep.episodeNumber);
+                  const key = (ep.slug || slugify(ep.title) || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || ep.id).trim().toLowerCase();
                   epMap.set(key, ep);
                 });
                 // Overlay / merge local admin episodes
                 cleanLocalEpisodes.forEach((ep) => {
-                  const key = ep.id || ep.slug || String(ep.episodeNumber);
-                  epMap.set(key, ep);
+                  const key = (ep.slug || slugify(ep.title) || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || ep.id).trim().toLowerCase();
+                  const existingEp = epMap.get(key);
+                  epMap.set(key, {
+                    ...existingEp,
+                    ...ep,
+                    id: existingEp?.id || ep.id,
+                  });
                 });
                 currentEpisodes = Array.from(epMap.values()).filter(
                   (ep) => !isAutoSeededEpisode(ep)
@@ -104,9 +109,16 @@ export function CampaignDocumentariesView({
         }
       }
 
-      // Always filter out any autoseeded episodes and sort latest first
+      // Always deduplicate and filter out any autoseeded episodes, sorting latest first
+      const seen = new Set<string>();
       currentEpisodes = currentEpisodes
         .filter((ep) => !isAutoSeededEpisode(ep))
+        .filter((ep) => {
+          const key = (ep.slug || slugify(ep.title) || (ep.episodeNumber ? `ep-${ep.episodeNumber}` : '') || ep.id).trim().toLowerCase();
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
         .sort((a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0));
 
       if (isMounted) {
