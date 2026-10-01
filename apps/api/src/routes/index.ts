@@ -290,9 +290,30 @@ export function registerRoutes(app: Router) {
         filter.status = req.query.status;
       }
       const campaigns = await Campaign.find(filter).sort({ featured: -1, createdAt: -1 }).lean();
-      const allEpisodes = await CampaignEpisode.find({}).sort({ episodeNumber: -1, createdAt: -1 }).lean();
+      const SEEDED_EPISODE_SLUGS = new Set([
+        'the-doctor',
+        'the-founder',
+        'the-civil-servant',
+        'the-creator',
+        'the-engineer',
+        'the-educator',
+      ]);
+
+      const isAutoSeededEpisode = (ep: any) => {
+        if (!ep) return false;
+        const id = String(ep.id || ep._id || '');
+        if (['ce1', 'ce2', 'ce3', 'ce4', 'ce5', 'ce6'].includes(id)) return true;
+        const slug = String(ep.slug || '').toLowerCase();
+        if (SEEDED_EPISODE_SLUGS.has(slug)) return true;
+        return false;
+      };
+
+      const allEpisodes = (await CampaignEpisode.find({}).sort({ episodeNumber: -1, createdAt: -1 }).lean())
+        .filter((ep) => !isAutoSeededEpisode(ep));
 
       let campaignList = campaigns;
+      const hasFeaturedInDb = campaigns.some((c) => Boolean(c.featured));
+
       if (!campaignList.some((c) => c.slug === 'all-india-career-awareness')) {
         const defaultCamp: any = {
           _id: 'camp1',
@@ -310,10 +331,18 @@ export function registerRoutes(app: Router) {
           categories: ['Medicine', 'Public Administration', 'Technology', 'Media & Creation', 'Engineering', 'Education', 'Entrepreneurship'],
           locations: ['Patna', 'Delhi', 'Bengaluru', 'Mumbai', 'Hyderabad', 'Kochi'],
           status: 'published',
-          featured: true,
+          featured: !hasFeaturedInDb,
         };
         campaignList = [defaultCamp, ...campaignList];
       }
+
+      // Ensure featured campaign is placed first for home page and listings
+      campaignList.sort((a: any, b: any) => {
+        const aFeat = Boolean(a.featured) ? 1 : 0;
+        const bFeat = Boolean(b.featured) ? 1 : 0;
+        if (bFeat !== aFeat) return bFeat - aFeat;
+        return new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime();
+      });
 
       const populated = campaignList.map((camp: any) => {
         const isDefault = camp.slug === 'all-india-career-awareness';
@@ -348,7 +377,7 @@ export function registerRoutes(app: Router) {
     '/api/campaigns/:idOrSlug',
     asyncHandler(async (req: Request, res: Response) => {
       const key = req.params.idOrSlug;
-      let doc = isObjectId(key)
+      let doc: any = isObjectId(key)
         ? await Campaign.findById(key).lean()
         : await Campaign.findOne({ slug: key }).lean();
 
@@ -397,9 +426,28 @@ export function registerRoutes(app: Router) {
         );
       }
 
-      const episodes = await CampaignEpisode.find({ $or: orConditions })
+      const SEEDED_EPISODE_SLUGS = new Set([
+        'the-doctor',
+        'the-founder',
+        'the-civil-servant',
+        'the-creator',
+        'the-engineer',
+        'the-educator',
+      ]);
+
+      const isAutoSeededEpisode = (ep: any) => {
+        if (!ep) return false;
+        const id = String(ep.id || ep._id || '');
+        if (['ce1', 'ce2', 'ce3', 'ce4', 'ce5', 'ce6'].includes(id)) return true;
+        const slug = String(ep.slug || '').toLowerCase();
+        if (SEEDED_EPISODE_SLUGS.has(slug)) return true;
+        return false;
+      };
+
+      const episodes = (await CampaignEpisode.find({ $or: orConditions })
         .sort({ episodeNumber: -1, createdAt: -1 })
-        .lean();
+        .lean())
+        .filter((ep) => !isAutoSeededEpisode(ep));
 
       res.json({
         success: true,
@@ -408,6 +456,24 @@ export function registerRoutes(app: Router) {
           episodes,
         },
       });
+    })
+  );
+
+  app.post(
+    '/api/campaigns',
+    requireAuth,
+    requireEditor,
+    asyncHandler(async (req: AuthRequest, res: Response) => {
+      const data: Record<string, any> = { ...req.body, createdBy: req.user?._id };
+      delete data._id;
+      delete data.id;
+
+      if (data.featured === true) {
+        await Campaign.updateMany({}, { $set: { featured: false } });
+      }
+
+      const created = await Campaign.create(data);
+      res.status(201).json({ success: true, data: created });
     })
   );
 
@@ -425,6 +491,16 @@ export function registerRoutes(app: Router) {
       let query: any = isOid ? { _id: key } : { slug: key };
       if (!isOid && key === 'camp1') {
         query = { slug: 'all-india-career-awareness' };
+      }
+
+      if (data.featured === true) {
+        const excludeFilter: any[] = [];
+        if (query._id) excludeFilter.push({ _id: { $ne: query._id } });
+        if (query.slug) excludeFilter.push({ slug: { $ne: query.slug } });
+        await Campaign.updateMany(
+          excludeFilter.length > 0 ? { $and: excludeFilter } : {},
+          { $set: { featured: false } }
+        );
       }
 
       const updated = await Campaign.findOneAndUpdate(query, data, {

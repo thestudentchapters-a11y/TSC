@@ -30,7 +30,7 @@ const SEEDS: Record<string, any[]> = {
   editions: demoEditions,
   legal: demoLegalArticles,
   campaign: [flagshipCampaign],
-  campaignEpisodes: flagshipCampaign.episodes,
+  campaignEpisodes: [],
   members: demoMembers,
   storySubmissions: demoStorySubmissions,
   campusSubmissions: demoCampusSubmissions,

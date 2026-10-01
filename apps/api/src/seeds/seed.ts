@@ -96,9 +96,11 @@ async function seed() {
 
   /* Campaign + episodes */
   const campaign = await Campaign.create({ ...seedData.campaign, slug: 'all-india-career-awareness', status: 'published', createdBy: editor._id });
-  await CampaignEpisode.insertMany(
-    seedData.campaignEpisodes.map((e) => ({ ...e, slug: slugify(e.title), campaign: campaign._id }))
-  );
+  if (seedData.campaignEpisodes && seedData.campaignEpisodes.length > 0) {
+    await CampaignEpisode.insertMany(
+      seedData.campaignEpisodes.map((e: any) => ({ ...e, slug: slugify(e.title), campaign: campaign._id }))
+    );
+  }
 
   /* Submissions + inbox + settings */
   await StorySubmission.insertMany(seedData.storySubmissions);

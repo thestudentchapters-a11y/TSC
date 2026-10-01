@@ -248,8 +248,43 @@ function normalizeLegal(raw: any): LegalArticle {
   };
 }
 
+const SEEDED_EPISODE_IDS = new Set(['ce1', 'ce2', 'ce3', 'ce4', 'ce5', 'ce6']);
+const SEEDED_EPISODE_SLUGS = new Set([
+  'the-doctor',
+  'the-founder',
+  'the-civil-servant',
+  'the-creator',
+  'the-engineer',
+  'the-educator',
+]);
+
+export function isAutoSeededEpisode(ep: any): boolean {
+  if (!ep) return false;
+  const id = String(ep.id || ep._id || '');
+  if (SEEDED_EPISODE_IDS.has(id)) return true;
+  const slug = String(ep.slug || '').toLowerCase();
+  if (SEEDED_EPISODE_SLUGS.has(slug)) return true;
+  return false;
+}
+
 function normalizeCampaignEpisode(raw: any): CampaignEpisode {
-  if (!raw) return flagshipCampaign.episodes[0];
+  if (!raw) {
+    return {
+      id: '',
+      slug: '',
+      episodeNumber: 1,
+      title: '',
+      professional: '',
+      profession: '',
+      location: '',
+      description: '',
+      image: '/images/campaign/campaign-1.jpg',
+      imageAlt: '',
+      videoUrl: null,
+      durationLabel: '25 min',
+      status: 'Coming Soon',
+    };
+  }
   const videoUrl = raw.videoUrl || null;
   const youtubeThumb = videoUrl ? getYoutubeThumbnailUrl(videoUrl, 'hq') : null;
   return {
@@ -288,9 +323,10 @@ function normalizeCampaign(raw: any): Campaign {
       : (isDefault ? flagshipCampaign.stills : []),
     episodes: Array.isArray(raw.episodes) && raw.episodes.length > 0
       ? raw.episodes
+          .filter((ep: any) => !isAutoSeededEpisode(ep))
           .map(normalizeCampaignEpisode)
           .sort((a: CampaignEpisode, b: CampaignEpisode) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0))
-      : (isDefault ? [...flagshipCampaign.episodes].sort((a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0)) : []),
+      : [],
     categories: Array.isArray(raw.categories) && raw.categories.length > 0
       ? raw.categories
       : (isDefault ? flagshipCampaign.categories : []),
@@ -298,7 +334,7 @@ function normalizeCampaign(raw: any): Campaign {
       ? raw.locations
       : (isDefault ? flagshipCampaign.locations : []),
     status: raw.status || 'published',
-    featured: raw.featured ?? true,
+    featured: raw.featured !== undefined ? Boolean(raw.featured) : (isDefault ? true : false),
   };
 }
 
@@ -539,11 +575,15 @@ export const getCampaigns = cache(() =>
   })
 );
 
-export const getCampaign = cache(() =>
-  withApi<Campaign>('/api/campaigns/all-india-career-awareness', flagshipCampaign, (data) =>
-    data ? normalizeCampaign(data) : flagshipCampaign
-  )
-);
+export const getCampaign = cache(async (): Promise<Campaign> => {
+  const campaigns = await getCampaigns();
+  const featured =
+    campaigns.find((c) => Boolean(c.featured) && c.status !== 'archived') ||
+    campaigns.find((c) => c.slug === 'all-india-career-awareness') ||
+    campaigns[0] ||
+    flagshipCampaign;
+  return featured;
+});
 
 export const getCampaignBySlug = cache(async function (slug: string): Promise<Campaign | undefined> {
   const item = await withApi<Campaign | null>(`/api/campaigns/${slug}`, null, (data) =>

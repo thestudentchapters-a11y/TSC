@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { PageHeader } from '@/components/common/PageHeader';
 import { CampaignDocumentariesView } from '@/components/campaign/CampaignDocumentariesView';
-import { getCampaign } from '@/lib/data';
+import { getCampaignBySlug } from '@/lib/data';
+import { flagshipCampaign } from '@/data/content';
 
 export const metadata: Metadata = {
   title: 'All India Career Awareness Youth Documentary Series',
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function CampaignPage() {
-  const campaign = await getCampaign();
+  const campaign = (await getCampaignBySlug('all-india-career-awareness')) || flagshipCampaign;
 
   return (
     <>

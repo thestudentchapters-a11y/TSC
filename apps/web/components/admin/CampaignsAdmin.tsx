@@ -20,6 +20,7 @@ import {
   Eye,
   RefreshCw,
   Video,
+  Star,
 } from 'lucide-react';
 import { Modal } from '@/components/common/Modal';
 import { Button } from '@/components/common/Button';
@@ -28,6 +29,7 @@ import { ImageUploadInput } from '@/components/admin/ImageUploadInput';
 import { flagshipCampaign } from '@/data/content';
 import { type Campaign, type CampaignEpisode } from '@/types/content';
 import { slugify, getYoutubeThumbnailUrl, getPublicApiUrl } from '@/lib/utils';
+import { isAutoSeededEpisode } from '@/lib/data';
 
 export function CampaignsAdmin() {
   const { push } = useToast();
@@ -143,9 +145,9 @@ export function CampaignsAdmin() {
               stills: Array.isArray(c.stills) && c.stills.length > 0
                 ? c.stills
                 : flagshipCampaign.stills,
-              episodes: Array.isArray(c.episodes) && c.episodes.length > 0
-                ? c.episodes
-                : (c.slug === flagshipCampaign.slug ? flagshipCampaign.episodes : []),
+              episodes: Array.isArray(c.episodes)
+                ? c.episodes.filter((ep: any) => !isAutoSeededEpisode(ep))
+                : [],
               status: c.status || 'published',
               featured: Boolean(c.featured),
             }));
@@ -167,26 +169,56 @@ export function CampaignsAdmin() {
             loadedCampaigns.forEach((c) => campMap.set(c.slug, c));
             parsed.forEach((localCamp: Campaign) => {
               const existing = campMap.get(localCamp.slug);
+              const cleanLocalEpisodes = (localCamp.episodes || []).filter(
+                (ep) => !isAutoSeededEpisode(ep)
+              );
               if (existing) {
                 const epMap = new Map<string, CampaignEpisode>();
-                (existing.episodes || []).forEach((e) => epMap.set(e.id || e.slug, e));
-                (localCamp.episodes || []).forEach((e) => epMap.set(e.id || e.slug, e));
+                (existing.episodes || [])
+                  .filter((ep) => !isAutoSeededEpisode(ep))
+                  .forEach((e) => epMap.set(e.id || e.slug, e));
+                cleanLocalEpisodes.forEach((e) => epMap.set(e.id || e.slug, e));
                 campMap.set(localCamp.slug, {
                   ...existing,
                   ...localCamp,
                   id: existing.id || localCamp.id,
                   episodes: Array.from(epMap.values()).sort(
-                    (a, b) => (Number(a.episodeNumber) || 1) - (Number(b.episodeNumber) || 1)
+                    (a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0)
                   ),
                 });
               } else {
-                campMap.set(localCamp.slug, localCamp);
+                campMap.set(localCamp.slug, {
+                  ...localCamp,
+                  episodes: cleanLocalEpisodes,
+                });
               }
             });
             loadedCampaigns = Array.from(campMap.values());
           }
         }
       } catch {}
+    }
+
+    // Ensure accurate single active featured campaign
+    let foundFeatured = false;
+    loadedCampaigns = loadedCampaigns.map((c) => {
+      if (Boolean(c.featured)) {
+        if (!foundFeatured) {
+          foundFeatured = true;
+          return { ...c, featured: true };
+        }
+        return { ...c, featured: false };
+      }
+      return { ...c, featured: false };
+    });
+
+    if (!foundFeatured && loadedCampaigns.length > 0) {
+      const defaultFeat =
+        loadedCampaigns.find((c) => c.slug === 'all-india-career-awareness') || loadedCampaigns[0];
+      loadedCampaigns = loadedCampaigns.map((c) => ({
+        ...c,
+        featured: c.slug === defaultFeat.slug,
+      }));
     }
 
     setCampaigns(loadedCampaigns);
@@ -206,11 +238,40 @@ export function CampaignsAdmin() {
     if (typeof window !== 'undefined') {
       try {
         window.localStorage.setItem('tsc_admin_campaigns', JSON.stringify(nextCampaigns));
+        window.localStorage.setItem('tsc_custom_campaigns', JSON.stringify(nextCampaigns));
+        const activeFeat = nextCampaigns.find((c) => Boolean(c.featured)) || nextCampaigns[0];
+        if (activeFeat) {
+          window.localStorage.setItem('tsc_featured_campaign', JSON.stringify(activeFeat));
+        }
         window.dispatchEvent(new Event('tsc_campaigns_updated'));
       } catch {
         /* ignore */
       }
     }
+  };
+
+  const handleSetFeaturedCampaign = async (camp: Campaign) => {
+    const next = campaigns.map((c) => ({
+      ...c,
+      featured: c.slug === camp.slug,
+    }));
+    await persistCampaigns(next);
+
+    const token = getAdminToken();
+    if (api && token) {
+      try {
+        await fetch(`${api}/api/campaigns/${camp.id || camp.slug}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ featured: true }),
+        });
+      } catch {}
+    }
+
+    push(`"${camp.title}" is now featured on the homepage!`, 'success');
   };
 
   const selectedCampaign = useMemo(() => {
@@ -311,7 +372,10 @@ export function CampaignsAdmin() {
           featured: campaignForm.featured,
         };
 
-        const next = campaigns.map((c) => (c.slug === editingCampaign.slug ? updatedCampaign : c));
+        let next = campaigns.map((c) => (c.slug === editingCampaign.slug ? updatedCampaign : c));
+        if (campaignForm.featured) {
+          next = next.map((c) => ({ ...c, featured: c.slug === slug }));
+        }
         await persistCampaigns(next);
 
         // Sync to API
@@ -369,7 +433,10 @@ export function CampaignsAdmin() {
           } catch {}
         }
 
-        const next = [...campaigns, newCampaign];
+        let next = [...campaigns, newCampaign];
+        if (campaignForm.featured) {
+          next = next.map((c) => ({ ...c, featured: c.slug === slug }));
+        }
         await persistCampaigns(next);
         setSelectedCampaignSlug(slug);
 
@@ -662,9 +729,9 @@ export function CampaignsAdmin() {
 
   const handleResetToDemo = () => {
     if (confirm('Reset all campaigns and documentary episodes to default factory seed data?')) {
-      persistCampaigns([flagshipCampaign]);
+      persistCampaigns([{ ...flagshipCampaign, episodes: [] }]);
       setSelectedCampaignSlug(flagshipCampaign.slug);
-      push('Campaigns reset to demo defaults.', 'info');
+      push('Campaigns reset to clean defaults.', 'info');
     }
   };
 
@@ -721,9 +788,16 @@ export function CampaignsAdmin() {
               >
                 <div>
                   <div className="flex items-start justify-between gap-2">
-                    <span className="rounded-[4px] bg-gold/30 px-2 py-0.5 font-display text-[9px] font-bold uppercase tracking-wider text-gold-deep">
-                      {camp.slug === 'all-india-career-awareness' ? 'Flagship' : 'Campaign'}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="rounded-[4px] bg-gold/30 px-2 py-0.5 font-display text-[9px] font-bold uppercase tracking-wider text-gold-deep">
+                        {camp.slug === 'all-india-career-awareness' ? 'Flagship' : 'Campaign'}
+                      </span>
+                      {camp.featured && (
+                        <span className="rounded-full bg-gold/20 border border-gold/50 px-2 py-0.5 font-display text-[9px] font-bold uppercase tracking-wider text-gold-deep inline-flex items-center gap-1">
+                          <Star className="h-2.5 w-2.5 fill-gold-deep text-gold-deep" /> Homepage Feature
+                        </span>
+                      )}
+                    </div>
                     <span className="rounded-full bg-cream px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
                       {camp.status || 'published'}
                     </span>
@@ -737,9 +811,24 @@ export function CampaignsAdmin() {
                 </div>
 
                 <div className="mt-5 flex items-center justify-between border-t border-hairline/60 pt-3 text-xs">
-                  <span className="inline-flex items-center gap-1.5 font-semibold text-ink/80">
-                    <Film className="h-3.5 w-3.5 text-brand" /> {epCount} Episodes
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 font-semibold text-ink/80">
+                      <Film className="h-3.5 w-3.5 text-brand" /> {epCount} Episodes
+                    </span>
+                    {!camp.featured && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSetFeaturedCampaign(camp);
+                        }}
+                        className="rounded border border-gold/40 bg-gold/10 px-2 py-0.5 font-display text-[9px] font-bold uppercase tracking-wider text-gold-deep hover:bg-gold hover:text-ink transition-colors flex items-center gap-1"
+                        title="Set this campaign to feature on the homepage"
+                      >
+                        <Star className="h-2.5 w-2.5" /> Feature on Home
+                      </button>
+                    )}
+                  </div>
 
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Link
@@ -782,11 +871,16 @@ export function CampaignsAdmin() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-display text-lg font-bold text-ink">
-                Behind The Scenes Images (Hero Section)
+                Behind The Scenes Images ({selectedCampaign.title})
               </h2>
               <span className="rounded-full bg-brand-50 border border-brand/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand">
                 {selectedCampaign.stills?.length || 3} Images
               </span>
+              {selectedCampaign.featured && (
+                <span className="rounded-full bg-gold/20 border border-gold/40 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold-deep inline-flex items-center gap-1">
+                  <Star className="h-3 w-3 fill-gold-deep text-gold-deep" /> Currently on Homepage
+                </span>
+              )}
             </div>
             <p className="mt-1 text-xs text-muted">
               These images appear in the hero section of the public campaign page (labeled &ldquo;Behind the scenes 01, 02, 03&rdquo;).
@@ -794,9 +888,16 @@ export function CampaignsAdmin() {
             </p>
           </div>
 
-          <Button size="sm" variant="outline" onClick={() => handleOpenStillsEditor()}>
-            <Pencil className="h-3.5 w-3.5" /> Change Hero Images
-          </Button>
+          <div className="flex items-center gap-2">
+            {!selectedCampaign.featured && (
+              <Button size="sm" variant="accent" onClick={() => handleSetFeaturedCampaign(selectedCampaign)}>
+                <Star className="h-3.5 w-3.5 fill-current" /> Feature on Homepage
+              </Button>
+            )}
+            <Button size="sm" variant="outline" onClick={() => handleOpenStillsEditor()}>
+              <Pencil className="h-3.5 w-3.5" /> Change Hero Images
+            </Button>
+          </div>
         </div>
 
         {/* Stills Preview Grid */}

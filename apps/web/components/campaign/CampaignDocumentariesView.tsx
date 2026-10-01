@@ -8,6 +8,7 @@ import { StaggerGrid, StaggerItem, Reveal } from '@/components/common/Reveal';
 import { Button } from '@/components/common/Button';
 import { type Campaign, type CampaignEpisode } from '@/types/content';
 import { getPublicApiUrl } from '@/lib/utils';
+import { isAutoSeededEpisode } from '@/lib/data';
 
 interface CampaignDocumentariesViewProps {
   initialCampaign: Campaign;
@@ -25,7 +26,7 @@ export function CampaignDocumentariesView({
 
     const syncCampaignData = async () => {
       let currentEpisodes = Array.isArray(initialCampaign.episodes)
-        ? [...initialCampaign.episodes]
+        ? initialCampaign.episodes.filter((ep) => !isAutoSeededEpisode(ep))
         : [];
       let updatedCamp: Campaign = { ...initialCampaign };
 
@@ -40,8 +41,8 @@ export function CampaignDocumentariesView({
             const json = await res.json();
             const apiData = json?.data;
             if (apiData) {
-              if (Array.isArray(apiData.episodes) && apiData.episodes.length > 0) {
-                currentEpisodes = apiData.episodes;
+              if (Array.isArray(apiData.episodes)) {
+                currentEpisodes = apiData.episodes.filter((ep: any) => !isAutoSeededEpisode(ep));
               }
               if (Array.isArray(apiData.stills) && apiData.stills.length > 0) {
                 updatedCamp.stills = apiData.stills;
@@ -77,7 +78,10 @@ export function CampaignDocumentariesView({
               if (localMatch.categories) updatedCamp.categories = localMatch.categories;
               if (localMatch.locations) updatedCamp.locations = localMatch.locations;
 
-              if (Array.isArray(localMatch.episodes) && localMatch.episodes.length > 0) {
+              if (Array.isArray(localMatch.episodes)) {
+                const cleanLocalEpisodes = localMatch.episodes.filter(
+                  (ep) => !isAutoSeededEpisode(ep)
+                );
                 const epMap = new Map<string, CampaignEpisode>();
                 // Keep API / initial episodes first
                 currentEpisodes.forEach((ep) => {
@@ -85,11 +89,13 @@ export function CampaignDocumentariesView({
                   epMap.set(key, ep);
                 });
                 // Overlay / merge local admin episodes
-                localMatch.episodes.forEach((ep) => {
+                cleanLocalEpisodes.forEach((ep) => {
                   const key = ep.id || ep.slug || String(ep.episodeNumber);
                   epMap.set(key, ep);
                 });
-                currentEpisodes = Array.from(epMap.values());
+                currentEpisodes = Array.from(epMap.values()).filter(
+                  (ep) => !isAutoSeededEpisode(ep)
+                );
               }
             }
           }
@@ -98,10 +104,10 @@ export function CampaignDocumentariesView({
         }
       }
 
-      // Always sort episodes so the latest documentary is first!
-      currentEpisodes.sort(
-        (a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0)
-      );
+      // Always filter out any autoseeded episodes and sort latest first
+      currentEpisodes = currentEpisodes
+        .filter((ep) => !isAutoSeededEpisode(ep))
+        .sort((a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0));
 
       if (isMounted) {
         setCampaign({
@@ -128,9 +134,9 @@ export function CampaignDocumentariesView({
   }, [initialCampaign]);
 
   const episodes = useMemo(() => {
-    return [...(campaign.episodes ?? [])].sort(
-      (a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0)
-    );
+    return [...(campaign.episodes ?? [])]
+      .filter((ep) => !isAutoSeededEpisode(ep))
+      .sort((a, b) => (Number(b.episodeNumber) || 0) - (Number(a.episodeNumber) || 0));
   }, [campaign.episodes]);
 
   const latestEpisode = episodes[0];

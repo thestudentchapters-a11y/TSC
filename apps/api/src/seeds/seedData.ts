@@ -419,14 +419,7 @@ export const seedData = {
     locations: ['Patna', 'Delhi', 'Bengaluru', 'Mumbai', 'Hyderabad', 'Kochi'],
   },
 
-  campaignEpisodes: [
-    { episodeNumber: 1, title: 'The Doctor', professional: 'Dr. A. Sharma', profession: 'Medicine & Public Health', location: 'Patna', description: 'A day in the life of a doctor.', image: '/images/hero/hero-classroom.jpg', durationLabel: '24 min', status: 'Released' },
-    { episodeNumber: 2, title: 'The Founder', professional: 'I. Verma', profession: 'Consumer Startup', location: 'Bengaluru', description: 'From hostel idea to first customers.', image: '/images/campaign/campaign-3.jpg', durationLabel: '31 min', status: 'Released' },
-    { episodeNumber: 3, title: 'The Civil Servant', professional: 'Civil Services Officer', profession: 'Public Administration', location: 'Delhi', description: 'Beyond the exam mythology.', image: '/images/hero/hero-workshop.jpg', durationLabel: '28 min', status: 'Coming Soon' },
-    { episodeNumber: 4, title: 'The Creator', professional: 'Digital Creator', profession: 'Media & Content', location: 'Mumbai', description: 'The business behind "just posting".', image: '/images/hero/hero-fest.jpg', durationLabel: '26 min', status: 'Coming Soon' },
-    { episodeNumber: 5, title: 'The Engineer', professional: 'Aerospace Engineer', profession: 'Aerospace & Manufacturing', location: 'Hyderabad', description: 'Engineering beyond the placement-package version.', image: '/images/stories/story-3.jpg', durationLabel: '29 min', status: 'Coming Soon' },
-    { episodeNumber: 6, title: 'The Educator', professional: 'Academic Educator', profession: 'Teaching & Research', location: 'Kochi', description: 'Why the best teachers chose the classroom.', image: '/images/campaign/campaign-1.jpg', durationLabel: '25 min', status: 'Coming Soon' },
-  ],
+  campaignEpisodes: [] as Array<Record<string, any>>,
 
   storySubmissions: [
     { name: 'Rohit Kumar ', email: 'rohit.demo@example.com', college: 'Demo College, Patna', city: 'Patna', state: 'Bihar', storyTitle: 'How Our Team Built a Flood-alert Prototype', storyCategory: 'Student', storyContent: 'A student team prototype for local flood alerts, built during a weekend hackathon. [Demo submission.]', consent: true, status: 'pending' },

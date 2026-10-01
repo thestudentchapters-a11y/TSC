@@ -6,19 +6,28 @@ import { ArrowRight, Film } from 'lucide-react';
 import { Reveal, StaggerGrid, StaggerItem } from '@/components/common/Reveal';
 import { type Campaign } from '@/types/content';
 import { getPublicApiUrl } from '@/lib/utils';
+import { isAutoSeededEpisode } from '@/lib/data';
 
 interface CampaignsListViewProps {
   initialCampaigns: Campaign[];
 }
 
 export function CampaignsListView({ initialCampaigns }: CampaignsListViewProps) {
-  const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(() =>
+    initialCampaigns.map((c) => ({
+      ...c,
+      episodes: (c.episodes || []).filter((ep) => !isAutoSeededEpisode(ep)),
+    }))
+  );
 
   useEffect(() => {
     let isMounted = true;
 
     const syncCampaigns = async () => {
-      let list = [...initialCampaigns];
+      let list = initialCampaigns.map((c) => ({
+        ...c,
+        episodes: (c.episodes || []).filter((ep) => !isAutoSeededEpisode(ep)),
+      }));
 
       // 1. Fetch from database API
       const api = getPublicApiUrl();
@@ -29,7 +38,10 @@ export function CampaignsListView({ initialCampaigns }: CampaignsListViewProps) 
             const json = await res.json();
             const apiData = json?.data || json?.items;
             if (Array.isArray(apiData) && apiData.length > 0) {
-              list = apiData;
+              list = apiData.map((c: any) => ({
+                ...c,
+                episodes: (c.episodes || []).filter((ep: any) => !isAutoSeededEpisode(ep)),
+              }));
             }
           }
         } catch {
@@ -48,14 +60,21 @@ export function CampaignsListView({ initialCampaigns }: CampaignsListViewProps) 
               list.forEach((c) => campMap.set(c.slug, c));
               parsed.forEach((localCamp) => {
                 const existing = campMap.get(localCamp.slug);
+                const cleanEpisodes = (
+                  localCamp.episodes?.length ? localCamp.episodes : existing?.episodes || []
+                ).filter((ep) => !isAutoSeededEpisode(ep));
+
                 if (existing) {
                   campMap.set(localCamp.slug, {
                     ...existing,
                     ...localCamp,
-                    episodes: localCamp.episodes?.length ? localCamp.episodes : existing.episodes,
+                    episodes: cleanEpisodes,
                   });
                 } else {
-                  campMap.set(localCamp.slug, localCamp);
+                  campMap.set(localCamp.slug, {
+                    ...localCamp,
+                    episodes: cleanEpisodes,
+                  });
                 }
               });
               list = Array.from(campMap.values());
@@ -86,6 +105,7 @@ export function CampaignsListView({ initialCampaigns }: CampaignsListViewProps) 
 
   const publishedCampaigns = campaigns.filter((c) => c.status !== 'archived');
   const flagship =
+    publishedCampaigns.find((c) => Boolean(c.featured)) ||
     publishedCampaigns.find((c) => c.slug === 'all-india-career-awareness') ||
     publishedCampaigns[0];
   const others = publishedCampaigns.filter((c) => c.slug !== flagship?.slug);
