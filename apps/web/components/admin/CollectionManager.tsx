@@ -201,6 +201,27 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
     }
   }, [def, api, token]);
 
+  // List feeds omit heavy fields (e.g. article `content`), so load the full document before editing
+  const openEdit = useCallback(async (row: Row) => {
+    if (!def || !api || !row.id || String(row.id).startsWith('new-')) {
+      setEditing(row);
+      return;
+    }
+    try {
+      const res = await fetch(`${api}/api/${def.key}/${encodeURIComponent(String(row.id))}?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      const json = res.ok ? await res.json() : null;
+      const full = json?.data && typeof json.data === 'object' && !Array.isArray(json.data) ? json.data : null;
+      setEditing(full ? { ...row, ...full, id: row.id } : row);
+    } catch {
+      setEditing(row);
+    }
+  }, [def, api, token]);
+
   useEffect(() => {
     if (def) {
       reloadRows();
@@ -788,7 +809,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
                       <button
                         type="button"
                         aria-label="Edit"
-                        onClick={() => setEditing(row)}
+                        onClick={() => void openEdit(row)}
                         className="flex h-8 w-8 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-brand hover:text-brand"
                       >
                         <Pencil aria-hidden className="h-3.5 w-3.5" />
@@ -819,7 +840,7 @@ export function CollectionManager({ collectionKey, presetFilter }: { collectionK
 
       {/* editor modal */}
       <Modal open={!!editing || creating} onClose={() => { setEditing(null); setCreating(false); }} title={editing ? `Edit ${def.singular}` : `New ${def.singular}`} wide>
-        <ItemForm def={def} initial={editing} presetFilter={presetFilter} onSubmit={upsert} onCancel={() => { setEditing(null); setCreating(false); }} />
+        <ItemForm key={editing ? String(editing.id) : 'new'} def={def} initial={editing} presetFilter={presetFilter} onSubmit={upsert} onCancel={() => { setEditing(null); setCreating(false); }} />
       </Modal>
 
       {/* broadcast review modal */}
