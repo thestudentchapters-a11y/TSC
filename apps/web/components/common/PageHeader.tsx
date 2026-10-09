@@ -68,9 +68,8 @@ export function ContentBody({ paragraphs }: { paragraphs?: string[] | string }) 
             [&_p]:my-4 [&_p]:leading-8
             [&_a]:text-brand [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-brand-dark
             [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-ink/80 [&_blockquote]:my-6
-            [&_ul:not(.task-list)]:list-disc [&_ul]:pl-6 [&_ul]:my-4 [&_li]:my-1.5
+            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-4 [&_li]:my-1.5
             [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-4 [&_li]:my-1.5
-            [&_ul.task-list]:list-none [&_ul.task-list]:pl-1 [&_ul.task-list_li]:flex [&_ul.task-list_li]:items-start [&_ul.task-list_li]:gap-2.5
             [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-4 [&_img]:max-h-[540px] [&_img]:object-cover
             [&_figure]:my-6 [&_figcaption]:mt-2 [&_figcaption]:text-center [&_figcaption]:text-xs [&_figcaption]:italic [&_figcaption]:text-muted
             [&_hr]:my-8 [&_hr]:border-hairline"
@@ -96,7 +95,7 @@ export function ContentBody({ paragraphs }: { paragraphs?: string[] | string }) 
             return (
               <div
                 key={i}
-                className="[&_a]:text-brand [&_a]:underline [&_img]:rounded-xl [&_img]:my-4 [&_figure]:my-6 [&_ul:not(.task-list)]:list-disc [&_ul]:pl-6 [&_ul]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-4 [&_li]:my-1.5 [&_ul.task-list]:list-none [&_ul.task-list]:pl-1 [&_ul.task-list_li]:flex [&_ul.task-list_li]:items-start [&_ul.task-list_li]:gap-2.5"
+                className="[&_a]:text-brand [&_a]:underline [&_img]:rounded-xl [&_img]:my-4 [&_figure]:my-6"
                 dangerouslySetInnerHTML={{ __html: p }}
               />
             );

@@ -96,191 +96,20 @@
     @apply text-xs font-medium uppercase tracking-wider text-muted;
   }
 
-  /* ── Editorial Prose & Rich Text Content (Lists, Quotes, Headings) ── */
-  .prose-tsc p,
-  .rich-editor-content p {
-    @apply mb-4 text-[15px] leading-7 text-ink/80 sm:text-base sm:leading-8;
+  .prose-tsc p {
+    @apply mb-5 text-[15px] leading-7 text-ink/80 sm:text-base sm:leading-8;
   }
 
-  .prose-tsc h2,
-  .rich-editor-content h2 {
-    @apply font-display text-2xl font-bold tracking-tight text-brand-dark mt-6 mb-3 sm:text-3xl;
+  .prose-tsc ul {
+    @apply list-disc pl-6 my-4 space-y-1.5;
   }
 
-  .prose-tsc h3,
-  .rich-editor-content h3 {
-    @apply font-display text-xl font-bold tracking-tight text-brand-dark mt-5 mb-2.5 sm:text-2xl;
+  .prose-tsc ol {
+    @apply list-decimal pl-6 my-4 space-y-1.5;
   }
 
-  .prose-tsc blockquote,
-  .rich-editor-content blockquote {
-    @apply border-l-4 border-gold pl-5 py-1.5 italic text-ink/80 my-5 bg-gold/5 rounded-r-lg;
-  }
-
-  .prose-tsc a,
-  .rich-editor-content a {
-    @apply text-brand font-medium underline underline-offset-2 hover:text-brand-dark;
-  }
-
-  /* Default Lists: Disc & Decimal */
-  .prose-tsc ul,
-  .rich-editor-content ul {
-    list-style-type: disc !important;
-    margin-top: 0.75rem !important;
-    margin-bottom: 0.75rem !important;
-    padding-left: 1.75rem !important;
-  }
-
-  .prose-tsc ol,
-  .rich-editor-content ol {
-    list-style-type: decimal !important;
-    margin-top: 0.75rem !important;
-    margin-bottom: 0.75rem !important;
-    padding-left: 1.75rem !important;
-  }
-
-  .prose-tsc li,
-  .rich-editor-content li {
-    margin-top: 0.35rem !important;
-    margin-bottom: 0.35rem !important;
-    line-height: 1.75 !important;
-  }
-
-  /* Multi-level Nested Lists */
-  .prose-tsc ul ul,
-  .rich-editor-content ul ul {
-    list-style-type: circle !important;
-    padding-left: 1.5rem !important;
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.25rem !important;
-  }
-
-  .prose-tsc ul ul ul,
-  .rich-editor-content ul ul ul {
-    list-style-type: square !important;
-    padding-left: 1.5rem !important;
-  }
-
-  .prose-tsc ol ol,
-  .rich-editor-content ol ol {
-    list-style-type: lower-alpha !important;
-    padding-left: 1.5rem !important;
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.25rem !important;
-  }
-
-  .prose-tsc ol ol ol,
-  .rich-editor-content ol ol ol {
-    list-style-type: lower-roman !important;
-    padding-left: 1.5rem !important;
-  }
-
-  .prose-tsc ul ol,
-  .rich-editor-content ul ol {
-    list-style-type: decimal !important;
-    padding-left: 1.5rem !important;
-  }
-
-  .prose-tsc ol ul,
-  .rich-editor-content ol ul {
-    list-style-type: circle !important;
-    padding-left: 1.5rem !important;
-  }
-
-  /* Bullet Style Variations (Disc, Circle, Square, Dash, Arrow) */
-  .prose-tsc ul.list-disc,
-  .prose-tsc ul[type="disc"],
-  .rich-editor-content ul.list-disc,
-  .rich-editor-content ul[type="disc"] {
-    list-style-type: disc !important;
-  }
-
-  .prose-tsc ul.list-circle,
-  .prose-tsc ul[type="circle"],
-  .rich-editor-content ul.list-circle,
-  .rich-editor-content ul[type="circle"] {
-    list-style-type: circle !important;
-  }
-
-  .prose-tsc ul.list-square,
-  .prose-tsc ul[type="square"],
-  .rich-editor-content ul.list-square,
-  .rich-editor-content ul[type="square"] {
-    list-style-type: square !important;
-  }
-
-  .prose-tsc ul.list-dash,
-  .rich-editor-content ul.list-dash {
-    list-style-type: "— " !important;
-  }
-
-  .prose-tsc ul.list-arrow,
-  .rich-editor-content ul.list-arrow {
-    list-style-type: "▸ " !important;
-  }
-
-  /* Numbered Style Variations (1. 2., a. b., A. B., i. ii., I. II.) */
-  .prose-tsc ol.list-decimal,
-  .prose-tsc ol[type="1"],
-  .rich-editor-content ol.list-decimal,
-  .rich-editor-content ol[type="1"] {
-    list-style-type: decimal !important;
-  }
-
-  .prose-tsc ol.list-lower-alpha,
-  .prose-tsc ol[type="a"],
-  .rich-editor-content ol.list-lower-alpha,
-  .rich-editor-content ol[type="a"] {
-    list-style-type: lower-alpha !important;
-  }
-
-  .prose-tsc ol.list-upper-alpha,
-  .prose-tsc ol[type="A"],
-  .rich-editor-content ol.list-upper-alpha,
-  .rich-editor-content ol[type="A"] {
-    list-style-type: upper-alpha !important;
-  }
-
-  .prose-tsc ol.list-lower-roman,
-  .prose-tsc ol[type="i"],
-  .rich-editor-content ol.list-lower-roman,
-  .rich-editor-content ol[type="i"] {
-    list-style-type: lower-roman !important;
-  }
-
-  .prose-tsc ol.list-upper-roman,
-  .prose-tsc ol[type="I"],
-  .rich-editor-content ol.list-upper-roman,
-  .rich-editor-content ol[type="I"] {
-    list-style-type: upper-roman !important;
-  }
-
-  /* Checklist / Task List */
-  .prose-tsc ul.task-list,
-  .rich-editor-content ul.task-list {
-    list-style-type: none !important;
-    padding-left: 0.25rem !important;
-  }
-
-  .prose-tsc ul.task-list li,
-  .rich-editor-content ul.task-list li {
-    list-style-type: none !important;
-    display: flex !important;
-    align-items: flex-start !important;
-    gap: 0.625rem !important;
-    margin-top: 0.35rem !important;
-    margin-bottom: 0.35rem !important;
-  }
-
-  .prose-tsc ul.task-list li input[type="checkbox"],
-  .rich-editor-content ul.task-list li input[type="checkbox"] {
-    margin-top: 0.35rem;
-    height: 1.05rem;
-    width: 1.05rem;
-    border-radius: 0.25rem;
-    accent-color: #1457a2;
-    cursor: pointer;
-    flex-shrink: 0;
+  .prose-tsc li {
+    @apply my-1 text-[15px] leading-7 text-ink/80 sm:text-base sm:leading-8;
   }
 
   .marquee-mask {
