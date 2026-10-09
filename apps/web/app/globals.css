@@ -96,6 +96,13 @@
     @apply text-xs font-medium uppercase tracking-wider text-muted;
   }
 
+  .prose-tsc h1,
+  .prose-tsc h2,
+  .prose-tsc h3,
+  .prose-tsc h4 {
+    font-family: var(--font-merriweather), Georgia, serif;
+  }
+
   .prose-tsc p {
     @apply mb-5 text-[15px] leading-7 text-ink/80 sm:text-base sm:leading-8;
   }

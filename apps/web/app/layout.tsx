@@ -4,7 +4,7 @@
  * Developed by AYUSH
  */
 import type { Metadata, Viewport } from 'next';
-import { Inter, Space_Grotesk, Fraunces } from 'next/font/google';
+import { Inter, Space_Grotesk, Fraunces, Merriweather } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
@@ -16,6 +16,13 @@ import { site } from '@/lib/site';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
 const grotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
 const fraunces = Fraunces({ subsets: ['latin'], style: ['normal', 'italic'], variable: '--font-serif', display: 'swap' });
+const merriweather = Merriweather({
+  weight: ['300', '400', '700', '900'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-merriweather',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -119,7 +126,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${grotesk.variable} ${fraunces.variable}`}>
+    <html lang="en" className={`${inter.variable} ${grotesk.variable} ${fraunces.variable} ${merriweather.variable}`}>
       <head>
         {/* Google tag (gtag.js) */}
         <Script

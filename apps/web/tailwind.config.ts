@@ -36,6 +36,7 @@ const config: Config = {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'system-ui', 'sans-serif'],
         serif: ['var(--font-serif)', 'Georgia', 'serif'],
+        merriweather: ['var(--font-merriweather)', 'Georgia', 'serif'],
       },
       boxShadow: {
         card: '0 1px 2px rgba(12,12,12,0.04), 0 10px 28px -14px rgba(12,12,12,0.14)',

@@ -109,8 +109,8 @@ export function CampusDescription({ description, categories = [], campusName }: 
       {parsed.isHtml && parsed.html && (
         <div
           className="prose-tsc max-w-none font-serif text-[17px] sm:text-[18px] leading-8 text-ink/90 space-y-4
-            [&_h2]:font-display [&_h2]:font-bold [&_h2]:text-2xl sm:[&_h2]:text-3xl [&_h2]:text-brand-dark [&_h2]:mt-8 [&_h2]:mb-4
-            [&_h3]:font-display [&_h3]:font-bold [&_h3]:text-xl sm:[&_h3]:text-2xl [&_h3]:text-brand-dark [&_h3]:mt-6 [&_h3]:mb-3
+            [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-2xl sm:[&_h2]:text-3xl [&_h2]:text-brand-dark [&_h2]:mt-8 [&_h2]:mb-4
+            [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-xl sm:[&_h3]:text-2xl [&_h3]:text-brand-dark [&_h3]:mt-6 [&_h3]:mb-3
             [&_p]:my-4 [&_p]:leading-8
             [&_a]:text-brand [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-brand-dark
             [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-ink/80 [&_blockquote]:my-6

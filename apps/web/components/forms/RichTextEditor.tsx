@@ -692,8 +692,8 @@ export function RichTextEditor({
             onKeyUp={checkActiveFormats}
             onMouseUp={checkActiveFormats}
             className="prose-tsc max-w-none min-h-[260px] text-ink text-[16px] leading-relaxed outline-none focus:outline-none
-              [&_h2]:font-display [&_h2]:font-bold [&_h2]:text-2xl [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-brand-dark
-              [&_h3]:font-display [&_h3]:font-bold [&_h3]:text-xl [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-brand-dark
+              [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-2xl [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-brand-dark
+              [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-xl [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-brand-dark
               [&_p]:my-3 [&_p]:leading-7
               [&_a]:text-brand [&_a]:underline [&_a]:underline-offset-2
               [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-slate-600 [&_blockquote]:my-4
