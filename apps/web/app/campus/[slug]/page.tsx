@@ -98,7 +98,7 @@ export default async function CampusProfilePage({ params }: Props) {
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-12 lg:grid-cols-12">
+          <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-start">
             <div className="space-y-10 lg:col-span-8">
               <DemoNotice />
               <CampusDescription
@@ -137,7 +137,7 @@ export default async function CampusProfilePage({ params }: Props) {
               </div>
             </div>
 
-            <aside className="space-y-6 lg:col-span-4">
+            <aside className="space-y-6 lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
               <div className="card-base p-5">
                 <h3 className="font-display text-sm font-bold uppercase tracking-[0.14em]">At a glance</h3>
                 <dl className="mt-4 space-y-2 text-xs">
