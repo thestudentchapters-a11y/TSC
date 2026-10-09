@@ -10,6 +10,7 @@ export function PageHeader({
   children,
   dark = false,
   className,
+  titleClassName,
 }: {
   eyebrow: string;
   title: React.ReactNode;
@@ -17,6 +18,7 @@ export function PageHeader({
   children?: React.ReactNode;
   dark?: boolean;
   className?: string;
+  titleClassName?: string;
 }) {
   return (
     <section className={cn(dark ? 'bg-brand-dark text-white' : 'border-b border-hairline bg-white')}>
@@ -28,7 +30,7 @@ export function PageHeader({
           </p>
         </Reveal>
         <Reveal delay={0.08}>
-          <h1 className={cn('mt-4 max-w-3xl font-display text-3xl font-bold leading-[1.08] tracking-tight sm:text-4xl lg:text-5xl', dark && 'text-white')}>
+          <h1 className={cn('mt-4 font-display text-3xl font-bold leading-[1.08] tracking-tight sm:text-4xl lg:text-5xl', dark && 'text-white', titleClassName || 'max-w-3xl')}>
             {title}
           </h1>
         </Reveal>
