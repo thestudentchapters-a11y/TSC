@@ -66,7 +66,7 @@ export default async function ArticlePage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <PageHeader eyebrow="Latest News" title={article.title}>
+      <PageHeader eyebrow="Latest News" title={article.title} className="max-w-7xl">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium uppercase tracking-wider text-muted">
           <CategoryPill>{article.category}</CategoryPill>
           <span className="inline-flex items-center gap-1">
@@ -89,18 +89,18 @@ export default async function ArticlePage({ params }: Props) {
       </PageHeader>
 
       <article className="section-pad">
-        <div className="container-tsc max-w-6xl">
+        <div className="container-tsc max-w-7xl">
           <Reveal>
             <div className="relative aspect-[16/8] overflow-hidden rounded-md">
-              <Image src={article.image} alt={article.imageAlt} fill priority sizes="(max-width: 1024px) 100vw, 66vw" className="object-cover" />
+              <Image src={article.image} alt={article.imageAlt} fill priority sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover" />
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-8">
-              <DemoNotice className="mb-8" />
-              <ContentBody paragraphs={article.content} />
+          <div className="mt-10">
+            <DemoNotice className="mb-8" />
+            <ContentBody paragraphs={article.content} />
 
+            {article.tags && article.tags.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-2">
                 {article.tags.map((t) => (
                   <span key={t} className="rounded-full border border-hairline bg-white px-3 py-1 text-[11px] font-semibold text-ink/60">
@@ -108,27 +108,33 @@ export default async function ArticlePage({ params }: Props) {
                   </span>
                 ))}
               </div>
-            </div>
+            )}
 
-            <aside className="space-y-6 lg:col-span-4">
-              <div className="card-base space-y-5 p-5">
+            {/* Bottom cards in a single row just after the article ends */}
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 border-t border-hairline pt-8">
+              <div className="card-base flex flex-col justify-between space-y-5 p-5 sm:p-6">
                 <ShareButtons title={article.title} path={`/news/${article.slug}`} />
-                <div className="border-t border-hairline pt-5">
+                <div className="border-t border-hairline pt-4">
                   <SaveButton itemType="article" itemId={article.id} title={article.title} className="w-full justify-center" />
                 </div>
               </div>
-              <div className="rounded-md border border-brand/20 bg-brand-50 p-5">
-                <h3 className="font-display text-sm font-bold uppercase tracking-[0.14em] text-brand">
-                  Want stories like this?
-                </h3>
-                <p className="mt-2 text-[13px] leading-6 text-ink/70">
-                  Get the latest from campuses across India — join the TSC community.
-                </p>
-                <Link href="/konnectx" className="cta-underline mt-3 inline-block font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-brand">
-                  Join Us
-                </Link>
+
+              <div className="flex flex-col justify-between rounded-md border border-brand/20 bg-brand-50 p-5 sm:p-6">
+                <div>
+                  <h3 className="font-display text-sm font-bold uppercase tracking-[0.14em] text-brand">
+                    Want stories like this?
+                  </h3>
+                  <p className="mt-2 text-[13px] leading-6 text-ink/70">
+                    Get the latest from campuses across India — join the TSC community.
+                  </p>
+                </div>
+                <div className="pt-4">
+                  <Link href="/konnectx" className="cta-underline inline-block font-display text-[11.5px] font-bold uppercase tracking-[0.14em] text-brand">
+                    Join Us
+                  </Link>
+                </div>
               </div>
-            </aside>
+            </div>
           </div>
         </div>
       </article>
