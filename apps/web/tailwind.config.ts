@@ -38,6 +38,10 @@ const config: Config = {
         serif: ['var(--font-serif)', 'Georgia', 'serif'],
         merriweather: ['var(--font-merriweather)', 'Georgia', 'serif'],
       },
+      maxWidth: {
+        '8xl': '88rem',
+        '9xl': '96rem',
+      },
       boxShadow: {
         card: '0 1px 2px rgba(12,12,12,0.04), 0 10px 28px -14px rgba(12,12,12,0.14)',
         lift: '0 2px 6px rgba(12,12,12,0.06), 0 20px 44px -18px rgba(12,12,12,0.24)',

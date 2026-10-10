@@ -71,7 +71,12 @@ export default async function CampusProfilePage({ params }: Props) {
 
   return (
     <>
-      <PageHeader eyebrow="Campus Directory" title={campus.name}>
+      <PageHeader
+        eyebrow="Campus Directory"
+        title={campus.name}
+        className="max-w-9xl"
+        titleClassName="max-w-9xl"
+      >
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium uppercase tracking-wider text-muted">
           <span className="inline-flex items-center gap-1">
             <MapPin aria-hidden className="h-3.5 w-3.5 text-brand" />

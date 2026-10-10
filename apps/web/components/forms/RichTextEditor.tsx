@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Faustina } from 'next/font/google';
 import {
   Bold,
   Italic,
@@ -38,6 +39,8 @@ import { Button } from '@/components/common/Button';
 import { Modal } from '@/components/common/Modal';
 import { useToast } from '@/components/common/Toast';
 import { compressImage, formatBytes } from '@/lib/image-compression';
+
+const faustina = Faustina({ subsets: ['latin'], style: ['normal', 'italic'], display: 'swap' });
 
 export interface RichTextEditorProps {
   id?: string;
@@ -1224,7 +1227,7 @@ export function RichTextEditor({
             onKeyUp={checkActiveFormats}
             onMouseUp={checkActiveFormats}
             onClick={checkActiveFormats}
-            className="prose-tsc max-w-none min-h-[260px] text-ink text-[17.5px] sm:text-[18.5px] leading-relaxed outline-none focus:outline-none
+            className={`${faustina.className} prose-tsc max-w-none min-h-[260px] text-ink text-[17.5px] sm:text-[18.5px] font-medium leading-relaxed outline-none focus:outline-none
               [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-[24px] sm:[&_h2]:text-[28px] [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-brand-dark
               [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-[20px] sm:[&_h3]:text-[24px] [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-brand-dark
               [&_p]:my-3.5 [&_p]:text-[17.5px] sm:[&_p]:text-[18.5px] [&_p]:leading-relaxed
@@ -1236,7 +1239,7 @@ export function RichTextEditor({
               [&_table]:w-full [&_table]:border-collapse [&_table]:my-4 [&_table]:text-sm sm:[&_table]:text-base
               [&_th]:border [&_th]:border-slate-300 [&_th]:bg-slate-100/90 [&_th]:px-4 [&_th]:py-2.5 [&_th]:font-bold [&_th]:text-ink [&_th]:min-w-[80px]
               [&_td]:border [&_td]:border-slate-200 [&_td]:px-4 [&_td]:py-2.5 [&_td]:text-slate-700 [&_td]:min-w-[80px]
-              [&_.table-container]:my-4 [&_.table-container]:overflow-x-auto [&_.table-container]:rounded-lg [&_.table-container]:border [&_.table-container]:border-slate-200"
+              [&_.table-container]:my-4 [&_.table-container]:overflow-x-auto [&_.table-container]:rounded-lg [&_.table-container]:border [&_.table-container]:border-slate-200`}
             data-placeholder={placeholder}
           />
         )}
