@@ -108,7 +108,7 @@ export function OpportunityDetailModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-opp-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6"
+      className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 sm:p-6 pt-20 sm:pt-24 md:pt-28 pb-4 sm:pb-8"
     >
       {/* Backdrop */}
       <div
@@ -119,7 +119,7 @@ export function OpportunityDetailModal({
 
       {/* Modal Dialog Card */}
       <div
-        className="relative z-10 flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-hairline bg-white shadow-2xl animate-in zoom-in-95 duration-200"
+        className="relative z-10 flex max-h-[calc(100dvh-5.5rem)] sm:max-h-[calc(100dvh-7.5rem)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-hairline bg-white shadow-2xl animate-in zoom-in-95 duration-200 sm:translate-y-2"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Sticky Modal Header */}

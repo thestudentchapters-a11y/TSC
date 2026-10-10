@@ -65,7 +65,7 @@ export function Modal({
     <AnimatePresence>
       {open && (
         <div 
-          className="fixed inset-0 z-[120] flex items-end justify-center p-4 sm:items-center select-none-modal"
+          className="fixed inset-0 z-[120] flex items-end justify-center p-4 pt-20 sm:items-center sm:pt-24 sm:pb-8 select-none-modal"
           role="dialog" 
           aria-modal="true" 
           aria-label={title}
@@ -98,7 +98,7 @@ export function Modal({
             }
             exit={{ opacity: 0, y: 20, scale: 0.98, transition: { duration: 0.2 } }}
             className={cn(
-              'relative max-h-[90vh] w-full overflow-y-auto rounded-xl border border-hairline/80 bg-white shadow-2xl transition-shadow',
+              'relative max-h-[calc(100dvh-6rem)] sm:max-h-[calc(100dvh-7.5rem)] w-full overflow-y-auto rounded-xl border border-hairline/80 bg-white shadow-2xl transition-shadow',
               shake ? 'ring-2 ring-brand/50 shadow-brand/20' : 'shadow-lift',
               wide ? 'max-w-4xl' : 'max-w-lg'
             )}
