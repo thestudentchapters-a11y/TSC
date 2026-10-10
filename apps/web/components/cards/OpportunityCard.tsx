@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import {
-  Briefcase, Building2, CalendarDays, GraduationCap, MapPin, Wifi, Home, Split, Sprout, ExternalLink,
+  Briefcase, Building2, CalendarDays, GraduationCap, MapPin, Wifi, Home, Split, Sprout,
 } from 'lucide-react';
 import { CategoryPill } from '@/components/common/CategoryPill';
 import { Button } from '@/components/common/Button';
+import { OpportunityDetailModal } from '@/components/career/OpportunityDetailModal';
 import type { Opportunity, OpportunityType, WorkMode } from '@/types/content';
 import { cn, daysUntil, formatDate, initialsOf } from '@/lib/utils';
 
@@ -23,7 +25,14 @@ const modeIcon: Record<WorkMode, typeof Wifi> = {
 };
 
 /** Opportunity card — org block, deadline badge, location, type tag, skills, direct apply link. */
-export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
+export function OpportunityCard({
+  opportunity,
+  defaultOpen = false,
+}: {
+  opportunity: Opportunity;
+  defaultOpen?: boolean;
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(defaultOpen);
   const days = daysUntil(opportunity.deadline);
   const ModeIcon = modeIcon[opportunity.mode];
   const soon = days >= 0 && days <= 7;
@@ -36,92 +45,136 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
           `${opportunity.organization.replace(/\[Demo.*?\]/g, '').trim()} ${opportunity.title} careers apply`
         )}`;
 
+  const handleOpen = () => {
+    setIsModalOpen(true);
+    if (typeof window !== 'undefined') {
+      const targetUrl = `/career/${opportunity.slug}`;
+      if (window.location.pathname !== targetUrl) {
+        window.history.pushState({ oppSlug: opportunity.slug }, '', targetUrl);
+      }
+    }
+  };
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+    if (typeof window !== 'undefined') {
+      if (window.location.pathname === `/career/${opportunity.slug}`) {
+        window.history.pushState(null, '', '/career');
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window !== 'undefined' && window.location.pathname !== `/career/${opportunity.slug}`) {
+        setIsModalOpen(false);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [opportunity.slug]);
+
   return (
-    <article className="card-base card-hover group flex h-full w-full min-w-0 max-w-full flex-col gap-4 p-5">
-      <div className="flex items-start justify-between gap-3 min-h-[3.25rem] min-w-0">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <span
-            aria-hidden
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[6px] border border-brand/20 bg-brand-50 font-display text-sm font-bold text-brand"
-          >
-            {initialsOf(opportunity.organization.replace(/\[Demo.*?\]/g, '').trim() || 'TSC')}
-          </span>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-display text-[16px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[2.5rem] min-w-0">
-              {opportunity.title}
-            </h3>
-            <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-muted min-w-0">
-              <Building2 aria-hidden className="h-3 w-3 shrink-0" />
-              <span className="truncate min-w-0">{opportunity.organization}</span>
-            </p>
+    <>
+      <article
+        onClick={handleOpen}
+        className="card-base card-hover group flex h-full w-full min-w-0 max-w-full cursor-pointer flex-col gap-4 p-5"
+      >
+        <div className="flex items-start justify-between gap-3 min-h-[3.25rem] min-w-0">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <span
+              aria-hidden
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[6px] border border-brand/20 bg-brand-50 font-display text-sm font-bold text-brand"
+            >
+              {initialsOf(opportunity.organization.replace(/\[Demo.*?\]/g, '').trim() || 'TSC')}
+            </span>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-display text-[16px] font-bold leading-snug transition-colors group-hover:text-brand line-clamp-2 min-h-[2.5rem] min-w-0">
+                {opportunity.title}
+              </h3>
+              <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-muted min-w-0">
+                <Building2 aria-hidden className="h-3 w-3 shrink-0" />
+                <span className="truncate min-w-0">{opportunity.organization}</span>
+              </p>
+            </div>
           </div>
+          <span
+            className={cn(
+              'flex shrink-0 flex-col items-center rounded-[6px] border px-2.5 py-1.5',
+              soon ? 'border-gold/60 bg-gold-50' : 'border-hairline bg-cream'
+            )}
+          >
+            <span className={cn('font-display text-sm font-bold leading-none', soon ? 'text-gold-deep' : 'text-ink')}>
+              {days >= 0 ? `${days}` : '—'}
+            </span>
+            <span className="mt-1 text-[9px] font-bold uppercase tracking-wider text-muted">
+              {days >= 0 ? 'days left' : 'closed'}
+            </span>
+          </span>
         </div>
-        <span
-          className={cn(
-            'flex shrink-0 flex-col items-center rounded-[6px] border px-2.5 py-1.5',
-            soon ? 'border-gold/60 bg-gold-50' : 'border-hairline bg-cream'
-          )}
-        >
-          <span className={cn('font-display text-sm font-bold leading-none', soon ? 'text-gold-deep' : 'text-ink')}>
-            {days >= 0 ? `${days}` : '—'}
-          </span>
-          <span className="mt-1 text-[9px] font-bold uppercase tracking-wider text-muted">
-            {days >= 0 ? 'days left' : 'closed'}
-          </span>
-        </span>
-      </div>
 
-      <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2 min-w-0">
-        <CategoryPill variant={typeVariant[opportunity.type]}>
-          {opportunity.type === 'Career Awareness' ? (
-            <Sprout aria-hidden className="mr-1 h-3 w-3" />
-          ) : (
-            <Briefcase aria-hidden className="mr-1 h-3 w-3" />
-          )}
-          {opportunity.type}
-        </CategoryPill>
-        <span className="inline-flex items-center gap-1 rounded-full border border-hairline bg-cream px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted">
-          <ModeIcon aria-hidden className="mr-1 h-3 w-3 text-brand" />
-          {opportunity.mode}
-        </span>
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-muted min-w-0 flex-1">
-          <MapPin aria-hidden className="h-3.5 w-3.5 shrink-0 text-brand" />
-          <span className="truncate min-w-0">{opportunity.location}</span>
-        </span>
-      </div>
-
-      <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem] break-words">{opportunity.description}</p>
-
-      <div className="flex h-[1.75rem] min-h-[1.75rem] flex-wrap gap-1.5 overflow-hidden">
-        {opportunity.skills.slice(0, 4).map((s) => (
-          <span key={s} className="rounded-full border border-hairline bg-white px-2.5 py-0.5 text-[11px] font-medium text-ink/70">
-            {s}
+        <div className="flex min-h-[1.75rem] flex-wrap items-center gap-2 min-w-0">
+          <CategoryPill variant={typeVariant[opportunity.type]}>
+            {opportunity.type === 'Career Awareness' ? (
+              <Sprout aria-hidden className="mr-1 h-3 w-3" />
+            ) : (
+              <Briefcase aria-hidden className="mr-1 h-3 w-3" />
+            )}
+            {opportunity.type}
+          </CategoryPill>
+          <span className="inline-flex items-center gap-1 rounded-full border border-hairline bg-cream px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted">
+            <ModeIcon aria-hidden className="mr-1 h-3 w-3 text-brand" />
+            {opportunity.mode}
           </span>
-        ))}
-      </div>
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-muted min-w-0 flex-1">
+            <MapPin aria-hidden className="h-3.5 w-3.5 shrink-0 text-brand" />
+            <span className="truncate min-w-0">{opportunity.location}</span>
+          </span>
+        </div>
 
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-hairline pt-4 min-w-0">
-        <p className="flex flex-col gap-0.5 text-[11px] leading-4 text-muted min-w-0 flex-1">
-          <span className="inline-flex items-center gap-1 min-w-0">
-            <GraduationCap aria-hidden className="h-3 w-3 shrink-0 text-brand" />
-            <span className="truncate min-w-0">{opportunity.eligibility}</span>
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <CalendarDays aria-hidden className="h-3 w-3 shrink-0 text-gold-deep" />
-            Deadline: {formatDate(opportunity.deadline)}
-          </span>
-        </p>
-        <Button
-          size="sm"
-          variant="primary"
-          href={targetApplicationUrl}
-          arrow
-          className="shrink-0"
-          ariaLabel={`Quick apply for ${opportunity.title} at ${opportunity.organization}`}
-        >
-          Quick Apply
-        </Button>
-      </div>
-    </article>
+        <p className="line-clamp-2 text-sm leading-6 text-muted min-h-[3rem] break-words">{opportunity.description}</p>
+
+        <div className="flex h-[1.75rem] min-h-[1.75rem] flex-wrap gap-1.5 overflow-hidden">
+          {opportunity.skills.slice(0, 4).map((s) => (
+            <span key={s} className="rounded-full border border-hairline bg-white px-2.5 py-0.5 text-[11px] font-medium text-ink/70">
+              {s}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-hairline pt-4 min-w-0">
+          <p className="flex flex-col gap-0.5 text-[11px] leading-4 text-muted min-w-0 flex-1">
+            <span className="inline-flex items-center gap-1 min-w-0">
+              <GraduationCap aria-hidden className="h-3 w-3 shrink-0 text-brand" />
+              <span className="truncate min-w-0">{opportunity.eligibility}</span>
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <CalendarDays aria-hidden className="h-3 w-3 shrink-0 text-gold-deep" />
+              Deadline: {formatDate(opportunity.deadline)}
+            </span>
+          </p>
+          <Button
+            size="sm"
+            variant="primary"
+            href={targetApplicationUrl}
+            arrow
+            className="shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            ariaLabel={`Quick apply for ${opportunity.title} at ${opportunity.organization}`}
+          >
+            Quick Apply
+          </Button>
+        </div>
+      </article>
+
+      <OpportunityDetailModal
+        opportunity={opportunity}
+        isOpen={isModalOpen}
+        onClose={handleClose}
+      />
+    </>
   );
 }
+

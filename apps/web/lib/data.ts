@@ -533,6 +533,18 @@ export const getOpportunities = cache(() =>
       : demoOpportunities;
   })
 );
+export const getOpportunityBySlug = cache(async function (slug: string): Promise<Opportunity | undefined> {
+  const items = await getOpportunities();
+  const directMatch = items.find((o) => o.slug === slug || o.id === slug);
+  if (directMatch) return directMatch;
+
+  const item = await withApi<Opportunity | null>(`/api/opportunities/${slug}`, null, (data) =>
+    data && (data.title?.trim() || data.name?.trim()) ? normalizeOpportunity(data) : null
+  );
+  if (item) return item;
+
+  return items.find((o) => slug.includes(o.slug) || o.slug.includes(slug));
+});
 
 /* Current Affairs */
 export const getEditions = cache(() =>

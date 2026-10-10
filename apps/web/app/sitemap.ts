@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import {
-  getArticles, getStories, getCampuses, getEpisodes, getEvents, getEditions, getLegalArticles,
+  getArticles, getStories, getCampuses, getEpisodes, getEvents, getEditions, getLegalArticles, getOpportunities,
 } from '@/lib/data';
 import { site } from '@/lib/site';
 
@@ -11,8 +11,8 @@ function parseSafeDate(d?: string | Date): Date {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [articles, stories, campuses, episodes, events, editions, legal] = await Promise.all([
-    getArticles(), getStories(), getCampuses(), getEpisodes(), getEvents(), getEditions(), getLegalArticles(),
+  const [articles, stories, campuses, episodes, events, editions, legal, opportunities] = await Promise.all([
+    getArticles(), getStories(), getCampuses(), getEpisodes(), getEvents(), getEditions(), getLegalArticles(), getOpportunities(),
   ]);
 
   const staticRoutes = [
@@ -37,5 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...events.map((e) => ({ url: `${site.url}/events/${e.slug}`, lastModified: parseSafeDate(e.date), changeFrequency: 'weekly' as const, priority: 0.6 })),
     ...editions.map((e) => ({ url: `${site.url}/current-affairs/${e.slug}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.6 })),
     ...legal.map((l) => ({ url: `${site.url}/legal-awareness/${l.slug}`, lastModified: parseSafeDate(l.date), changeFrequency: 'yearly' as const, priority: 0.5 })),
+    ...opportunities.map((o) => ({ url: `${site.url}/career/${o.slug}`, lastModified: parseSafeDate(o.postedOn), changeFrequency: 'weekly' as const, priority: 0.7 })),
   ];
 }
+
