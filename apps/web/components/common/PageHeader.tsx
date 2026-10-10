@@ -74,6 +74,10 @@ export function ContentBody({ paragraphs }: { paragraphs?: string[] | string }) 
             [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-5 [&_li]:my-2 [&_li]:text-[18px] sm:[&_li]:text-[20px] [&_li]:leading-[1.85]
             [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:max-h-[540px] [&_img]:object-cover
             [&_figure]:my-6 [&_figcaption]:mt-2 [&_figcaption]:text-center [&_figcaption]:text-sm [&_figcaption]:italic [&_figcaption]:text-muted
+            [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-left [&_table]:text-sm sm:[&_table]:text-base
+            [&_th]:border [&_th]:border-slate-300 [&_th]:bg-slate-100/90 [&_th]:px-4 [&_th]:py-2.5 [&_th]:font-bold [&_th]:text-ink
+            [&_td]:border [&_td]:border-slate-200 [&_td]:px-4 [&_td]:py-2.5 [&_td]:text-ink/80
+            [&_.table-container]:my-6 [&_.table-container]:overflow-x-auto [&_.table-container]:rounded-lg [&_.table-container]:border [&_.table-container]:border-slate-200
             [&_hr]:my-8 [&_hr]:border-hairline"
           dangerouslySetInnerHTML={{ __html: paragraphs }}
         />

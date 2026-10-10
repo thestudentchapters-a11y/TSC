@@ -115,7 +115,11 @@ export function CampusDescription({ description, categories = [], campusName }: 
             [&_a]:text-brand [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-brand-dark
             [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-ink/80 [&_blockquote]:my-6 [&_blockquote]:text-[19px] sm:[&_blockquote]:text-[21px]
             [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-5 [&_li]:my-2 [&_li]:text-[18px] sm:[&_li]:text-[20px] [&_li]:leading-[1.85]
-            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-5 [&_li]:my-2 [&_li]:text-[18px] sm:[&_li]:text-[20px] [&_li]:leading-[1.85]"
+            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-5 [&_li]:my-2 [&_li]:text-[18px] sm:[&_li]:text-[20px] [&_li]:leading-[1.85]
+            [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-left [&_table]:text-sm sm:[&_table]:text-base
+            [&_th]:border [&_th]:border-slate-300 [&_th]:bg-slate-100/90 [&_th]:px-4 [&_th]:py-2.5 [&_th]:font-bold [&_th]:text-ink
+            [&_td]:border [&_td]:border-slate-200 [&_td]:px-4 [&_td]:py-2.5 [&_td]:text-ink/80
+            [&_.table-container]:my-6 [&_.table-container]:overflow-x-auto [&_.table-container]:rounded-lg [&_.table-container]:border [&_.table-container]:border-slate-200"
           dangerouslySetInnerHTML={{ __html: parsed.html }}
         />
       )}

@@ -119,6 +119,26 @@
     @apply my-1.5 text-[18px] leading-[1.85] text-ink/90 sm:text-[19.5px] sm:leading-[1.9];
   }
 
+  .prose-tsc table {
+    @apply w-full border-collapse my-6 text-left text-sm sm:text-base;
+  }
+
+  .prose-tsc th {
+    @apply border border-slate-300 bg-slate-100/90 px-4 py-2.5 font-bold text-ink;
+  }
+
+  .prose-tsc td {
+    @apply border border-slate-200 px-4 py-2.5 text-ink/80;
+  }
+
+  .prose-tsc tr:nth-child(even) td {
+    @apply bg-slate-50/50;
+  }
+
+  .prose-tsc .table-container {
+    @apply my-6 overflow-x-auto rounded-lg border border-slate-200 shadow-sm;
+  }
+
   .marquee-mask {
     mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
