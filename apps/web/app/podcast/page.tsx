@@ -53,6 +53,8 @@ export default async function PodcastPage({
       <PageHeader
         eyebrow="06 — TSC Podcast"
         title="Conversations That Matter."
+        className="max-w-9xl"
+        titleClassName="max-w-9xl"
         description="Some lessons aren't found in textbooks. They're found in conversations. TSC Podcast brings students, founders, educators, professionals, creators and changemakers into conversations about careers, entrepreneurship, education, life, failures, opportunities and everything young people are figuring out."
       >
         <Suspense fallback={null}>
