@@ -9,7 +9,6 @@ export function PageHeader({
   description,
   children,
   dark = false,
-  compact = false,
   className,
   titleClassName,
 }: {
@@ -18,8 +17,6 @@ export function PageHeader({
   description?: string;
   children?: React.ReactNode;
   dark?: boolean;
-  /** Smaller title scale for detail pages whose titles are long article/listing names. */
-  compact?: boolean;
   className?: string;
   titleClassName?: string;
 }) {
@@ -33,14 +30,7 @@ export function PageHeader({
           </p>
         </Reveal>
         <Reveal delay={0.08}>
-          <h1
-            className={cn(
-              'mt-4 font-display font-bold leading-[1.08] tracking-tight break-words',
-              compact ? 'text-3xl sm:text-4xl lg:text-5xl' : 'text-4xl sm:text-6xl lg:text-8xl xl:text-9xl',
-              dark && 'text-white',
-              titleClassName || (compact ? 'max-w-3xl' : 'max-w-6xl')
-            )}
-          >
+          <h1 className={cn('mt-4 font-display text-3xl font-bold leading-[1.08] tracking-tight sm:text-4xl lg:text-9xl', dark && 'text-white', titleClassName || 'max-w-3xl')}>
             {title}
           </h1>
         </Reveal>
