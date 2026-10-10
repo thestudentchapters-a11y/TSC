@@ -9,6 +9,8 @@ import {
   Heading2,
   Heading3,
   Quote,
+  Type,
+  ChevronDown,
   Link as LinkIcon,
   Unlink,
   Image as ImageIcon,
@@ -45,6 +47,19 @@ export interface RichTextEditorProps {
   className?: string;
   minHeight?: string;
 }
+
+const PRESET_FONT_SIZES = [
+  { label: 'Small (14px)', value: '14px', px: 14 },
+  { label: 'Standard (16px)', value: '16px', px: 16 },
+  { label: 'Normal Body (18px)', value: '18px', px: 18 },
+  { label: 'Medium Lead (20px)', value: '20px', px: 20 },
+  { label: 'Large (22px)', value: '22px', px: 22 },
+  { label: 'Subheading (24px)', value: '24px', px: 24 },
+  { label: 'Section Header (28px)', value: '28px', px: 28 },
+  { label: 'Major Heading (32px)', value: '32px', px: 32 },
+  { label: 'Display Title (36px)', value: '36px', px: 36 },
+  { label: 'Hero Title (44px)', value: '44px', px: 44 },
+];
 
 const PRESET_COLORS = [
   { name: 'Default Dark', value: '#112340' },
@@ -135,6 +150,25 @@ export function RichTextEditor({
   const [hoverCols, setHoverCols] = useState(0);
   const [isInsideTable, setIsInsideTable] = useState(false);
 
+  // Custom text size state
+  const [showFontSizeDropdown, setShowFontSizeDropdown] = useState(false);
+  const [currentFontSize, setCurrentFontSize] = useState<string>('18');
+  const [customSizeInput, setCustomSizeInput] = useState<string>('18');
+
+  // Close font size dropdown on outside click
+  useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.font-size-picker-container')) {
+        setShowFontSizeDropdown(false);
+      }
+    };
+    if (showFontSizeDropdown) {
+      document.addEventListener('mousedown', handleGlobalClick);
+      return () => document.removeEventListener('mousedown', handleGlobalClick);
+    }
+  }, [showFontSizeDropdown]);
+
   // Sync internal content from incoming value when not focused
   useEffect(() => {
     if (editorRef.current && !isHtmlMode) {
@@ -192,6 +226,26 @@ export function RichTextEditor({
         node = node.parentNode;
       }
       setIsInsideTable(inside);
+
+      // Detect current font size at cursor
+      let sizeNode: Node | null = sel && sel.rangeCount > 0 ? sel.anchorNode : null;
+      let detectedSize = '';
+      while (sizeNode && sizeNode !== editorRef.current) {
+        if (sizeNode instanceof HTMLElement && sizeNode.style.fontSize) {
+          detectedSize = sizeNode.style.fontSize;
+          break;
+        }
+        sizeNode = sizeNode.parentNode;
+      }
+      if (detectedSize) {
+        const num = parseInt(detectedSize);
+        if (num) {
+          setCurrentFontSize(`${num}`);
+          setCustomSizeInput(`${num}`);
+        }
+      } else {
+        setCurrentFontSize('18');
+      }
     } catch {
       // Ignore if document commands are unavailable
     }
@@ -224,6 +278,120 @@ export function RichTextEditor({
     } else {
       document.execCommand('formatBlock', false, `<${tag}>`);
     }
+    handleInput();
+  };
+
+  // Custom Font Size Application & Reset
+  const applyCustomFontSize = (sizePx: number | string) => {
+    if (isHtmlMode) return;
+    editorRef.current?.focus();
+
+    const numeric = typeof sizePx === 'number' ? sizePx : parseInt(sizePx) || 18;
+    const clamped = Math.max(8, Math.min(numeric, 120));
+    const sizeStr = `${clamped}px`;
+
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+
+    if (range.collapsed) {
+      const span = document.createElement('span');
+      span.style.fontSize = sizeStr;
+      span.innerHTML = '&#8203;';
+      range.insertNode(span);
+      range.selectNodeContents(span);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      setCurrentFontSize(`${clamped}`);
+      setCustomSizeInput(`${clamped}`);
+      handleInput();
+      setShowFontSizeDropdown(false);
+      return;
+    }
+
+    try {
+      document.execCommand('styleWithCSS', false, 'true');
+      document.execCommand('fontSize', false, '7');
+
+      if (editorRef.current) {
+        const fontTags = editorRef.current.querySelectorAll('font[size="7"]');
+        fontTags.forEach((font) => {
+          const span = document.createElement('span');
+          span.style.fontSize = sizeStr;
+          span.innerHTML = font.innerHTML;
+          font.parentNode?.replaceChild(span, font);
+        });
+
+        const allSpans = editorRef.current.querySelectorAll('span');
+        allSpans.forEach((span) => {
+          const fSize = span.style.fontSize;
+          if (
+            fSize === '-webkit-xxx-large' ||
+            fSize === 'xxx-large' ||
+            fSize === '36pt' ||
+            fSize === '48px' ||
+            span.getAttribute('size') === '7'
+          ) {
+            span.style.fontSize = sizeStr;
+            span.removeAttribute('size');
+          }
+        });
+      }
+    } catch {
+      try {
+        const contents = range.extractContents();
+        const span = document.createElement('span');
+        span.style.fontSize = sizeStr;
+        span.appendChild(contents);
+        range.insertNode(span);
+        range.selectNode(span);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch (err) {
+        console.error('Error applying font size:', err);
+      }
+    }
+
+    setCurrentFontSize(`${clamped}`);
+    setCustomSizeInput(`${clamped}`);
+    handleInput();
+    setShowFontSizeDropdown(false);
+  };
+
+  const resetFontSize = () => {
+    if (isHtmlMode) return;
+    editorRef.current?.focus();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    let node: Node | null = sel.anchorNode;
+    while (node && node !== editorRef.current) {
+      if (node instanceof HTMLElement && node.tagName.toLowerCase() === 'span' && node.style.fontSize) {
+        node.style.fontSize = '';
+        if (!node.getAttribute('style')?.trim()) {
+          node.removeAttribute('style');
+        }
+      }
+      node = node.parentNode;
+    }
+
+    const range = sel.getRangeAt(0);
+    const container = range.commonAncestorContainer;
+    const parentEl = container.nodeType === Node.ELEMENT_NODE ? (container as HTMLElement) : container.parentElement;
+    if (parentEl) {
+      parentEl.querySelectorAll('span[style*="font-size"]').forEach((sp) => {
+        (sp as HTMLElement).style.fontSize = '';
+      });
+      parentEl.querySelectorAll('font[size]').forEach((f) => {
+        f.removeAttribute('size');
+      });
+    }
+
+    setCurrentFontSize('18');
+    setCustomSizeInput('18');
+    setShowFontSizeDropdown(false);
     handleInput();
   };
 
@@ -594,6 +762,124 @@ export function RichTextEditor({
           </button>
         </div>
 
+        {/* Custom Text Size Selector */}
+        <div className="relative font-size-picker-container px-1 border-r border-hairline">
+          <button
+            type="button"
+            onClick={() => {
+              setShowFontSizeDropdown(!showFontSizeDropdown);
+              setShowColorPicker(false);
+              setShowHighlightPicker(false);
+            }}
+            className={cn(
+              'flex items-center gap-1.5 rounded px-2 py-1 text-xs font-semibold transition-colors cursor-pointer',
+              showFontSizeDropdown ? 'bg-brand text-white shadow-xs' : 'text-slate-700 hover:bg-slate-200'
+            )}
+            title="Choose or Type Custom Text Size"
+          >
+            <Type className="h-4 w-4 text-brand" />
+            <span className="font-mono text-xs font-bold min-w-[28px] text-center">
+              {currentFontSize}
+              <span className={cn('text-[10px] font-normal ml-0.5', showFontSizeDropdown ? 'text-white/80' : 'text-slate-400')}>px</span>
+            </span>
+            <ChevronDown className="h-3 w-3 opacity-60" />
+          </button>
+
+          {showFontSizeDropdown && (
+            <div className="absolute left-0 top-full z-50 mt-1.5 w-64 rounded-xl border border-hairline bg-white p-3 shadow-2xl animate-fadeIn">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Custom Text Size</p>
+                <button
+                  type="button"
+                  onClick={resetFontSize}
+                  className="text-[10px] font-semibold text-brand hover:underline cursor-pointer"
+                >
+                  Reset Default
+                </button>
+              </div>
+
+              {/* Precise Steppers & Direct Input */}
+              <div className="flex items-center gap-1.5 mb-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = parseInt(customSizeInput) || 18;
+                    const next = Math.max(8, current - 2);
+                    setCustomSizeInput(String(next));
+                    applyCustomFontSize(next);
+                  }}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 font-bold transition-colors cursor-pointer"
+                  title="Decrease size by 2px"
+                >
+                  -
+                </button>
+                <div className="relative flex-1">
+                  <input
+                    type="number"
+                    min={8}
+                    max={120}
+                    value={customSizeInput}
+                    onChange={(e) => setCustomSizeInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        applyCustomFontSize(customSizeInput);
+                      }
+                    }}
+                    placeholder="18"
+                    className="w-full h-8 rounded-lg border border-slate-200 px-2 pr-7 text-center text-xs font-bold text-slate-800 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium text-slate-400">px</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = parseInt(customSizeInput) || 18;
+                    const next = Math.min(120, current + 2);
+                    setCustomSizeInput(String(next));
+                    applyCustomFontSize(next);
+                  }}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 font-bold transition-colors cursor-pointer"
+                  title="Increase size by 2px"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyCustomFontSize(customSizeInput)}
+                  className="h-8 rounded-lg bg-brand px-3 text-xs font-bold text-white hover:bg-brand-dark transition-colors cursor-pointer"
+                >
+                  Set
+                </button>
+              </div>
+
+              {/* Standard Presets */}
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Popular Presets</p>
+              <div className="grid grid-cols-2 gap-1 max-h-48 overflow-y-auto pr-0.5">
+                {PRESET_FONT_SIZES.map((preset) => {
+                  const isSelected = currentFontSize === String(preset.px);
+                  return (
+                    <button
+                      key={preset.value}
+                      type="button"
+                      onClick={() => applyCustomFontSize(preset.px)}
+                      className={cn(
+                        'flex items-center justify-between rounded-md px-2 py-1.5 text-xs transition-colors cursor-pointer',
+                        isSelected
+                          ? 'bg-brand/10 text-brand font-bold border border-brand/20'
+                          : 'text-slate-700 hover:bg-slate-100'
+                      )}
+                    >
+                      <span className="truncate">{preset.label}</span>
+                      <span className="font-mono text-[10px] opacity-75">{preset.value}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Basic Text Styles (Bold, Italic, Underline, Strike) */}
         <div className="flex items-center gap-0.5 px-1 border-r border-hairline">
           <button
@@ -651,6 +937,7 @@ export function RichTextEditor({
               onClick={() => {
                 setShowColorPicker(!showColorPicker);
                 setShowHighlightPicker(false);
+                setShowFontSizeDropdown(false);
               }}
               className="flex items-center gap-1 rounded p-1.5 text-slate-700 hover:bg-slate-200 transition-colors"
               title="Text Color"
@@ -691,6 +978,7 @@ export function RichTextEditor({
               onClick={() => {
                 setShowHighlightPicker(!showHighlightPicker);
                 setShowColorPicker(false);
+                setShowFontSizeDropdown(false);
               }}
               className="flex items-center gap-1 rounded p-1.5 text-slate-700 hover:bg-slate-200 transition-colors"
               title="Highlight Background"
