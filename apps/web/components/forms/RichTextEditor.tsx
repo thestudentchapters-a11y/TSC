@@ -1227,7 +1227,7 @@ export function RichTextEditor({
             onKeyUp={checkActiveFormats}
             onMouseUp={checkActiveFormats}
             onClick={checkActiveFormats}
-            className={`${faustina.className} prose-tsc max-w-none min-h-[260px] text-ink text-[17.5px] sm:text-[18.5px] font-medium leading-relaxed outline-none focus:outline-none
+            className={`${faustina.className} prose-tsc max-w-none min-h-[260px] text-ink text-[17.5px] sm:text-[18.5px] font-semibold leading-relaxed outline-none focus:outline-none
               [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-[24px] sm:[&_h2]:text-[28px] [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-brand-dark
               [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-[20px] sm:[&_h3]:text-[24px] [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-brand-dark
               [&_p]:my-3.5 [&_p]:text-[17.5px] sm:[&_p]:text-[18.5px] [&_p]:leading-relaxed
