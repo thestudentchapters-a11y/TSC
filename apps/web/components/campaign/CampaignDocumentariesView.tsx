@@ -174,7 +174,7 @@ export function CampaignDocumentariesView({
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <DemoNotice className="mb-8" />
-            <p className="text-[15px] leading-8 text-muted">{campaign.description}</p>
+            <p className="text-[17px] leading-8 text-muted">{campaign.description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button href="#episodes" size="lg" arrow>
                 Explore the Series
@@ -409,7 +409,7 @@ export function CampaignDocumentariesView({
                         <p className="text-[12px] font-semibold uppercase tracking-wider text-brand">
                           {ep.profession || 'Specialist'} • <span className="text-muted">{ep.location || 'India'}</span>
                         </p>
-                        <p className="text-[13.5px] leading-6 text-muted">{ep.description}</p>
+                        <p className="text-[14.5px] leading-6 text-muted">{ep.description}</p>
                         <div className="mt-auto flex items-center justify-between border-t border-hairline/60 pt-3 text-[11px] font-medium uppercase tracking-wider text-muted">
                           <span>{ep.professional || 'TSC Feature'}</span>
                           <span className="flex items-center gap-1 font-bold text-ink/80">

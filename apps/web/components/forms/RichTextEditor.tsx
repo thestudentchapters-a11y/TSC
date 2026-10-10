@@ -1227,14 +1227,14 @@ export function RichTextEditor({
             onKeyUp={checkActiveFormats}
             onMouseUp={checkActiveFormats}
             onClick={checkActiveFormats}
-            className={`${faustina.className} prose-tsc max-w-none min-h-[260px] text-ink text-[17.5px] sm:text-[18.5px] font-semibold leading-relaxed outline-none focus:outline-none
+            className={`${faustina.className} prose-tsc max-w-none min-h-[260px] text-ink text-[18.5px] sm:text-[19.5px] font-semibold leading-relaxed outline-none focus:outline-none
               [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-[24px] sm:[&_h2]:text-[28px] [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-brand-dark
               [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-[20px] sm:[&_h3]:text-[24px] [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-brand-dark
-              [&_p]:my-3.5 [&_p]:text-[17.5px] sm:[&_p]:text-[18.5px] [&_p]:leading-relaxed
+              [&_p]:my-3.5 [&_p]:text-[18.5px] sm:[&_p]:text-[19.5px] [&_p]:leading-relaxed
               [&_a]:text-brand [&_a]:underline [&_a]:underline-offset-2
-              [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-slate-600 [&_blockquote]:my-4 [&_blockquote]:text-[18px]
-              [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3.5 [&_li]:my-1.5 [&_li]:text-[17.5px] sm:[&_li]:text-[18.5px]
-              [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3.5 [&_li]:my-1.5 [&_li]:text-[17.5px] sm:[&_li]:text-[18.5px]
+              [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-slate-600 [&_blockquote]:my-4 [&_blockquote]:text-[19px]
+              [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3.5 [&_li]:my-1.5 [&_li]:text-[18.5px] sm:[&_li]:text-[19.5px]
+              [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3.5 [&_li]:my-1.5 [&_li]:text-[18.5px] sm:[&_li]:text-[19.5px]
               [&_img]:rounded-xl [&_img]:shadow-sm [&_img]:my-4
               [&_table]:w-full [&_table]:border-collapse [&_table]:my-4 [&_table]:text-sm sm:[&_table]:text-base
               [&_th]:border [&_th]:border-slate-300 [&_th]:bg-slate-100/90 [&_th]:px-4 [&_th]:py-2.5 [&_th]:font-bold [&_th]:text-ink [&_th]:min-w-[80px]

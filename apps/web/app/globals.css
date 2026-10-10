@@ -104,7 +104,7 @@
   }
 
   .prose-tsc p {
-    @apply mb-5 text-[18px] leading-[1.85] text-ink/90 sm:text-[19.5px] sm:leading-[1.9];
+    @apply mb-5 text-[19px] leading-[1.85] text-ink/90 sm:text-[20.5px] sm:leading-[1.9];
   }
 
   .prose-tsc ul {
@@ -116,11 +116,11 @@
   }
 
   .prose-tsc li {
-    @apply my-1.5 text-[18px] leading-[1.85] text-ink/90 sm:text-[19.5px] sm:leading-[1.9];
+    @apply my-1.5 text-[19px] leading-[1.85] text-ink/90 sm:text-[20.5px] sm:leading-[1.9];
   }
 
   .prose-tsc table {
-    @apply w-full border-collapse my-6 text-left text-sm sm:text-base;
+    @apply w-full border-collapse my-6 text-left text-[15px] sm:text-[17px];
   }
 
   .prose-tsc th {

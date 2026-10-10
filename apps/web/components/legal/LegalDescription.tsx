@@ -110,7 +110,7 @@ export function LegalDescription({ content, summary, topic, title }: LegalDescri
       {/* Lead Intro / Summary (mirroring campus lead intro callout) */}
       {(summary || (!parsed.isHtml && parsed.intro)) && (
         <div className="rounded-xl border border-brand/20 border-l-4 border-l-brand bg-brand-50/40 p-5 sm:p-6 shadow-xs">
-          <p className="font-serif text-[18px] sm:text-[19.5px] leading-relaxed text-ink/90 italic">
+          <p className="font-serif text-[19px] sm:text-[20.5px] leading-relaxed text-ink/90 italic">
             {summary || parsed.intro}
           </p>
         </div>
@@ -119,15 +119,15 @@ export function LegalDescription({ content, summary, topic, title }: LegalDescri
       {/* HTML Content Render (mirroring campus prose styles) */}
       {parsed.isHtml && parsed.html && (
         <div
-          className="prose-tsc max-w-none font-serif text-[18px] sm:text-[20px] leading-[1.85] text-ink/90 space-y-5
-            [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-[26px] sm:[&_h2]:text-[32px] [&_h2]:text-brand-dark [&_h2]:mt-10 [&_h2]:mb-4
-            [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-[22px] sm:[&_h3]:text-[26px] [&_h3]:text-brand-dark [&_h3]:mt-8 [&_h3]:mb-3
-            [&_p]:my-5 [&_p]:text-[18px] sm:[&_p]:text-[20px] [&_p]:leading-[1.85]
+          className="prose-tsc max-w-none font-serif text-[19px] sm:text-[21px] leading-[1.85] text-ink/90 space-y-5
+            [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-[27px] sm:[&_h2]:text-[33px] [&_h2]:text-brand-dark [&_h2]:mt-10 [&_h2]:mb-4
+            [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-[23px] sm:[&_h3]:text-[27px] [&_h3]:text-brand-dark [&_h3]:mt-8 [&_h3]:mb-3
+            [&_p]:my-5 [&_p]:text-[19px] sm:[&_p]:text-[21px] [&_p]:leading-[1.85]
             [&_a]:text-brand [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-brand-dark
-            [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-ink/80 [&_blockquote]:my-6 [&_blockquote]:text-[19px] sm:[&_blockquote]:text-[21px]
-            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-5 [&_li]:my-2 [&_li]:text-[18px] sm:[&_li]:text-[20px] [&_li]:leading-[1.85]
-            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-5 [&_li]:my-2 [&_li]:text-[18px] sm:[&_li]:text-[20px] [&_li]:leading-[1.85]
-            [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-left [&_table]:text-sm sm:[&_table]:text-base
+            [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-ink/80 [&_blockquote]:my-6 [&_blockquote]:text-[20px] sm:[&_blockquote]:text-[22px]
+            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-5 [&_li]:my-2 [&_li]:text-[19px] sm:[&_li]:text-[21px] [&_li]:leading-[1.85]
+            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-5 [&_li]:my-2 [&_li]:text-[19px] sm:[&_li]:text-[21px] [&_li]:leading-[1.85]
+            [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-left [&_table]:text-[15px] sm:[&_table]:text-[17px]
             [&_th]:border [&_th]:border-slate-300 [&_th]:bg-slate-100/90 [&_th]:px-4 [&_th]:py-2.5 [&_th]:font-bold [&_th]:text-ink
             [&_td]:border [&_td]:border-slate-200 [&_td]:px-4 [&_td]:py-2.5 [&_td]:text-ink/80
             [&_.table-container]:my-6 [&_.table-container]:overflow-x-auto [&_.table-container]:rounded-lg [&_.table-container]:border [&_.table-container]:border-slate-200"
@@ -150,13 +150,13 @@ export function LegalDescription({ content, summary, topic, title }: LegalDescri
                   </span>
                 )}
                 <div>
-                  <h3 className="font-display text-[17px] sm:text-[18px] font-bold tracking-tight text-ink">
+                  <h3 className="font-display text-[18px] sm:text-[19px] font-bold tracking-tight text-ink">
                     {sec.title}
                   </h3>
                 </div>
               </div>
 
-              <div className="space-y-3 font-sans text-[15px] sm:text-[15.5px] leading-relaxed text-ink/80">
+              <div className="space-y-3 font-sans text-[16px] sm:text-[16.5px] leading-relaxed text-ink/80">
                 {sec.paragraphs.map((p, pIdx) => (
                   <p key={pIdx}>{p}</p>
                 ))}
@@ -168,7 +168,7 @@ export function LegalDescription({ content, summary, topic, title }: LegalDescri
 
       {/* Plain Text Multi-Paragraph Fallback */}
       {!parsed.isHtml && parsed.sections.length === 0 && parsed.plainParagraphs.length > 0 && (
-        <div className="space-y-5 font-serif text-[18px] sm:text-[20px] leading-[1.85] text-ink/90">
+        <div className="space-y-5 font-serif text-[19px] sm:text-[21px] leading-[1.85] text-ink/90">
           {parsed.plainParagraphs.map((p, idx) => (
             <p key={idx}>{p}</p>
           ))}

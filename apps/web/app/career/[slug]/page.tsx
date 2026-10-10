@@ -215,7 +215,7 @@ export default async function OpportunitySlugPage({ params }: Props) {
                   <h2 className="font-display text-xs font-bold uppercase tracking-[0.14em] text-brand mb-4">
                     Description & Opportunity Details
                   </h2>
-                  <div className="space-y-4 font-serif text-[17px] sm:text-[18px] leading-[1.85] text-ink/90">
+                  <div className="space-y-4 font-serif text-[18px] sm:text-[19px] leading-[1.85] text-ink/90">
                     {paragraphs.length > 0 ? (
                       paragraphs.map((p, idx) => <p key={idx}>{p}</p>)
                     ) : (

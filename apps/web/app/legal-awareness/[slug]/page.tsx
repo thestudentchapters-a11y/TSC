@@ -85,7 +85,7 @@ export default async function LegalArticlePage({ params }: Props) {
                   </h3>
                   <ul className="mt-4 space-y-3">
                     {article.keyPoints.map((k) => (
-                      <li key={k} className="flex items-start gap-2.5 text-[15px] leading-relaxed text-ink/85">
+                      <li key={k} className="flex items-start gap-2.5 text-[16px] leading-relaxed text-ink/85">
                         <CheckCircle2 aria-hidden className="mt-1 h-4 w-4 shrink-0 text-gold-deep" />
                         <span>{k}</span>
                       </li>

@@ -165,14 +165,14 @@ export function InteractiveEditionReader({ articles, pdfUrl, editionSlug }: Inte
                   </div>
 
                   {/* Headline */}
-                  <h2 className="font-display text-lg sm:text-xl font-bold leading-snug text-ink pr-6">
+                  <h2 className="font-display text-[19px] sm:text-[21px] font-bold leading-snug text-ink pr-6">
                     {a.title}
                   </h2>
 
                   {/* Preview / Teaser when collapsed */}
                   {!isOpen && (
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 pt-1">
-                      <p className="text-xs sm:text-[13px] text-muted line-clamp-2 sm:line-clamp-1 italic">
+                      <p className="text-[13px] sm:text-[14px] text-muted line-clamp-2 sm:line-clamp-1 italic">
                         {a.summary}
                       </p>
                       <span className="shrink-0 text-[11px] font-bold text-brand uppercase tracking-wider underline underline-offset-4">
@@ -186,7 +186,7 @@ export function InteractiveEditionReader({ articles, pdfUrl, editionSlug }: Inte
                 {isOpen && (
                   <div className="border-t border-hairline bg-white px-5 pb-7 pt-5 sm:px-8 space-y-6 animate-fadeIn">
                     {/* Executive Summary Callout Box */}
-                    <div className="rounded-r-lg border-l-4 border-gold bg-gold/10 p-4 text-[13.5px] leading-relaxed text-ink/90">
+                    <div className="rounded-r-lg border-l-4 border-gold bg-gold/10 p-4 text-[15px] leading-relaxed text-ink/90">
                       <p className="font-semibold text-gold-deep uppercase tracking-wider text-[10px] mb-1">
                         Executive Summary
                       </p>
@@ -199,7 +199,7 @@ export function InteractiveEditionReader({ articles, pdfUrl, editionSlug }: Inte
                         <p className="mb-3 font-display text-xs font-bold uppercase tracking-wider text-ink flex items-center gap-2">
                           <CheckCircle2 className="h-4 w-4 text-emerald-600" /> Key Developments &amp; Takeaways:
                         </p>
-                        <ul className="space-y-2.5 text-[13.5px] leading-relaxed text-ink/85">
+                        <ul className="space-y-2.5 text-[15px] leading-relaxed text-ink/85">
                           {a.keyPoints.map((pt, idx) => (
                             <li key={idx} className="flex items-start gap-2.5">
                               <span className="mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
@@ -218,13 +218,13 @@ export function InteractiveEditionReader({ articles, pdfUrl, editionSlug }: Inte
                         <BookOpen className="h-4 w-4" /> Comprehensive In-Depth Breakdown (Bulleted Analysis):
                       </h3>
 
-                      <ul className="space-y-3.5 text-[14px] leading-relaxed text-ink/85 font-sans">
+                      <ul className="space-y-3.5 text-[15.5px] leading-relaxed text-ink/85 font-sans">
                         {contentBullets.map((p, pIdx) => (
                           <li key={pIdx} className="flex items-start gap-3 rounded-lg bg-cream/20 p-3 border border-hairline/60">
                             <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand/10 font-display text-[10px] font-bold text-brand">
                               {pIdx + 1}
                             </span>
-                            <span className="leading-6">{p}</span>
+                            <span className="leading-7">{p}</span>
                           </li>
                         ))}
                       </ul>

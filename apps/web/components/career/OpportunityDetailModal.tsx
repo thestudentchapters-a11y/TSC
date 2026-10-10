@@ -292,7 +292,7 @@ export function OpportunityDetailModal({
             <h3 className="font-display text-xs font-bold uppercase tracking-[0.14em] text-brand mb-3">
               Description & Details
             </h3>
-            <div className="rounded-xl border border-hairline bg-white p-5 sm:p-6 shadow-xs space-y-4 font-serif text-[16px] sm:text-[17px] leading-[1.8] text-ink/90">
+            <div className="rounded-xl border border-hairline bg-white p-5 sm:p-6 shadow-xs space-y-4 font-serif text-[17px] sm:text-[18px] leading-[1.8] text-ink/90">
               {paragraphs.length > 0 ? (
                 paragraphs.map((p, idx) => <p key={idx}>{p}</p>)
               ) : (

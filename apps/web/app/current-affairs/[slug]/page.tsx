@@ -128,7 +128,7 @@ export default async function EditionPage({ params }: Props) {
 
             <div className="card-base p-5">
               <p className="eyebrow">Editorial Introduction</p>
-              <p className="mt-2 font-serif text-[15px] italic leading-7 text-ink/80">{edition.intro}</p>
+              <p className="mt-2 font-serif text-[16px] italic leading-7 text-ink/80">{edition.intro}</p>
               <div className="mt-5 border-t border-hairline pt-5">
                 <ShareButtons title={edition.title} path={`/current-affairs/${edition.slug}`} />
               </div>

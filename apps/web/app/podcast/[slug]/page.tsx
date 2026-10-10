@@ -106,8 +106,8 @@ export default async function EpisodePage({ params }: Props) {
 
           <div className="mt-8 grid gap-12 lg:grid-cols-12">
             <div className="space-y-8 lg:col-span-8">
-              <p className="text-[15px] leading-8 text-ink/80">{episode.description}</p>
-              <p className="rounded-md border border-brand/20 bg-brand-50 px-4 py-3 text-sm text-ink/75">
+              <p className="text-[17px] leading-8 text-ink/80">{episode.description}</p>
+              <p className="rounded-md border border-brand/20 bg-brand-50 px-4 py-3 text-[15px] text-ink/75">
                 <span className="font-display font-bold text-brand">Guest — </span>
                 {episode.guest}, {episode.guestRole}
               </p>
@@ -130,7 +130,7 @@ export default async function EpisodePage({ params }: Props) {
                 <h2 className="font-display text-lg font-bold">Transcript</h2>
                 <div className="mt-3 space-y-2">
                   {episode.transcript.map((line, i) => (
-                    <p key={i} className="text-[14px] leading-7 text-muted">
+                    <p key={i} className="text-[15.5px] leading-7 text-muted">
                       {line}
                     </p>
                   ))}
