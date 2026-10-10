@@ -122,9 +122,9 @@ export default async function EpisodePage({ params }: Props) {
 
               <div>
                 <h2 className="font-display text-lg font-bold">Transcript</h2>
-                <div className="prose-tsc mt-3">
+                <div className="mt-3 space-y-2">
                   {episode.transcript.map((line, i) => (
-                    <p key={i} className="text-[13.5px] leading-7 text-muted">
+                    <p key={i} className="text-[14px] leading-7 text-muted">
                       {line}
                     </p>
                   ))}

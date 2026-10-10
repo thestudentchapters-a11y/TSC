@@ -108,14 +108,14 @@ export function CampusDescription({ description, categories = [], campusName }: 
       {/* HTML Content Render */}
       {parsed.isHtml && parsed.html && (
         <div
-          className="prose-tsc max-w-none font-serif text-[17px] sm:text-[18px] leading-8 text-ink/90 space-y-4
-            [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-2xl sm:[&_h2]:text-3xl [&_h2]:text-brand-dark [&_h2]:mt-8 [&_h2]:mb-4
-            [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-xl sm:[&_h3]:text-2xl [&_h3]:text-brand-dark [&_h3]:mt-6 [&_h3]:mb-3
-            [&_p]:my-4 [&_p]:leading-8
+          className="prose-tsc max-w-none font-serif text-[18px] sm:text-[20px] leading-[1.85] text-ink/90 space-y-5
+            [&_h2]:font-merriweather [&_h2]:font-bold [&_h2]:text-[26px] sm:[&_h2]:text-[32px] [&_h2]:text-brand-dark [&_h2]:mt-10 [&_h2]:mb-4
+            [&_h3]:font-merriweather [&_h3]:font-bold [&_h3]:text-[22px] sm:[&_h3]:text-[26px] [&_h3]:text-brand-dark [&_h3]:mt-8 [&_h3]:mb-3
+            [&_p]:my-5 [&_p]:text-[18px] sm:[&_p]:text-[20px] [&_p]:leading-[1.85]
             [&_a]:text-brand [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-brand-dark
-            [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-ink/80 [&_blockquote]:my-6
-            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-4 [&_li]:my-1.5
-            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-4 [&_li]:my-1.5"
+            [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-ink/80 [&_blockquote]:my-6 [&_blockquote]:text-[19px] sm:[&_blockquote]:text-[21px]
+            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-5 [&_li]:my-2 [&_li]:text-[18px] sm:[&_li]:text-[20px] [&_li]:leading-[1.85]
+            [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-5 [&_li]:my-2 [&_li]:text-[18px] sm:[&_li]:text-[20px] [&_li]:leading-[1.85]"
           dangerouslySetInnerHTML={{ __html: parsed.html }}
         />
       )}
@@ -123,7 +123,7 @@ export function CampusDescription({ description, categories = [], campusName }: 
       {/* Lead Intro Paragraph */}
       {!parsed.isHtml && parsed.intro && (
         <div className="rounded-xl border border-brand/20 border-l-4 border-l-brand bg-brand-50/40 p-5 sm:p-6 shadow-xs">
-          <p className="font-serif text-[16.5px] sm:text-[17.5px] leading-relaxed text-ink/90 italic">
+          <p className="font-serif text-[18px] sm:text-[19.5px] leading-relaxed text-ink/90 italic">
             {parsed.intro}
           </p>
         </div>
