@@ -89,8 +89,8 @@ export function OpportunityDetailModal({
     opportunity.applicationUrl && opportunity.applicationUrl.trim().length > 0
       ? opportunity.applicationUrl
       : `https://www.google.com/search?q=${encodeURIComponent(
-          `${opportunity.organization.replace(/\[Demo.*?\]/g, '').trim()} ${opportunity.title} careers apply`
-        )}`;
+        `${opportunity.organization.replace(/\[Demo.*?\]/g, '').trim()} ${opportunity.title} careers apply`
+      )}`;
 
   const handleCopyLink = () => {
     const slugUrl = `${window.location.origin}/career/${opportunity.slug}`;
@@ -108,7 +108,7 @@ export function OpportunityDetailModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-opp-title"
-      className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-3 sm:p-6 pt-20 sm:pt-24 md:pt-28 pb-4 sm:pb-8"
+      className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-3 sm:p-6 pt-20 sm:pt-24 md:pt-28 pb-4 sm:pb-8"
     >
       {/* Backdrop */}
       <div
@@ -119,7 +119,7 @@ export function OpportunityDetailModal({
 
       {/* Modal Dialog Card */}
       <div
-        className="relative z-10 flex max-h-[calc(100dvh-5.5rem)] sm:max-h-[calc(100dvh-7.5rem)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-hairline bg-white shadow-2xl animate-in zoom-in-95 duration-200 sm:translate-y-2"
+        className="relative z-10 flex max-h-[calc(100dvh-6.5rem)] sm:max-h-[calc(100dvh-8.5rem)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-hairline bg-white shadow-2xl animate-in zoom-in-95 duration-200 sm:translate-y-2"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Sticky Modal Header */}
@@ -205,8 +205,8 @@ export function OpportunityDetailModal({
                 isClosed
                   ? 'border-slate-200 bg-slate-100 text-muted'
                   : isSoon
-                  ? 'border-gold/60 bg-gold-50 text-gold-deep'
-                  : 'border-brand/20 bg-brand-50 text-brand'
+                    ? 'border-gold/60 bg-gold-50 text-gold-deep'
+                    : 'border-brand/20 bg-brand-50 text-brand'
               )}
             >
               <CalendarDays className="h-4 w-4" />
