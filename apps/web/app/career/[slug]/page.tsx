@@ -82,6 +82,7 @@ export default async function OpportunitySlugPage({ params }: Props) {
   return (
     <>
       <PageHeader
+        compact
         eyebrow={`Career / ${opportunity.type}`}
         title={opportunity.title}
       >

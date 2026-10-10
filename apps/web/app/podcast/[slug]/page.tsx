@@ -59,7 +59,7 @@ export default async function EpisodePage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <PageHeader eyebrow={`TSC Podcast / Episode ${String(episode.episodeNumber).padStart(2, '0')}`} title={episode.title}>
+      <PageHeader compact eyebrow={`TSC Podcast / Episode ${String(episode.episodeNumber).padStart(2, '0')}`} title={episode.title}>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium uppercase tracking-wider text-muted">
           <CategoryPill><Mic2 aria-hidden className="mr-1 h-3 w-3" />{episode.category}</CategoryPill>
           <span>with {episode.guest}</span>

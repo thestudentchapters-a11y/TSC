@@ -72,6 +72,7 @@ export default async function CampusProfilePage({ params }: Props) {
   return (
     <>
       <PageHeader
+        compact
         eyebrow="Campus Directory"
         title={campus.name}
         className="max-w-9xl"

@@ -66,7 +66,7 @@ export default async function ArticlePage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <PageHeader eyebrow="Latest News" title={article.title} className="max-w-7xl" titleClassName="max-w-7xl">
+      <PageHeader compact eyebrow="Latest News" title={article.title} className="max-w-7xl" titleClassName="max-w-7xl">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium uppercase tracking-wider text-muted">
           <CategoryPill>{article.category}</CategoryPill>
           <span className="inline-flex items-center gap-1">

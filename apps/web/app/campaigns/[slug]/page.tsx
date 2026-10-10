@@ -40,6 +40,7 @@ export default async function DynamicCampaignPage({
   return (
     <>
       <PageHeader
+        compact
         dark
         eyebrow={campaign.eyebrow || 'Campaigns • Nationwide'}
         title={campaign.title}

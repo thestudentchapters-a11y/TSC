@@ -38,7 +38,7 @@ export default async function EditionPage({ params }: Props) {
 
   return (
     <>
-      <PageHeader eyebrow="Monthly Current Affairs Dossier" title={edition.title}>
+      <PageHeader compact eyebrow="Monthly Current Affairs Dossier" title={edition.title}>
         <div className="flex flex-wrap gap-1.5">
           {edition.topics.map((t) => (
             <span

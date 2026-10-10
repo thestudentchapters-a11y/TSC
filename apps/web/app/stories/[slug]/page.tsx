@@ -59,7 +59,7 @@ export default async function StoryDetailPage({ params }: Props) {
 
   return (
     <>
-      <PageHeader eyebrow={`Stories / ${categoryLabel}`} title={story.title}>
+      <PageHeader compact eyebrow={`Stories / ${categoryLabel}`} title={story.title}>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium uppercase tracking-wider text-muted">
           <CategoryPill variant={story.category === 'startup' ? 'gold' : story.category === 'campus' ? 'ink' : 'brand'}>
             {categoryLabel}
