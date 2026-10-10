@@ -785,14 +785,6 @@ export function CampaignsAdmin() {
     push(`Episode "${ep.title}" removed.`, 'info');
   };
 
-  const handleResetToDemo = () => {
-    if (confirm('Reset all campaigns and documentary episodes to default factory seed data?')) {
-      persistCampaigns([{ ...flagshipCampaign, episodes: [] }]);
-      setSelectedCampaignSlug(flagshipCampaign.slug);
-      push('Campaigns reset to clean defaults.', 'info');
-    }
-  };
-
   return (
     <div className="pb-16">
       {/* Header */}
@@ -808,9 +800,6 @@ export function CampaignsAdmin() {
         </div>
 
         <div className="flex flex-wrap gap-2.5">
-          <Button variant="outline" size="sm" onClick={handleResetToDemo}>
-            <RefreshCw className="h-3.5 w-3.5" /> Reset Demo Seed
-          </Button>
           <Button variant="outline" size="sm" onClick={handleOpenNewCampaign}>
             <Plus className="h-3.5 w-3.5" /> Create Campaign
           </Button>

@@ -16,6 +16,8 @@ import {
   User as UserIcon,
   Building2,
   MapPin,
+  Trash2,
+  AlertTriangle,
 } from 'lucide-react';
 import { Button } from '@/components/common/Button';
 import { Modal } from '@/components/common/Modal';
@@ -68,8 +70,24 @@ export default function AdminTeamPage() {
   const [activePermissions, setActivePermissions] = useState<string[]>([]);
   const [savingPermissions, setSavingPermissions] = useState(false);
 
+  // Password-authenticated Delete Modal
+  const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
+  const [adminAuthPassword, setAdminAuthPassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const isCurrentUserAdmin = currentUser?.role === 'admin';
+
   const loadUsers = async () => {
     setLoading(true);
+    const deletedUserIds: string[] = (() => {
+      try {
+        return JSON.parse(window.localStorage.getItem('tsc.admin.deleted_users') || '[]');
+      } catch {
+        return [];
+      }
+    })();
+
     const api = process.env.NEXT_PUBLIC_API_URL;
     if (api) {
       try {
@@ -81,7 +99,13 @@ export default function AdminTeamPage() {
           const data = await res.json();
           if (Array.isArray(data?.data)) {
             const fetched = data.data
-              .filter((u: any) => u.role === 'admin' || u.role === 'editor')
+              .filter(
+                (u: any) =>
+                  (u.role === 'admin' || u.role === 'editor') &&
+                  !deletedUserIds.includes(u._id) &&
+                  !deletedUserIds.includes(u.id) &&
+                  !deletedUserIds.includes(u.email?.toLowerCase())
+              )
               .map((u: any) => ({
                 id: u._id || u.id,
                 _id: u._id,
@@ -107,7 +131,12 @@ export default function AdminTeamPage() {
 
     // Demo dataset (only staff: admin and editor)
     const mapped: AdminUser[] = demoMembers
-      .filter((m) => m.role === 'admin' || m.role === 'editor')
+      .filter(
+        (m) =>
+          (m.role === 'admin' || m.role === 'editor') &&
+          !deletedUserIds.includes(m.id) &&
+          !deletedUserIds.includes(m.email?.toLowerCase())
+      )
       .map((m) => ({
         id: m.id,
         name: m.name,
@@ -128,7 +157,11 @@ export default function AdminTeamPage() {
       const addedStaff = JSON.parse(window.localStorage.getItem('tsc.admin.staff_added') || '[]');
       if (Array.isArray(addedStaff)) {
         for (const s of addedStaff) {
-          if (!mapped.some((u) => u.id === s.id || u.email === s.email)) {
+          if (
+            !deletedUserIds.includes(s.id) &&
+            !deletedUserIds.includes(s.email?.toLowerCase()) &&
+            !mapped.some((u) => u.id === s.id || u.email === s.email)
+          ) {
             mapped.push(s);
           }
         }
@@ -375,6 +408,130 @@ export default function AdminTeamPage() {
     push(`Staff role updated to ${newRole.toUpperCase()}.`, 'success');
   };
 
+  const handleInitiateDelete = (u: AdminUser) => {
+    if (!isCurrentUserAdmin) {
+      push('Only administrators have the right to remove team members.', 'error');
+      return;
+    }
+
+    const isSelf =
+      currentUser &&
+      (currentUser.email?.toLowerCase() === u.email?.toLowerCase() ||
+        currentUser.id === u.id ||
+        (u._id && currentUser.id === u._id));
+
+    if (isSelf) {
+      push('You cannot remove your own account.', 'error');
+      return;
+    }
+
+    setUserToDelete(u);
+    setAdminAuthPassword('');
+    setDeleteError('');
+  };
+
+  const handleConfirmDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userToDelete) return;
+
+    if (!isCurrentUserAdmin) {
+      setDeleteError('Only administrators have the right to remove team members.');
+      return;
+    }
+
+    if (!adminAuthPassword.trim()) {
+      setDeleteError('Administrator password is required to confirm removal.');
+      return;
+    }
+
+    setIsDeleting(true);
+    setDeleteError('');
+
+    const api = process.env.NEXT_PUBLIC_API_URL;
+    const targetId = userToDelete._id || userToDelete.id;
+
+    if (api && targetId) {
+      try {
+        const token = window.localStorage.getItem('tsc_token');
+        const res = await fetch(`${api}/api/users/${targetId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ password: adminAuthPassword.trim() }),
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          const errMsg =
+            errData.message ||
+            errData.error ||
+            'Password authentication failed. Invalid administrator credentials.';
+          setDeleteError(errMsg);
+          setIsDeleting(false);
+          return;
+        }
+      } catch {
+        /* fallback handled */
+      }
+    }
+
+    // Optimistically update list
+    setAllUsers((prev) =>
+      prev.filter(
+        (user) => user.id !== userToDelete.id && (!userToDelete._id || user._id !== userToDelete._id)
+      )
+    );
+
+    // Save to deleted list so persistence works across reloads
+    try {
+      const deletedIds = JSON.parse(
+        window.localStorage.getItem('tsc.admin.deleted_users') || '[]'
+      );
+      if (!deletedIds.includes(userToDelete.id)) deletedIds.push(userToDelete.id);
+      if (userToDelete._id && !deletedIds.includes(userToDelete._id)) {
+        deletedIds.push(userToDelete._id);
+      }
+      if (userToDelete.email && !deletedIds.includes(userToDelete.email.toLowerCase())) {
+        deletedIds.push(userToDelete.email.toLowerCase());
+      }
+      window.localStorage.setItem('tsc.admin.deleted_users', JSON.stringify(deletedIds));
+
+      // Clean up from staff_added if present
+      const addedStaff = JSON.parse(
+        window.localStorage.getItem('tsc.admin.staff_added') || '[]'
+      );
+      if (Array.isArray(addedStaff)) {
+        const filtered = addedStaff.filter(
+          (s: AdminUser) =>
+            s.id !== userToDelete.id &&
+            s.email.toLowerCase() !== userToDelete.email.toLowerCase()
+        );
+        window.localStorage.setItem('tsc.admin.staff_added', JSON.stringify(filtered));
+      }
+
+      // Clean up custom permissions if present
+      const storedPerms = JSON.parse(
+        window.localStorage.getItem('tsc.admin.custom_permissions') || '{}'
+      );
+      if (storedPerms[userToDelete.id]) {
+        delete storedPerms[userToDelete.id];
+        window.localStorage.setItem(
+          'tsc.admin.custom_permissions',
+          JSON.stringify(storedPerms)
+        );
+      }
+    } catch {
+      /* noop */
+    }
+
+    push(`Staff member "${userToDelete.name}" removed successfully.`, 'info');
+    setIsDeleting(false);
+    setUserToDelete(null);
+    setAdminAuthPassword('');
+  };
+
   return (
     <div className="pb-16">
       {/* Header */}
@@ -382,7 +539,7 @@ export default function AdminTeamPage() {
         <div>
           <p className="eyebrow">Editorial &amp; System Administration</p>
           <h1 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-3xl">
-            Team &amp; Staff
+            Team &amp; Editors
           </h1>
           <p className="mt-1 max-w-2xl text-sm text-muted">
             Strictly for Administrators and Editors. Manage editorial suite access and configure granular publishing permissions for authorized staff.
@@ -562,14 +719,44 @@ export default function AdminTeamPage() {
                       </td>
 
                       <td className="px-5 py-4 text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleOpenPermissions(u)}
-                          className="text-xs"
-                        >
-                          <KeyRound className="h-3.5 w-3.5 mr-1" /> Permissions
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleOpenPermissions(u)}
+                            className="text-xs"
+                          >
+                            <KeyRound className="h-3.5 w-3.5 mr-1" /> Permissions
+                          </Button>
+                          {isCurrentUserAdmin &&
+                            (() => {
+                              const isSelf =
+                                currentUser &&
+                                (currentUser.email?.toLowerCase() === u.email?.toLowerCase() ||
+                                  currentUser.id === u.id ||
+                                  (u._id && currentUser.id === u._id));
+                              return (
+                                <button
+                                  type="button"
+                                  onClick={() => handleInitiateDelete(u)}
+                                  disabled={Boolean(isSelf)}
+                                  title={
+                                    isSelf
+                                      ? 'You cannot remove your own account'
+                                      : `Remove ${u.name} from team (requires admin password)`
+                                  }
+                                  aria-label={`Remove ${u.name}`}
+                                  className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-hairline transition-colors ${
+                                    isSelf
+                                      ? 'cursor-not-allowed opacity-30 text-muted bg-slate-50'
+                                      : 'bg-white text-muted hover:border-red-300 hover:bg-red-50 hover:text-red-600'
+                                  }`}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              );
+                            })()}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -796,15 +983,128 @@ export default function AdminTeamPage() {
               })}
             </div>
 
-            <div className="flex justify-end gap-2.5 border-t border-hairline pt-4">
-              <Button variant="ghost" size="sm" onClick={() => setSelectedUser(null)}>
-                Cancel
-              </Button>
-              <Button size="sm" onClick={handleSavePermissions} disabled={savingPermissions}>
-                {savingPermissions ? 'Saving…' : 'Save Permissions'}
-              </Button>
+            <div className="flex items-center justify-between gap-2.5 border-t border-hairline pt-4">
+              {isCurrentUserAdmin &&
+                (() => {
+                  const isSelf =
+                    currentUser &&
+                    (currentUser.email?.toLowerCase() === selectedUser.email?.toLowerCase() ||
+                      currentUser.id === selectedUser.id ||
+                      (selectedUser._id && currentUser.id === selectedUser._id));
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const target = selectedUser;
+                        setSelectedUser(null);
+                        if (target) handleInitiateDelete(target);
+                      }}
+                      disabled={Boolean(isSelf)}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 transition-colors hover:text-red-700 hover:underline disabled:cursor-not-allowed disabled:opacity-30 disabled:no-underline"
+                      title={
+                        isSelf
+                          ? 'You cannot remove your own account'
+                          : `Remove ${selectedUser.name} (requires admin password)`
+                      }
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Remove from Team
+                    </button>
+                  );
+                })()}
+
+              <div className="flex items-center gap-2 ml-auto">
+                <Button variant="ghost" size="sm" onClick={() => setSelectedUser(null)}>
+                  Cancel
+                </Button>
+                <Button size="sm" onClick={handleSavePermissions} disabled={savingPermissions}>
+                  {savingPermissions ? 'Saving…' : 'Save Permissions'}
+                </Button>
+              </div>
             </div>
           </div>
+        </Modal>
+      )}
+
+      {/* Password-Protected Staff Deletion Modal */}
+      {userToDelete && (
+        <Modal
+          open={!!userToDelete}
+          onClose={() => {
+            if (!isDeleting) {
+              setUserToDelete(null);
+              setAdminAuthPassword('');
+              setDeleteError('');
+            }
+          }}
+          title="Confirm Staff Removal"
+        >
+          <form onSubmit={handleConfirmDelete} className="space-y-4">
+            <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50/70 p-4">
+              <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+              <div className="text-xs space-y-1">
+                <p className="font-bold text-red-950">
+                  You are about to remove this staff member from TSC:
+                </p>
+                <p className="text-red-900 font-semibold">
+                  {userToDelete.name} ({userToDelete.email}) —{' '}
+                  <span className="uppercase">{userToDelete.role}</span>
+                </p>
+                <p className="text-red-800/80 leading-relaxed text-[11.5px] pt-1">
+                  This action revokes all administrative and editorial privileges. To execute this privileged action, enter your administrator account password below.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-ink mb-1.5">
+                Administrator Password <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="password"
+                  required
+                  autoFocus
+                  value={adminAuthPassword}
+                  onChange={(e) => {
+                    setAdminAuthPassword(e.target.value);
+                    if (deleteError) setDeleteError('');
+                  }}
+                  placeholder="Enter your administrator password"
+                  className="w-full rounded-md border border-hairline bg-white px-3 py-2 text-xs text-ink placeholder:text-muted focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                />
+              </div>
+              {deleteError && (
+                <p className="mt-1.5 text-xs font-semibold text-red-600 flex items-center gap-1">
+                  <span>⚠</span> {deleteError}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 border-t border-hairline pt-4">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setUserToDelete(null);
+                  setAdminAuthPassword('');
+                  setDeleteError('');
+                }}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                variant="primary"
+                disabled={isDeleting || !adminAuthPassword.trim()}
+                className="!bg-red-600 hover:!bg-red-700 !text-white shadow-sm"
+              >
+                {isDeleting ? 'Verifying & Removing…' : 'Authenticate & Remove'}
+              </Button>
+            </div>
+          </form>
         </Modal>
       )}
     </div>

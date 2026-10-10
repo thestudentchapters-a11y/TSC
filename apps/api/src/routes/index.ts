@@ -790,6 +790,38 @@ export function registerRoutes(app: Router) {
     })
   );
 
+  app.delete(
+    '/api/users/:id',
+    requireAuth,
+    requireAdmin,
+    asyncHandler(async (req: Request, res) => {
+      const password = (req.body?.password || req.headers['x-admin-password']) as string | undefined;
+      if (!password || typeof password !== 'string' || !password.trim()) {
+        throw ApiError.badRequest('Admin password is required to remove staff members');
+      }
+
+      const callingAdmin = await User.findById((req as any).user?._id).select('+passwordHash');
+      if (!callingAdmin) {
+        throw ApiError.unauthorized('Administrator account not found');
+      }
+
+      const isPasswordValid = await callingAdmin.comparePassword(password);
+      if (!isPasswordValid) {
+        throw ApiError.forbidden('Invalid administrator password. Authentication failed.');
+      }
+
+      const targetUser = await User.findById(req.params.id);
+      if (!targetUser) throw ApiError.notFound('User not found');
+      const callerId = String((req as any).user?._id || '');
+      const callerEmail = String((req as any).user?.email || '').toLowerCase();
+      if (callerId === String(targetUser._id) || callerEmail === targetUser.email.toLowerCase()) {
+        throw ApiError.badRequest('You cannot delete your own account');
+      }
+      await User.findByIdAndDelete(req.params.id);
+      res.json({ success: true, message: 'User removed successfully' });
+    })
+  );
+
   app.get(
     '/api/admin/stats',
     requireAuth,
