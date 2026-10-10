@@ -83,48 +83,52 @@ export default async function StoryDetailPage({ params }: Props) {
       </PageHeader>
 
       <article className="section-pad">
-        <div className="container-tsc max-w-5xl">
+        <div className="container-tsc max-w-7xl">
           <Reveal>
             <div className="relative aspect-[16/8] overflow-hidden rounded-md">
-              <Image src={story.image} alt={story.imageAlt} fill priority sizes="(max-width: 1024px) 100vw, 66vw" className="object-cover" />
+              <Image src={story.image} alt={story.imageAlt} fill priority sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover" />
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-8">
-              <DemoNotice className="mb-8" />
-              <p className="mb-8 font-serif text-xl italic leading-8 text-brand sm:text-2xl">{story.dek}</p>
-              <ContentBody paragraphs={story.content} />
+          <div className="mt-10">
+            <DemoNotice className="mb-8" />
+            <p className="mb-8 font-serif text-xl italic leading-8 text-brand sm:text-2xl">{story.dek}</p>
+            <ContentBody paragraphs={story.content} />
 
-              {story.quote && (
-                <blockquote className="my-10 border-l-4 border-gold bg-white p-6 shadow-card sm:p-8">
-                  <p className="font-serif text-lg italic leading-8 text-ink sm:text-xl">“{story.quote.text}”</p>
-                  <cite className="mt-4 block font-display text-xs font-bold uppercase tracking-[0.16em] text-brand not-italic">
-                    — {story.quote.person}
-                  </cite>
-                </blockquote>
-              )}
-            </div>
+            {story.quote && (
+              <blockquote className="my-10 border-l-4 border-gold bg-white p-6 shadow-card sm:p-8">
+                <p className="font-serif text-lg italic leading-8 text-ink sm:text-xl">“{story.quote.text}”</p>
+                <cite className="mt-4 block font-display text-xs font-bold uppercase tracking-[0.16em] text-brand not-italic">
+                  — {story.quote.person}
+                </cite>
+              </blockquote>
+            )}
 
-            <aside className="space-y-6 lg:col-span-4">
-              <div className="card-base space-y-5 p-5">
+            {/* Bottom cards in a row just after the story ends */}
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 border-t border-hairline pt-8">
+              <div className="card-base flex flex-col justify-between space-y-5 p-5 sm:p-6">
                 <ShareButtons title={story.title} path={`/stories/${story.slug}`} />
-                <div className="border-t border-hairline pt-5">
+                <div className="border-t border-hairline pt-4">
                   <SaveButton itemType="story" itemId={story.id} title={story.title} className="w-full justify-center" />
                 </div>
               </div>
-              <div className="rounded-md border border-gold/40 bg-gold-50 p-5">
-                <h3 className="font-display text-sm font-bold uppercase tracking-[0.14em] text-gold-deep">
-                  Have a story like this?
-                </h3>
-                <p className="mt-2 text-[13px] leading-6 text-ink/70">
-                  Your journey could inspire someone else. Tell us yours.
-                </p>
-                <Button href="/share-your-story" size="sm" className="mt-4">
-                  Share Your Story
-                </Button>
+
+              <div className="flex flex-col justify-between rounded-md border border-gold/40 bg-gold-50 p-5 sm:p-6">
+                <div>
+                  <h3 className="font-display text-sm font-bold uppercase tracking-[0.14em] text-gold-deep">
+                    Have a story like this?
+                  </h3>
+                  <p className="mt-2 text-[13px] leading-6 text-ink/70">
+                    Your journey could inspire someone else. Tell us yours.
+                  </p>
+                </div>
+                <div className="pt-4">
+                  <Button href="/share-your-story" size="sm">
+                    Share Your Story
+                  </Button>
+                </div>
               </div>
-            </aside>
+            </div>
           </div>
         </div>
       </article>

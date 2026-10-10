@@ -84,10 +84,10 @@ export default async function EventPage({ params }: Props) {
       </PageHeader>
 
       <section className="section-pad">
-        <div className="container-tsc max-w-6xl">
+        <div className="container-tsc max-w-7xl">
           <Reveal>
             <div className="relative aspect-[16/7] overflow-hidden rounded-md">
-              <Image src={event.image} alt={event.imageAlt} fill priority sizes="100vw" className="object-cover" />
+              <Image src={event.image} alt={event.imageAlt} fill priority sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover" />
               <div className="absolute left-5 top-5 flex flex-col items-center rounded-[8px] border border-white/20 bg-brand-dark/95 px-4 py-3 text-white shadow-lift">
                 <span className="font-display text-2xl font-bold leading-none">{badge.day}</span>
                 <span className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-gold">{badge.month} {new Date(event.date).getFullYear()}</span>
@@ -100,54 +100,61 @@ export default async function EventPage({ params }: Props) {
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-12 lg:grid-cols-12">
-            <div className="space-y-8 lg:col-span-8">
-              <DemoNotice />
-              <div>
-                <h2 className="font-serif text-xl italic leading-8 text-brand">{event.dek}</h2>
-              </div>
+          <div className="mt-10">
+            <DemoNotice />
+            <div>
+              <h2 className="font-serif text-xl italic leading-8 text-brand">{event.dek}</h2>
+            </div>
+            <div className="mt-6">
               <ContentBody paragraphs={event.description} />
+            </div>
 
-              <div className="grid gap-4 rounded-md border border-hairline bg-white p-6 sm:grid-cols-2">
-                <div>
-                  <p className="meta-text">Date</p>
-                  <p className="mt-1 font-display text-sm font-bold">{formatDateLong(event.date)}</p>
-                </div>
-                <div>
-                  <p className="meta-text">Time</p>
-                  <p className="mt-1 inline-flex items-center gap-1.5 font-display text-sm font-bold"><Clock aria-hidden className="h-4 w-4 text-brand" />{event.time}</p>
-                </div>
-                <div>
-                  <p className="meta-text">Venue</p>
-                  <p className="mt-1 inline-flex items-center gap-1.5 font-display text-sm font-bold"><MapPin aria-hidden className="h-4 w-4 text-brand" />{event.venue}</p>
-                </div>
-                <div>
-                  <p className="meta-text">Registration deadline</p>
-                  <p className="mt-1 font-display text-sm font-bold">{formatDate(event.registrationDeadline)}</p>
-                </div>
+            <div className="mt-8 grid gap-4 rounded-md border border-hairline bg-white p-6 sm:grid-cols-2 md:grid-cols-4">
+              <div>
+                <p className="meta-text">Date</p>
+                <p className="mt-1 font-display text-sm font-bold">{formatDateLong(event.date)}</p>
+              </div>
+              <div>
+                <p className="meta-text">Time</p>
+                <p className="mt-1 inline-flex items-center gap-1.5 font-display text-sm font-bold"><Clock aria-hidden className="h-4 w-4 text-brand" />{event.time}</p>
+              </div>
+              <div>
+                <p className="meta-text">Venue</p>
+                <p className="mt-1 inline-flex items-center gap-1.5 font-display text-sm font-bold"><MapPin aria-hidden className="h-4 w-4 text-brand" />{event.venue}</p>
+              </div>
+              <div>
+                <p className="meta-text">Registration deadline</p>
+                <p className="mt-1 font-display text-sm font-bold">{formatDate(event.registrationDeadline)}</p>
               </div>
             </div>
 
-            <aside className="space-y-6 lg:col-span-4">
-              <div className="card-base space-y-4 p-6">
-                {closed ? (
-                  <p className="rounded-md border border-hairline bg-cream px-4 py-3 text-center text-[13px] font-semibold text-muted">
-                    {event.status === 'cancelled' ? 'This event was cancelled.' : 'Registrations are closed for this event.'}
+            {/* Bottom cards in a row just after the event content ends */}
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 border-t border-hairline pt-8">
+              <div className="card-base flex flex-col justify-between space-y-4 p-5 sm:p-6">
+                <div>
+                  <h3 className="font-display text-sm font-bold uppercase tracking-[0.14em] text-brand mb-1">
+                    Event Registration
+                  </h3>
+                  <p className="text-xs text-muted mb-4">
+                    Free registration • confirmation by email
                   </p>
-                ) : (
-                  <RegisterButton event={{ id: event.id, title: event.title, slug: event.slug }} />
-                )}
-                <p className="text-center text-[11px] text-muted">
-                  Free registration • confirmation by email
-                </p>
-                <div className="border-t border-hairline pt-4">
-                  <ShareButtons title={event.title} path={`/events/${event.slug}`} />
+                  {closed ? (
+                    <p className="rounded-md border border-hairline bg-cream px-4 py-3 text-center text-[13px] font-semibold text-muted">
+                      {event.status === 'cancelled' ? 'This event was cancelled.' : 'Registrations are closed for this event.'}
+                    </p>
+                  ) : (
+                    <RegisterButton event={{ id: event.id, title: event.title, slug: event.slug }} />
+                  )}
                 </div>
+              </div>
+
+              <div className="card-base flex flex-col justify-between space-y-5 p-5 sm:p-6">
+                <ShareButtons title={event.title} path={`/events/${event.slug}`} />
                 <div className="border-t border-hairline pt-4">
                   <SaveButton itemType="event" itemId={event.id} title={event.title} className="w-full justify-center" />
                 </div>
               </div>
-            </aside>
+            </div>
           </div>
 
           {related.length > 0 && (
